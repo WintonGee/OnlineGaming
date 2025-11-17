@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Grid3x3, Coffee } from 'lucide-react';
 import { useEffect } from 'react';
+import { ThemeToggle } from './theme-toggle';
 
 export default function Header() {
   useEffect(() => {
@@ -60,6 +61,9 @@ export default function Header() {
                 Sudoku
               </Link>
             </nav>
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* Buy Me a Coffee */}
             <div id="bmc-container" className="flex items-center"></div>
