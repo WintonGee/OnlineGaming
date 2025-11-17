@@ -1,88 +1,137 @@
 'use client';
 
-import { Difficulty } from '../types';
+import { CellPosition, Grid, InputMode } from '../types';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { RefreshCw, CheckCircle } from 'lucide-react';
+import { X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface SudokuControlsProps {
-  difficulty: Difficulty;
-  onDifficultyChange: (difficulty: Difficulty) => void;
-  onNewGame: () => void;
-  onCheckSolution: () => void;
   isGenerating?: boolean;
+  selectedCell: CellPosition | null;
+  initialGrid: Grid;
+  onCellChange: (row: number, col: number, value: number | null) => void;
+  inputMode: InputMode;
+  onInputModeChange: (mode: InputMode) => void;
+  onCandidateToggle: (row: number, col: number, value: number) => void;
+  onClearCandidates: (row: number, col: number) => void;
+  onUndo: () => void;
+  canUndo: boolean;
 }
 
 export default function SudokuControls({
-  difficulty,
-  onDifficultyChange,
-  onNewGame,
-  onCheckSolution,
   isGenerating = false,
+  selectedCell,
+  initialGrid,
+  onCellChange,
+  inputMode,
+  onInputModeChange,
+  onCandidateToggle,
+  onClearCandidates,
+  onUndo,
+  canUndo,
 }: SudokuControlsProps) {
+
+  const isCellInitial = (row: number, col: number): boolean => {
+    return initialGrid[row]?.[col] !== null;
+  };
+
+  const handleNumberSelect = (num: number) => {
+    if (selectedCell && !isCellInitial(selectedCell.row, selectedCell.col)) {
+      if (inputMode === 'Candidate') {
+        onCandidateToggle(selectedCell.row, selectedCell.col, num);
+      } else {
+        onCellChange(selectedCell.row, selectedCell.col, num);
+      }
+    }
+  };
+
+  const handleClear = () => {
+    if (selectedCell && !isCellInitial(selectedCell.row, selectedCell.col)) {
+      if (inputMode === 'Candidate') {
+        onClearCandidates(selectedCell.row, selectedCell.col);
+      } else {
+        onCellChange(selectedCell.row, selectedCell.col, null);
+      }
+    }
+  };
+
   return (
-    <div className="flex flex-col gap-6 w-full max-w-md">
-      {/* Difficulty Selector */}
-      <div className="space-y-3">
-        <Label className="text-base font-semibold text-black dark:text-white">Difficulty</Label>
-        <RadioGroup
-          value={difficulty}
-          onValueChange={(value) => onDifficultyChange(value as Difficulty)}
-          className="flex flex-col space-y-2"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="Easy" id="easy" />
-            <Label htmlFor="easy" className="font-normal cursor-pointer text-black dark:text-white">
-              Easy
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="Medium" id="medium" />
-            <Label htmlFor="medium" className="font-normal cursor-pointer text-black dark:text-white">
-              Medium
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="Hard" id="hard" />
-            <Label htmlFor="hard" className="font-normal cursor-pointer text-black dark:text-white">
-              Hard
-            </Label>
-          </div>
-        </RadioGroup>
-      </div>
+    <div className="flex flex-col gap-6 w-full">
+      <section>
+        <Label className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+          Input Mode
+        </Label>
+        <div className="mt-3 rounded-2xl border border-gray-300 dark:border-gray-700 overflow-hidden flex bg-white dark:bg-black">
+          {(['Normal', 'Candidate'] as InputMode[]).map((mode) => (
+            <button
+              key={mode}
+              onClick={() => onInputModeChange(mode)}
+              className={cn(
+                'flex-1 py-3 text-base font-semibold transition-colors focus:outline-none',
+                inputMode === mode
+                  ? 'bg-black text-white dark:bg-white dark:text-black'
+                  : 'bg-white text-black hover:bg-gray-100 dark:bg-black dark:text-white dark:hover:bg-gray-800'
+              )}
+            >
+              {mode}
+            </button>
+          ))}
+        </div>
+      </section>
 
-      {/* Action Buttons */}
-      <div className="flex flex-col gap-3">
-        <Button
-          onClick={onNewGame}
-          disabled={isGenerating}
-          size="lg"
-          className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 border-2 border-black dark:border-white"
-        >
-          {isGenerating ? (
-            <>
-              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-              Generating...
-            </>
-          ) : (
-            <>
-              <RefreshCw className="mr-2 h-4 w-4" />
-              New Game
-            </>
-          )}
-        </Button>
+      <section>
+        <Label className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+          Number Pad
+        </Label>
+        <div className="mt-4 grid grid-cols-3 gap-3 w-full">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+            <button
+              key={num}
+              onClick={() => handleNumberSelect(num)}
+              disabled={
+                isGenerating ||
+                !selectedCell ||
+                isCellInitial(selectedCell.row, selectedCell.col)
+              }
+              className={cn(
+                'aspect-square rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-800 text-lg sm:text-xl font-semibold text-black dark:text-white shadow-sm transition-colors',
+                'hover:bg-gray-300 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500',
+                'disabled:cursor-not-allowed disabled:opacity-30'
+              )}
+            >
+              {num}
+            </button>
+          ))}
+        </div>
+      </section>
 
+      <section className="grid grid-cols-2 gap-3">
         <Button
-          onClick={onCheckSolution}
           variant="outline"
-          size="lg"
-          className="w-full bg-white dark:bg-black text-black dark:text-white border-2 border-black dark:border-white hover:bg-gray-100 dark:hover:bg-gray-900"
+          onClick={handleClear}
+          disabled={
+            !selectedCell ||
+            isCellInitial(selectedCell?.row ?? 0, selectedCell?.col ?? 0)
+          }
+          className="border border-gray-300 bg-gray-200 text-black dark:border-gray-700 dark:bg-gray-800 dark:text-white flex items-center justify-center gap-2 text-base"
         >
-          <CheckCircle className="mr-2 h-4 w-4" />
-          Check Solution
+          <X className="h-4 w-4" />
+          Clear Cell
         </Button>
-      </div>
+        <Button
+          variant="outline"
+          onClick={onUndo}
+          disabled={!canUndo}
+          className={cn(
+            'border border-gray-300 bg-gray-200 text-black dark:border-gray-700 dark:bg-gray-800 dark:text-white',
+            !canUndo && 'opacity-50'
+          )}
+        >
+          Undo
+        </Button>
+      </section>
+
     </div>
   );
 }

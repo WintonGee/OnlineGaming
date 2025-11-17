@@ -1,6 +1,6 @@
 'use client';
 
-import { Grid, CellPosition } from '../types';
+import { Grid, CellPosition, CandidatesGrid } from '../types';
 import { cn } from '@/lib/utils';
 
 interface SudokuGridProps {
@@ -10,6 +10,7 @@ interface SudokuGridProps {
   onCellSelect: (position: CellPosition) => void;
   onCellChange: (row: number, col: number, value: number | null) => void;
   incorrectCells?: CellPosition[];
+  candidates?: CandidatesGrid;
 }
 
 export default function SudokuGrid({
@@ -19,6 +20,7 @@ export default function SudokuGrid({
   onCellSelect,
   onCellChange,
   incorrectCells = [],
+  candidates,
 }: SudokuGridProps) {
   const isCellInitial = (row: number, col: number): boolean => {
     return initialGrid[row][col] !== null;
@@ -51,100 +53,81 @@ export default function SudokuGrid({
     onCellSelect({ row, col });
   };
 
-  const handleNumberSelect = (num: number) => {
-    if (selectedCell && !isCellInitial(selectedCell.row, selectedCell.col)) {
-      onCellChange(selectedCell.row, selectedCell.col, num);
+  const getCellCandidates = (row: number, col: number): Set<number> => {
+    if (!candidates || !candidates[row] || !candidates[row][col]) {
+      return new Set();
     }
-  };
-
-  const handleClear = () => {
-    if (selectedCell && !isCellInitial(selectedCell.row, selectedCell.col)) {
-      onCellChange(selectedCell.row, selectedCell.col, null);
-    }
+    return candidates[row][col];
   };
 
   return (
-    <div className="flex flex-col items-center gap-6">
-      {/* Sudoku Grid */}
-      <div className="inline-block bg-black dark:bg-white p-3 shadow-lg">
-        <div className="grid grid-cols-9 gap-0">
-          {grid.map((row, rowIndex) =>
-            row.map((cell, colIndex) => {
-              const isInitial = isCellInitial(rowIndex, colIndex);
-              const isSelected = isCellSelected(rowIndex, colIndex);
-              const isHighlighted = isCellHighlighted(rowIndex, colIndex);
-              const isIncorrect = isCellIncorrect(rowIndex, colIndex);
+    <div className="inline-block bg-black dark:bg-white p-3 shadow-lg">
+      <div className="grid grid-cols-9 gap-0">
+        {grid.map((row, rowIndex) =>
+          row.map((cell, colIndex) => {
+            const isInitial = isCellInitial(rowIndex, colIndex);
+            const isSelected = isCellSelected(rowIndex, colIndex);
+            const isHighlighted = isCellHighlighted(rowIndex, colIndex);
+            const isIncorrect = isCellIncorrect(rowIndex, colIndex);
+            const cellCandidates = getCellCandidates(rowIndex, colIndex);
+            const hasCandidates = cellCandidates.size > 0 && cell === null;
 
-              // Border styling for 3x3 boxes
-              const borderTop = rowIndex % 3 === 0 ? 'border-t-[3px]' : 'border-t';
-              const borderLeft = colIndex % 3 === 0 ? 'border-l-[3px]' : 'border-l';
-              const borderRight = colIndex === 8 ? 'border-r-[3px]' : '';
-              const borderBottom = rowIndex === 8 ? 'border-b-[3px]' : '';
+            // Border styling for 3x3 boxes
+            const borderTop = rowIndex % 3 === 0 ? 'border-t-[1.5px]' : 'border-t';
+            const borderLeft = colIndex % 3 === 0 ? 'border-l-[1.5px]' : 'border-l';
+            const borderRight = colIndex === 8 ? 'border-r-[1.5px]' : '';
+            const borderBottom = rowIndex === 8 ? 'border-b-[1.5px]' : '';
 
-              return (
-                <button
-                  key={`${rowIndex}-${colIndex}`}
-                  onClick={() => handleCellClick(rowIndex, colIndex)}
-                  className={cn(
-                    'w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 flex items-center justify-center text-lg sm:text-xl font-medium transition-colors',
-                    'border-black dark:border-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:z-10',
-                    borderTop,
-                    borderLeft,
-                    borderRight,
-                    borderBottom,
-                    isSelected && 'bg-gray-300 dark:bg-gray-700',
-                    !isSelected && isHighlighted && 'bg-gray-100 dark:bg-gray-800',
-                    !isSelected && !isHighlighted && 'bg-white dark:bg-black',
-                    isInitial && 'text-black dark:text-white font-bold',
-                    !isInitial && cell !== null && 'text-black dark:text-white',
-                    !isInitial && !isSelected && 'hover:bg-gray-50 dark:hover:bg-gray-900',
-                    isIncorrect && 'bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400'
-                  )}
-                  disabled={isInitial}
-                >
-                  {cell || ''}
-                </button>
-              );
-            })
-          )}
-        </div>
-      </div>
-
-      {/* Number Palette */}
-      <div className="flex flex-col items-center gap-4 w-full max-w-md">
-        <div className="grid grid-cols-5 gap-2 w-full">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-            <button
-              key={num}
-              onClick={() => handleNumberSelect(num)}
-              disabled={!selectedCell || isCellInitial(selectedCell.row, selectedCell.col)}
-              className={cn(
-                'h-12 sm:h-14 font-medium text-lg sm:text-xl transition-colors',
-                'bg-white dark:bg-black border-2 border-black dark:border-white',
-                'hover:bg-gray-100 dark:hover:bg-gray-900',
-                'disabled:opacity-30 disabled:cursor-not-allowed',
-                'focus:outline-none focus:ring-2 focus:ring-gray-500',
-                'text-black dark:text-white'
-              )}
-            >
-              {num}
-            </button>
-          ))}
-          <button
-            onClick={handleClear}
-            disabled={!selectedCell || isCellInitial(selectedCell?.row ?? 0, selectedCell?.col ?? 0)}
-            className={cn(
-              'h-12 sm:h-14 font-medium text-base sm:text-lg transition-colors col-span-5',
-              'bg-white dark:bg-black border-2 border-black dark:border-white',
-              'hover:bg-gray-100 dark:hover:bg-gray-900',
-              'disabled:opacity-30 disabled:cursor-not-allowed',
-              'focus:outline-none focus:ring-2 focus:ring-gray-500',
-              'text-black dark:text-white'
-            )}
-          >
-            Clear
-          </button>
-        </div>
+            // Alternating background pattern (beige/grey)
+            const isAlternateCell = (rowIndex + colIndex) % 2 === 0;
+            
+            return (
+              <button
+                key={`${rowIndex}-${colIndex}`}
+                onClick={() => handleCellClick(rowIndex, colIndex)}
+                className={cn(
+                  'w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center text-xl sm:text-2xl font-medium transition-colors relative',
+                  'border-black dark:border-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:z-10',
+                  borderTop,
+                  borderLeft,
+                  borderRight,
+                  borderBottom,
+                  isSelected && 'bg-orange-300 dark:bg-orange-600',
+                  !isSelected && isHighlighted && 'bg-gray-100 dark:bg-gray-800',
+                  !isSelected && !isHighlighted && isAlternateCell && 'bg-amber-50 dark:bg-amber-950',
+                  !isSelected && !isHighlighted && !isAlternateCell && 'bg-gray-100 dark:bg-gray-900',
+                  isInitial && 'text-black dark:text-white font-bold',
+                  !isInitial && cell !== null && 'text-black dark:text-white',
+                  !isInitial && !isSelected && 'hover:bg-gray-200 dark:hover:bg-gray-800',
+                  isIncorrect && 'bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400'
+                )}
+                disabled={isInitial}
+              >
+                {cell !== null ? (
+                  <span>{cell}</span>
+                ) : hasCandidates ? (
+                  <div className="grid grid-cols-3 gap-0 w-full h-full p-0.5">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+                      <span
+                        key={num}
+                        className={cn(
+                          'text-[0.5rem] sm:text-[0.6rem] md:text-[0.8rem] leading-none flex items-center justify-center',
+                          cellCandidates.has(num)
+                            ? 'text-black dark:text-white'
+                            : 'text-transparent'
+                        )}
+                      >
+                        {num}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  ''
+                )}
+              </button>
+            );
+          })
+        )}
       </div>
     </div>
   );
