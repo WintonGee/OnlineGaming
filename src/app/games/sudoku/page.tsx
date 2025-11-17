@@ -239,17 +239,32 @@ export default function SudokuPage() {
     }
   };
 
-  const handleClearCandidates = (row: number, col: number) => {
-    // Don't allow clearing candidates on initial cells or cells with values
-    if (initialGrid[row][col] !== null || currentGrid[row][col] !== null) {
+  const handleClearCell = (row: number, col: number) => {
+    if (initialGrid[row][col] !== null) {
+      return;
+    }
+
+    const cellValue = currentGrid[row]?.[col] ?? null;
+    const cellCandidates = candidates[row]?.[col] ?? new Set<number>();
+    const hasValue = cellValue !== null;
+    const hasCandidates = cellCandidates.size > 0;
+
+    if (!hasValue && !hasCandidates) {
       return;
     }
 
     saveToHistory();
 
-    const newCandidates = candidates.map(r => r.map(c => new Set(c)));
-    newCandidates[row][col] = new Set<number>();
-    setCandidates(newCandidates);
+    const newGrid = copyGrid(currentGrid);
+    newGrid[row][col] = null;
+    setCurrentGrid(newGrid);
+    setIncorrectCells([]);
+
+    if (!autoCandidateMode) {
+      const newCandidates = candidates.map(r => r.map(c => new Set(c)));
+      newCandidates[row][col] = new Set<number>();
+      setCandidates(newCandidates);
+    }
   };
 
   // Auto-check completion once the grid is full
@@ -312,11 +327,7 @@ export default function SudokuPage() {
       // Backspace or Delete to clear
       else if (e.key === 'Backspace' || e.key === 'Delete') {
         if (initialGrid[row]?.[col] === null) {
-          if (inputMode === 'Candidate') {
-            handleClearCandidates(row, col);
-          } else {
-            handleCellChange(row, col, null);
-          }
+          handleClearCell(row, col);
         }
         e.preventDefault();
       }
@@ -415,7 +426,7 @@ export default function SudokuPage() {
               inputMode={inputMode}
               onInputModeChange={setInputMode}
               onCandidateToggle={handleCandidateToggle}
-              onClearCandidates={handleClearCandidates}
+              onClearCell={handleClearCell}
               onUndo={handleUndo}
               canUndo={history.length > 0}
             />

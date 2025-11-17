@@ -14,7 +14,7 @@ interface SudokuControlsProps {
   inputMode: InputMode;
   onInputModeChange: (mode: InputMode) => void;
   onCandidateToggle: (row: number, col: number, value: number) => void;
-  onClearCandidates: (row: number, col: number) => void;
+  onClearCell: (row: number, col: number) => void;
   onUndo: () => void;
   canUndo: boolean;
 }
@@ -27,7 +27,7 @@ export default function SudokuControls({
   inputMode,
   onInputModeChange,
   onCandidateToggle,
-  onClearCandidates,
+  onClearCell,
   onUndo,
   canUndo,
 }: SudokuControlsProps) {
@@ -48,11 +48,7 @@ export default function SudokuControls({
 
   const handleClear = () => {
     if (selectedCell && !isCellInitial(selectedCell.row, selectedCell.col)) {
-      if (inputMode === 'Candidate') {
-        onClearCandidates(selectedCell.row, selectedCell.col);
-      } else {
-        onCellChange(selectedCell.row, selectedCell.col, null);
-      }
+      onClearCell(selectedCell.row, selectedCell.col);
     }
   };
 
