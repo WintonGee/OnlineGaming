@@ -66,8 +66,8 @@ export default function SudokuGrid({
   return (
     <div className="flex flex-col items-center gap-6">
       {/* Sudoku Grid */}
-      <div className="inline-block bg-gray-900 p-2 rounded-lg shadow-2xl">
-        <div className="grid grid-cols-9 gap-0 bg-gray-700">
+      <div className="inline-block bg-black dark:bg-white p-3 shadow-lg">
+        <div className="grid grid-cols-9 gap-0">
           {grid.map((row, rowIndex) =>
             row.map((cell, colIndex) => {
               const isInitial = isCellInitial(rowIndex, colIndex);
@@ -76,28 +76,28 @@ export default function SudokuGrid({
               const isIncorrect = isCellIncorrect(rowIndex, colIndex);
 
               // Border styling for 3x3 boxes
-              const borderTop = rowIndex % 3 === 0 ? 'border-t-2' : 'border-t';
-              const borderLeft = colIndex % 3 === 0 ? 'border-l-2' : 'border-l';
-              const borderRight = colIndex === 8 ? 'border-r-2' : '';
-              const borderBottom = rowIndex === 8 ? 'border-b-2' : '';
+              const borderTop = rowIndex % 3 === 0 ? 'border-t-[3px]' : 'border-t';
+              const borderLeft = colIndex % 3 === 0 ? 'border-l-[3px]' : 'border-l';
+              const borderRight = colIndex === 8 ? 'border-r-[3px]' : '';
+              const borderBottom = rowIndex === 8 ? 'border-b-[3px]' : '';
 
               return (
                 <button
                   key={`${rowIndex}-${colIndex}`}
                   onClick={() => handleCellClick(rowIndex, colIndex)}
                   className={cn(
-                    'w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 flex items-center justify-center text-lg sm:text-xl font-semibold transition-colors',
-                    'border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:z-10',
+                    'w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 flex items-center justify-center text-lg sm:text-xl font-medium transition-colors',
+                    'border-black dark:border-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:z-10',
                     borderTop,
                     borderLeft,
                     borderRight,
                     borderBottom,
-                    isSelected && 'bg-blue-200 dark:bg-blue-900',
-                    !isSelected && isHighlighted && 'bg-blue-50 dark:bg-blue-950',
-                    !isSelected && !isHighlighted && 'bg-white dark:bg-gray-800',
-                    isInitial && 'text-gray-900 dark:text-gray-100 font-bold',
-                    !isInitial && cell !== null && 'text-blue-600 dark:text-blue-400',
-                    !isInitial && !isSelected && 'hover:bg-gray-100 dark:hover:bg-gray-700',
+                    isSelected && 'bg-gray-300 dark:bg-gray-700',
+                    !isSelected && isHighlighted && 'bg-gray-100 dark:bg-gray-800',
+                    !isSelected && !isHighlighted && 'bg-white dark:bg-black',
+                    isInitial && 'text-black dark:text-white font-bold',
+                    !isInitial && cell !== null && 'text-black dark:text-white',
+                    !isInitial && !isSelected && 'hover:bg-gray-50 dark:hover:bg-gray-900',
                     isIncorrect && 'bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400'
                   )}
                   disabled={isInitial}
@@ -119,11 +119,12 @@ export default function SudokuGrid({
               onClick={() => handleNumberSelect(num)}
               disabled={!selectedCell || isCellInitial(selectedCell.row, selectedCell.col)}
               className={cn(
-                'h-12 sm:h-14 rounded-lg font-semibold text-lg sm:text-xl transition-colors',
-                'bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600',
-                'hover:bg-blue-50 dark:hover:bg-gray-700 hover:border-blue-400',
-                'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-gray-800',
-                'focus:outline-none focus:ring-2 focus:ring-blue-500'
+                'h-12 sm:h-14 font-medium text-lg sm:text-xl transition-colors',
+                'bg-white dark:bg-black border-2 border-black dark:border-white',
+                'hover:bg-gray-100 dark:hover:bg-gray-900',
+                'disabled:opacity-30 disabled:cursor-not-allowed',
+                'focus:outline-none focus:ring-2 focus:ring-gray-500',
+                'text-black dark:text-white'
               )}
             >
               {num}
@@ -133,12 +134,12 @@ export default function SudokuGrid({
             onClick={handleClear}
             disabled={!selectedCell || isCellInitial(selectedCell?.row ?? 0, selectedCell?.col ?? 0)}
             className={cn(
-              'h-12 sm:h-14 rounded-lg font-semibold text-lg sm:text-xl transition-colors col-span-5',
-              'bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600',
-              'hover:bg-red-50 dark:hover:bg-red-950 hover:border-red-400',
-              'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-gray-800',
-              'focus:outline-none focus:ring-2 focus:ring-blue-500',
-              'text-red-600 dark:text-red-400'
+              'h-12 sm:h-14 font-medium text-base sm:text-lg transition-colors col-span-5',
+              'bg-white dark:bg-black border-2 border-black dark:border-white',
+              'hover:bg-gray-100 dark:hover:bg-gray-900',
+              'disabled:opacity-30 disabled:cursor-not-allowed',
+              'focus:outline-none focus:ring-2 focus:ring-gray-500',
+              'text-black dark:text-white'
             )}
           >
             Clear
