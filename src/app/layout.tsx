@@ -4,8 +4,8 @@ import Header from '@/components/Header';
 import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'Free Fun Games - Play Sudoku, Chess, and More!',
-  description: 'Enjoy a collection of free online games including Sudoku, Chess, Wordle, and more!',
+  title: 'Puzzles - Play Sudoku and Classic Logic Games',
+  description: 'Challenge your mind with classic logic puzzles including Sudoku. No registration required, completely free!',
 };
 
 export default function RootLayout({

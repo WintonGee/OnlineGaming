@@ -126,20 +126,20 @@ export default function SudokuPage() {
   }, [selectedCell, initialGrid, currentGrid]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-white dark:bg-black py-12 px-4">
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl md:text-6xl font-serif font-bold text-black dark:text-white mb-3">
             Sudoku
           </h1>
-          <p className="text-gray-600 dark:text-gray-300">
+          <p className="text-base text-gray-700 dark:text-gray-300">
             Fill the grid so each row, column, and 3×3 box contains the numbers 1-9
           </p>
         </div>
 
         {/* Main Game Area */}
-        <div className="flex flex-col lg:flex-row items-start justify-center gap-8">
+        <div className="flex flex-col items-center gap-10">
           {/* Grid */}
           <div className="flex-shrink-0">
             {currentGrid.length > 0 && (
@@ -155,47 +155,32 @@ export default function SudokuPage() {
           </div>
 
           {/* Controls */}
-          <div className="w-full lg:w-auto">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-              <SudokuControls
-                difficulty={difficulty}
-                onDifficultyChange={handleDifficultyChange}
-                onNewGame={handleNewGame}
-                onCheckSolution={handleCheckSolution}
-                isGenerating={isGenerating}
-              />
-
-              {/* Help Text */}
-              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-300 mb-2">
-                  How to Play:
-                </h3>
-                <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
-                  <li>• Click a cell to select it</li>
-                  <li>• Use number buttons or keyboard to fill cells</li>
-                  <li>• Use arrow keys to navigate</li>
-                  <li>• Press Backspace/Delete to clear a cell</li>
-                </ul>
-              </div>
-            </div>
+          <div className="w-full max-w-md">
+            <SudokuControls
+              difficulty={difficulty}
+              onDifficultyChange={handleDifficultyChange}
+              onNewGame={handleNewGame}
+              onCheckSolution={handleCheckSolution}
+              isGenerating={isGenerating}
+            />
           </div>
         </div>
       </div>
 
       {/* Win Dialog */}
       <Dialog open={showWinDialog} onOpenChange={setShowWinDialog}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white dark:bg-black border-gray-300 dark:border-gray-700">
           <DialogHeader>
             <div className="flex items-center justify-center mb-4">
-              <div className="bg-green-100 dark:bg-green-900 rounded-full p-3">
-                <Trophy className="h-12 w-12 text-green-600 dark:text-green-400" />
+              <div className="bg-black dark:bg-white rounded-full p-3">
+                <Trophy className="h-12 w-12 text-white dark:text-black" />
               </div>
             </div>
-            <DialogTitle className="text-center text-2xl">
+            <DialogTitle className="text-center text-2xl font-serif text-black dark:text-white">
               Congratulations!
             </DialogTitle>
-            <DialogDescription className="text-center text-base">
-              You solved the puzzle correctly! 🎉
+            <DialogDescription className="text-center text-base text-gray-700 dark:text-gray-300">
+              You solved the puzzle correctly!
               <br />
               <br />
               Click &quot;New Game&quot; to try another puzzle.
@@ -206,29 +191,23 @@ export default function SudokuPage() {
 
       {/* Check Solution Dialog */}
       <Dialog open={showCheckDialog} onOpenChange={setShowCheckDialog}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white dark:bg-black border-gray-300 dark:border-gray-700">
           <DialogHeader>
             <div className="flex items-center justify-center mb-4">
-              <div className={`rounded-full p-3 ${
-                checkType === 'error'
-                  ? 'bg-red-100 dark:bg-red-900'
-                  : checkType === 'success'
-                  ? 'bg-green-100 dark:bg-green-900'
-                  : 'bg-blue-100 dark:bg-blue-900'
-              }`}>
+              <div className="bg-black dark:bg-white rounded-full p-3">
                 {checkType === 'error' ? (
-                  <AlertCircle className="h-12 w-12 text-red-600 dark:text-red-400" />
+                  <AlertCircle className="h-12 w-12 text-white dark:text-black" />
                 ) : checkType === 'success' ? (
-                  <CheckCircle2 className="h-12 w-12 text-green-600 dark:text-green-400" />
+                  <CheckCircle2 className="h-12 w-12 text-white dark:text-black" />
                 ) : (
-                  <AlertCircle className="h-12 w-12 text-blue-600 dark:text-blue-400" />
+                  <AlertCircle className="h-12 w-12 text-white dark:text-black" />
                 )}
               </div>
             </div>
-            <DialogTitle className="text-center text-2xl">
+            <DialogTitle className="text-center text-2xl font-serif text-black dark:text-white">
               {checkType === 'error' ? 'Not Quite!' : 'Keep Going!'}
             </DialogTitle>
-            <DialogDescription className="text-center text-base">
+            <DialogDescription className="text-center text-base text-gray-700 dark:text-gray-300">
               {checkMessage}
             </DialogDescription>
           </DialogHeader>
