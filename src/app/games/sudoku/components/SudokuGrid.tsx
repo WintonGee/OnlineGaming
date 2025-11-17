@@ -1,6 +1,7 @@
 'use client';
 
-import { Grid, CellPosition, CandidatesGrid } from '../types';
+import React from 'react';
+import { Grid, CellPosition, CandidatesGrid, SUDOKU_BOX_SIZE } from '../types';
 import { cn } from '@/lib/utils';
 
 interface SudokuGridProps {
@@ -13,7 +14,7 @@ interface SudokuGridProps {
   candidates?: CandidatesGrid;
 }
 
-export default function SudokuGrid({
+export default React.memo(function SudokuGrid({
   grid,
   initialGrid,
   selectedCell,
@@ -37,10 +38,10 @@ export default function SudokuGrid({
     if (selectedCell.row === row || selectedCell.col === col) return true;
 
     // Same 3x3 box
-    const boxRow = Math.floor(selectedCell.row / 3);
-    const boxCol = Math.floor(selectedCell.col / 3);
-    const cellBoxRow = Math.floor(row / 3);
-    const cellBoxCol = Math.floor(col / 3);
+    const boxRow = Math.floor(selectedCell.row / SUDOKU_BOX_SIZE);
+    const boxCol = Math.floor(selectedCell.col / SUDOKU_BOX_SIZE);
+    const cellBoxRow = Math.floor(row / SUDOKU_BOX_SIZE);
+    const cellBoxCol = Math.floor(col / SUDOKU_BOX_SIZE);
 
     return boxRow === cellBoxRow && boxCol === cellBoxCol;
   };
@@ -131,4 +132,4 @@ export default function SudokuGrid({
       </div>
     </div>
   );
-}
+});

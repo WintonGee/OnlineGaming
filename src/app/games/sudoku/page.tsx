@@ -1,8 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Grid, Difficulty, CellPosition, InputMode, CandidatesGrid } from './types';
-import { generatePuzzle, checkSolution, copyGrid } from './logic/sudokuLogic';
+import { useState, useEffect, useCallback } from 'react';
+import {
+  Grid,
+  Difficulty,
+  CellPosition,
+  InputMode,
+  CandidatesGrid,
+  SUDOKU_GRID_SIZE,
+  SUDOKU_BOX_SIZE,
+  MAX_HISTORY_SIZE,
+  UI_UPDATE_DELAY_MS
+} from './types';
+import { generatePuzzle, checkSolution, copyGrid, isValid } from './logic/sudokuLogic';
 import SudokuGrid from './components/SudokuGrid';
 import SudokuControls from './components/SudokuControls';
 import {
@@ -20,9 +30,14 @@ import { cn } from '@/lib/utils';
 
 // Helper function to create an empty candidates grid
 function createEmptyCandidatesGrid(): CandidatesGrid {
-  return Array(9).fill(null).map(() => 
-    Array(9).fill(null).map(() => new Set<number>())
+  return Array(SUDOKU_GRID_SIZE).fill(null).map(() =>
+    Array(SUDOKU_GRID_SIZE).fill(null).map(() => new Set<number>())
   );
+}
+
+// Helper function to copy candidates grid
+function copyCandidatesGrid(candidates: CandidatesGrid): CandidatesGrid {
+  return candidates.map(row => row.map(cell => new Set(cell)));
 }
 
 const DIFFICULTY_OPTIONS: Difficulty[] = ['Easy', 'Medium', 'Hard'];
@@ -50,31 +65,7 @@ export default function SudokuPage() {
   // Dialog states
   const [showWinDialog, setShowWinDialog] = useState(false);
 
-  // Initialize game on mount
-  useEffect(() => {
-    initializeGame(selectedDifficulty);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Update candidates when auto candidate mode is toggled
-  useEffect(() => {
-    if (autoCandidateMode && currentGrid.length > 0) {
-      updateAllCandidates(currentGrid);
-    } else if (!autoCandidateMode) {
-      // Clear all candidates when auto mode is disabled
-      setCandidates(createEmptyCandidatesGrid());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoCandidateMode]);
-
-  // Update candidates when grid changes (only if auto candidate mode is enabled)
-  useEffect(() => {
-    if (autoCandidateMode && currentGrid.length > 0) {
-      updateAllCandidates(currentGrid);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentGrid]);
-
+  // Helper functions and handlers
   const initializeGame = (diff: Difficulty) => {
     setIsGenerating(true);
     setIncorrectCells([]);
@@ -92,7 +83,7 @@ export default function SudokuPage() {
       setSolution(sol);
       setIsGenerating(false);
       // The useEffect will handle updating candidates if auto candidate mode is enabled
-    }, 100);
+    }, UI_UPDATE_DELAY_MS);
   };
 
   const handleNewGame = () => {
@@ -106,74 +97,39 @@ export default function SudokuPage() {
   const saveToHistory = () => {
     const newHistory = [...history, {
       grid: copyGrid(currentGrid),
-      candidates: candidates.map(r => r.map(c => new Set(c)))
+      candidates: copyCandidatesGrid(candidates)
     }];
-    // Keep only last 50 moves
-    if (newHistory.length > 50) {
+    // Keep only last MAX_HISTORY_SIZE moves
+    if (newHistory.length > MAX_HISTORY_SIZE) {
       newHistory.shift();
     }
     setHistory(newHistory);
   };
 
   // Calculate valid candidates for a specific cell
-  const calculateValidCandidates = (row: number, col: number, grid: Grid): Set<number> => {
+  const calculateValidCandidates = useCallback((row: number, col: number, grid: Grid): Set<number> => {
     const validCandidates = new Set<number>();
-    
+
     // Skip if cell already has a value
     if (grid[row][col] !== null) {
       return validCandidates;
     }
-    
-    for (let num = 1; num <= 9; num++) {
-      let isValid = true;
-      
-      // Check row
-      for (let c = 0; c < 9; c++) {
-        if (grid[row][c] === num) {
-          isValid = false;
-          break;
-        }
-      }
-      
-      // Check column
-      if (isValid) {
-        for (let r = 0; r < 9; r++) {
-          if (grid[r][col] === num) {
-            isValid = false;
-            break;
-          }
-        }
-      }
-      
-      // Check 3x3 box
-      if (isValid) {
-        const boxRow = Math.floor(row / 3) * 3;
-        const boxCol = Math.floor(col / 3) * 3;
-        for (let r = boxRow; r < boxRow + 3; r++) {
-          for (let c = boxCol; c < boxCol + 3; c++) {
-            if (grid[r][c] === num) {
-              isValid = false;
-              break;
-            }
-          }
-          if (!isValid) break;
-        }
-      }
-      
-      if (isValid) {
+
+    for (let num = 1; num <= SUDOKU_GRID_SIZE; num++) {
+      if (isValid(grid, row, col, num)) {
         validCandidates.add(num);
       }
     }
-    
+
     return validCandidates;
-  };
+  }, []);
 
   // Update all candidates based on auto candidate mode
-  const updateAllCandidates = (grid: Grid) => {
+  const updateAllCandidates = useCallback((grid: Grid) => {
     const newCandidates = createEmptyCandidatesGrid();
-    
-    for (let row = 0; row < 9; row++) {
-      for (let col = 0; col < 9; col++) {
+
+    for (let row = 0; row < SUDOKU_GRID_SIZE; row++) {
+      for (let col = 0; col < SUDOKU_GRID_SIZE; col++) {
         // Only update candidates for empty cells that are not initial
         if (grid[row][col] === null && initialGrid[row][col] === null) {
           newCandidates[row][col] = calculateValidCandidates(row, col, grid);
@@ -181,30 +137,30 @@ export default function SudokuPage() {
         // Otherwise, candidates remain empty (default)
       }
     }
-    
-    setCandidates(newCandidates);
-  };
 
-  const handleCellChange = (row: number, col: number, value: number | null) => {
+    setCandidates(newCandidates);
+  }, [initialGrid, calculateValidCandidates]);
+
+  const handleCellChange = useCallback((row: number, col: number, value: number | null) => {
     saveToHistory();
-    
+
     const newGrid = copyGrid(currentGrid);
     newGrid[row][col] = value;
     setCurrentGrid(newGrid);
     setIncorrectCells([]); // Clear incorrect cells when user makes changes
-    
+
     // If auto candidate mode is off, clear candidates for this cell when a value is set
     if (!autoCandidateMode) {
-      const newCandidates = candidates.map(r => r.map(c => new Set(c)));
+      const newCandidates = copyCandidatesGrid(candidates);
       if (value !== null) {
         newCandidates[row][col] = new Set<number>();
       }
       setCandidates(newCandidates);
     }
     // If auto candidate mode is on, the useEffect will handle updating all candidates
-  };
+  }, [currentGrid, autoCandidateMode, candidates, history]);
 
-  const handleCandidateToggle = (row: number, col: number, value: number) => {
+  const handleCandidateToggle = useCallback((row: number, col: number, value: number) => {
     // Don't allow candidates on initial cells or cells with values
     if (initialGrid[row][col] !== null || currentGrid[row][col] !== null) {
       return;
@@ -217,19 +173,19 @@ export default function SudokuPage() {
 
     saveToHistory();
 
-    const newCandidates = candidates.map(r => r.map(c => new Set(c)));
+    const newCandidates = copyCandidatesGrid(candidates);
     const cellCandidates = newCandidates[row][col];
-    
+
     if (cellCandidates.has(value)) {
       cellCandidates.delete(value);
     } else {
       cellCandidates.add(value);
     }
-    
-    setCandidates(newCandidates);
-  };
 
-  const handleUndo = () => {
+    setCandidates(newCandidates);
+  }, [initialGrid, currentGrid, autoCandidateMode, candidates, history]);
+
+  const handleUndo = useCallback(() => {
     if (history.length > 0) {
       const previousState = history[history.length - 1];
       setCurrentGrid(previousState.grid);
@@ -237,9 +193,9 @@ export default function SudokuPage() {
       setHistory(history.slice(0, -1));
       setIncorrectCells([]);
     }
-  };
+  }, [history]);
 
-  const handleClearCandidates = (row: number, col: number) => {
+  const handleClearCandidates = useCallback((row: number, col: number) => {
     // Don't allow clearing candidates on initial cells or cells with values
     if (initialGrid[row][col] !== null || currentGrid[row][col] !== null) {
       return;
@@ -247,10 +203,33 @@ export default function SudokuPage() {
 
     saveToHistory();
 
-    const newCandidates = candidates.map(r => r.map(c => new Set(c)));
+    const newCandidates = copyCandidatesGrid(candidates);
     newCandidates[row][col] = new Set<number>();
     setCandidates(newCandidates);
-  };
+  }, [initialGrid, currentGrid, candidates, history]);
+
+  // Initialize game on mount
+  useEffect(() => {
+    initializeGame(selectedDifficulty);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Update candidates when auto candidate mode is toggled
+  useEffect(() => {
+    if (autoCandidateMode && currentGrid.length > 0) {
+      updateAllCandidates(currentGrid);
+    } else if (!autoCandidateMode) {
+      // Clear all candidates when auto mode is disabled
+      setCandidates(createEmptyCandidatesGrid());
+    }
+  }, [autoCandidateMode, currentGrid, updateAllCandidates]);
+
+  // Update candidates when grid changes (only if auto candidate mode is enabled)
+  useEffect(() => {
+    if (autoCandidateMode && currentGrid.length > 0) {
+      updateAllCandidates(currentGrid);
+    }
+  }, [currentGrid, autoCandidateMode, updateAllCandidates]);
 
   // Auto-check completion once the grid is full
   useEffect(() => {
@@ -275,7 +254,6 @@ export default function SudokuPage() {
     } else {
       setIncorrectCells(result.incorrectCells);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentGrid, solution, hasCompleted]);
 
   // Keyboard support
@@ -289,13 +267,13 @@ export default function SudokuPage() {
       if (e.key === 'ArrowUp' && row > 0) {
         setSelectedCell({ row: row - 1, col });
         e.preventDefault();
-      } else if (e.key === 'ArrowDown' && row < 8) {
+      } else if (e.key === 'ArrowDown' && row < SUDOKU_GRID_SIZE - 1) {
         setSelectedCell({ row: row + 1, col });
         e.preventDefault();
       } else if (e.key === 'ArrowLeft' && col > 0) {
         setSelectedCell({ row, col: col - 1 });
         e.preventDefault();
-      } else if (e.key === 'ArrowRight' && col < 8) {
+      } else if (e.key === 'ArrowRight' && col < SUDOKU_GRID_SIZE - 1) {
         setSelectedCell({ row, col: col + 1 });
         e.preventDefault();
       }
@@ -324,7 +302,7 @@ export default function SudokuPage() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedCell, initialGrid, currentGrid, inputMode, candidates]);
+  }, [selectedCell, initialGrid, inputMode, handleCellChange, handleCandidateToggle, handleClearCandidates]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-black py-12 px-4" data-game-page="sudoku">

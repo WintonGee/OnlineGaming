@@ -1,6 +1,7 @@
 'use client';
 
-import { CellPosition, Grid, InputMode } from '../types';
+import React from 'react';
+import { CellPosition, Grid, InputMode, SUDOKU_NUMBERS } from '../types';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { X } from 'lucide-react';
@@ -19,7 +20,7 @@ interface SudokuControlsProps {
   canUndo: boolean;
 }
 
-export default function SudokuControls({
+export default React.memo(function SudokuControls({
   isGenerating = false,
   selectedCell,
   initialGrid,
@@ -85,7 +86,7 @@ export default function SudokuControls({
           Number Pad
         </Label>
         <div className="mt-4 grid grid-cols-3 gap-3 w-full">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+          {[...SUDOKU_NUMBERS].map((num) => (
             <button
               key={num}
               onClick={() => handleNumberSelect(num)}
@@ -134,4 +135,4 @@ export default function SudokuControls({
 
     </div>
   );
-}
+});
