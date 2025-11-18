@@ -61,7 +61,7 @@ export default function SudokuGrid({
   };
 
   return (
-    <div className="inline-block bg-black dark:bg-white p-3 shadow-lg">
+    <div className="inline-block bg-black dark:bg-white p-1 shadow-lg">
       <div className="grid grid-cols-9 gap-0">
         {grid.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
@@ -73,10 +73,10 @@ export default function SudokuGrid({
             const hasCandidates = cellCandidates.size > 0 && cell === null;
 
             // Border styling for 3x3 boxes
-            const borderTop = rowIndex % 3 === 0 ? 'border-t-[1.5px]' : 'border-t';
-            const borderLeft = colIndex % 3 === 0 ? 'border-l-[1.5px]' : 'border-l';
-            const borderRight = colIndex === 8 ? 'border-r-[1.5px]' : '';
-            const borderBottom = rowIndex === 8 ? 'border-b-[1.5px]' : '';
+            const borderTop = rowIndex % 3 === 0 ? 'border-t' : 'border-t-[0.5px]';
+            const borderLeft = colIndex % 3 === 0 ? 'border-l' : 'border-l-[0.5px]';
+            const borderRight = colIndex === 8 ? 'border-r' : '';
+            const borderBottom = rowIndex === 8 ? 'border-b' : '';
 
             // Alternating background pattern (beige/grey)
             const isAlternateCell = (rowIndex + colIndex) % 2 === 0;
