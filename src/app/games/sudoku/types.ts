@@ -13,6 +13,11 @@ export interface CellPosition {
   col: number;
 }
 
+export interface HistoryState {
+  grid: Grid;
+  candidates: CandidatesGrid;
+}
+
 export interface SudokuGameState {
   initialGrid: Grid;
   currentGrid: Grid;
@@ -27,4 +32,11 @@ export interface CheckResult {
   isComplete: boolean;
   isCorrect: boolean;
   incorrectCells: CellPosition[];
+}
+
+export type HelperActionStatus = "success" | "info" | "warning" | "error";
+
+export interface HelperActionResult {
+  status: HelperActionStatus;
+  message: string;
 }

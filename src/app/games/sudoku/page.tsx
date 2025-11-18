@@ -1,14 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Grid,
-  Difficulty,
-  CellPosition,
-  InputMode,
-  CandidatesGrid,
-} from "./types";
-import { generatePuzzle, checkSolution, copyGrid } from "./logic/sudokuLogic";
+import { useCallback, useEffect, useState } from "react";
+import { Difficulty } from "./types";
 import SudokuGrid from "./components/SudokuGrid";
 import SudokuControls from "./components/SudokuControls";
 import {
@@ -17,364 +10,75 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-// Helper function to create an empty candidates grid
-function createEmptyCandidatesGrid(): CandidatesGrid {
-  return Array(9)
-    .fill(null)
-    .map(() =>
-      Array(9)
-        .fill(null)
-        .map(() => new Set<number>())
-    );
-}
-
-const computeIncorrectCells = (grid: Grid): CellPosition[] => {
-  if (!grid.length) {
-    return [];
-  }
-
-  const incorrect: CellPosition[] = [];
-
-  // Check each cell for constraint violations (duplicates in row, column, or 3x3 box)
-  for (let row = 0; row < 9; row++) {
-    for (let col = 0; col < 9; col++) {
-      const current = grid[row]?.[col];
-
-      // Skip empty cells
-      if (current === null) {
-        continue;
-      }
-
-      let hasViolation = false;
-
-      // Check row for duplicates
-      for (let c = 0; c < 9; c++) {
-        if (c !== col && grid[row][c] === current) {
-          hasViolation = true;
-          break;
-        }
-      }
-
-      // Check column for duplicates
-      if (!hasViolation) {
-        for (let r = 0; r < 9; r++) {
-          if (r !== row && grid[r][col] === current) {
-            hasViolation = true;
-            break;
-          }
-        }
-      }
-
-      // Check 3x3 box for duplicates
-      if (!hasViolation) {
-        const boxRow = Math.floor(row / 3) * 3;
-        const boxCol = Math.floor(col / 3) * 3;
-        for (let r = boxRow; r < boxRow + 3; r++) {
-          for (let c = boxCol; c < boxCol + 3; c++) {
-            if ((r !== row || c !== col) && grid[r][c] === current) {
-              hasViolation = true;
-              break;
-            }
-          }
-          if (hasViolation) break;
-        }
-      }
-
-      if (hasViolation) {
-        incorrect.push({ row, col });
-      }
-    }
-  }
-
-  return incorrect;
-};
+import { useSudokuGame } from "./hooks/useSudokuGame";
+import SudokuHintMenu from "./components/SudokuHintMenu";
+import SudokuHelperToast from "./components/SudokuHelperToast";
+import { HelperActionResult } from "./types";
 
 const DIFFICULTY_OPTIONS: Difficulty[] = ["Easy", "Medium", "Hard"];
 
-interface HistoryState {
-  grid: Grid;
-  candidates: CandidatesGrid;
-}
-
 export default function SudokuPage() {
-  const [selectedDifficulty, setSelectedDifficulty] =
-    useState<Difficulty>("Medium");
-  const [activeDifficulty, setActiveDifficulty] =
-    useState<Difficulty>("Medium");
-  const [initialGrid, setInitialGrid] = useState<Grid>([]);
-  const [currentGrid, setCurrentGrid] = useState<Grid>([]);
-  const [solution, setSolution] = useState<Grid>([]);
-  const [selectedCell, setSelectedCell] = useState<CellPosition | null>(null);
-  const [incorrectCells, setIncorrectCells] = useState<CellPosition[]>([]);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [inputMode, setInputMode] = useState<InputMode>("Normal");
-  const [candidates, setCandidates] = useState<CandidatesGrid>(
-    createEmptyCandidatesGrid()
+  const {
+    autoCandidateMode,
+    candidates,
+    canUndo,
+    handleCheckCell,
+    handleCheckPuzzle,
+    currentGrid,
+    handleCandidateToggle,
+    handleCellChange,
+    handleClearCell,
+    handleDifficultyChange,
+    handleNewGame,
+    handleResetPuzzle,
+    handleRevealCell,
+    handleRevealPuzzle,
+    handleUndo,
+    hasSolution,
+    incorrectCells,
+    initialGrid,
+    inputMode,
+    isGenerating,
+    selectedCell,
+    selectedDifficulty,
+    setAutoCandidateMode,
+    setInputMode,
+    setSelectedCell,
+    setShowWinDialog,
+    showWinDialog,
+  } = useSudokuGame();
+  const [helperResult, setHelperResult] = useState<HelperActionResult | null>(
+    null
   );
-  const [history, setHistory] = useState<HistoryState[]>([]);
-  const [autoCandidateMode, setAutoCandidateMode] = useState(false);
-  const [hasCompleted, setHasCompleted] = useState(false);
+  const [pendingConfirm, setPendingConfirm] = useState<
+    "reveal" | "reset" | null
+  >(null);
+  const [helperToastOpen, setHelperToastOpen] = useState(false);
 
-  // Dialog states
-  const [showWinDialog, setShowWinDialog] = useState(false);
+  const runHelperAction = (action: () => HelperActionResult) => {
+    const result = action();
+    setHelperResult(result);
+    setHelperToastOpen(true);
+  };
 
-  // Initialize game on mount
-  useEffect(() => {
-    initializeGame(selectedDifficulty);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleToastClose = useCallback(() => {
+    setHelperToastOpen(false);
+    setHelperResult(null);
   }, []);
 
-  // Update candidates when auto candidate mode changes or grid changes
-  useEffect(() => {
-    if (autoCandidateMode && currentGrid.length > 0) {
-      updateAllCandidates(currentGrid);
-    } else if (!autoCandidateMode) {
-      // Clear all candidates when auto mode is disabled
-      setCandidates(createEmptyCandidatesGrid());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoCandidateMode, currentGrid]);
-
-  const initializeGame = (diff: Difficulty) => {
-    setIsGenerating(true);
-    setIncorrectCells([]);
-    setSelectedCell(null);
-    setCandidates(createEmptyCandidatesGrid());
-    setHasCompleted(false);
-    setShowWinDialog(false);
-    setActiveDifficulty(diff);
-
-    // Use setTimeout to allow UI to update
-    setTimeout(() => {
-      const { puzzle, solution: sol } = generatePuzzle(diff);
-      setInitialGrid(puzzle);
-      setCurrentGrid(copyGrid(puzzle));
-      setSolution(sol);
-      setIsGenerating(false);
-      // The useEffect will handle updating candidates if auto candidate mode is enabled
-    }, 100);
-  };
-
-  const handleNewGame = () => {
-    initializeGame(selectedDifficulty);
-  };
-
-  const handleDifficultyChange = (newDifficulty: Difficulty) => {
-    setSelectedDifficulty(newDifficulty);
-  };
-
-  const saveToHistory = () => {
-    const newHistory = [
-      ...history,
-      {
-        grid: copyGrid(currentGrid),
-        candidates: candidates.map((r) => r.map((c) => new Set(c))),
-      },
-    ];
-    // Keep only last 50 moves
-    if (newHistory.length > 50) {
-      newHistory.shift();
-    }
-    setHistory(newHistory);
-  };
-
-  // Calculate valid candidates for a specific cell
-  const calculateValidCandidates = (
-    row: number,
-    col: number,
-    grid: Grid
-  ): Set<number> => {
-    const validCandidates = new Set<number>();
-
-    // Skip if cell already has a value
-    if (grid[row][col] !== null) {
-      return validCandidates;
-    }
-
-    for (let num = 1; num <= 9; num++) {
-      let isValid = true;
-
-      // Check row
-      for (let c = 0; c < 9; c++) {
-        if (grid[row][c] === num) {
-          isValid = false;
-          break;
-        }
-      }
-
-      // Check column
-      if (isValid) {
-        for (let r = 0; r < 9; r++) {
-          if (grid[r][col] === num) {
-            isValid = false;
-            break;
-          }
-        }
-      }
-
-      // Check 3x3 box
-      if (isValid) {
-        const boxRow = Math.floor(row / 3) * 3;
-        const boxCol = Math.floor(col / 3) * 3;
-        for (let r = boxRow; r < boxRow + 3; r++) {
-          for (let c = boxCol; c < boxCol + 3; c++) {
-            if (grid[r][c] === num) {
-              isValid = false;
-              break;
-            }
-          }
-          if (!isValid) break;
-        }
-      }
-
-      if (isValid) {
-        validCandidates.add(num);
-      }
-    }
-
-    return validCandidates;
-  };
-
-  // Update all candidates based on auto candidate mode
-  const updateAllCandidates = (grid: Grid) => {
-    const newCandidates = createEmptyCandidatesGrid();
-
-    for (let row = 0; row < 9; row++) {
-      for (let col = 0; col < 9; col++) {
-        // Only update candidates for empty cells that are not initial
-        if (grid[row][col] === null && initialGrid[row][col] === null) {
-          newCandidates[row][col] = calculateValidCandidates(row, col, grid);
-        }
-        // Otherwise, candidates remain empty (default)
-      }
-    }
-
-    setCandidates(newCandidates);
-  };
-
-  const handleCellChange = (row: number, col: number, value: number | null) => {
-    saveToHistory();
-
-    const newGrid = copyGrid(currentGrid);
-    newGrid[row][col] = value;
-    setCurrentGrid(newGrid);
-
-    setIncorrectCells(computeIncorrectCells(newGrid));
-
-    // If auto candidate mode is off, clear candidates for this cell when a value is set
-    if (!autoCandidateMode) {
-      const newCandidates = candidates.map((r) => r.map((c) => new Set(c)));
-      if (value !== null) {
-        newCandidates[row][col] = new Set<number>();
-      }
-      setCandidates(newCandidates);
-    }
-    // If auto candidate mode is on, the useEffect will handle updating all candidates
-  };
-
-  const handleCandidateToggle = (row: number, col: number, value: number) => {
-    // Don't allow candidates on initial cells or cells with values
-    if (initialGrid[row][col] !== null || currentGrid[row][col] !== null) {
-      return;
-    }
-
-    // In auto candidate mode, don't allow manual candidate toggling
-    if (autoCandidateMode) {
-      return;
-    }
-
-    saveToHistory();
-
-    const newCandidates = candidates.map((r) => r.map((c) => new Set(c)));
-    const cellCandidates = newCandidates[row][col];
-
-    if (cellCandidates.has(value)) {
-      cellCandidates.delete(value);
-    } else {
-      cellCandidates.add(value);
-    }
-
-    setCandidates(newCandidates);
-  };
-
-  const handleUndo = () => {
-    if (history.length > 0) {
-      const previousState = history[history.length - 1];
-      setCurrentGrid(previousState.grid);
-      setCandidates(previousState.candidates);
-      setHistory(history.slice(0, -1));
-
-      setIncorrectCells(computeIncorrectCells(previousState.grid));
-    }
-  };
-
-  const handleClearCell = (row: number, col: number) => {
-    if (initialGrid[row][col] !== null) {
-      return;
-    }
-
-    const cellValue = currentGrid[row]?.[col] ?? null;
-    const cellCandidates = candidates[row]?.[col] ?? new Set<number>();
-    const hasValue = cellValue !== null;
-    const hasCandidates = cellCandidates.size > 0;
-
-    if (!hasValue && !hasCandidates) {
-      return;
-    }
-
-    saveToHistory();
-
-    const newGrid = copyGrid(currentGrid);
-    newGrid[row][col] = null;
-    setCurrentGrid(newGrid);
-
-    setIncorrectCells(computeIncorrectCells(newGrid));
-
-    if (!autoCandidateMode) {
-      const newCandidates = candidates.map((r) => r.map((c) => new Set(c)));
-      newCandidates[row][col] = new Set<number>();
-      setCandidates(newCandidates);
-    }
-  };
-
-  // Auto-check completion once the grid is full
-  useEffect(() => {
-    if (hasCompleted || !currentGrid.length || !solution.length) {
-      return;
-    }
-
-    const result = checkSolution(currentGrid, solution);
-
-    if (!result.isComplete) {
-      return;
-    }
-
-    if (result.isCorrect) {
-      setShowWinDialog(true);
-      setHasCompleted(true);
-      setIncorrectCells([]);
-    } else {
-      // Use constraint-based error highlighting for consistency
-      setIncorrectCells(computeIncorrectCells(currentGrid));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentGrid, solution, hasCompleted]);
-
-  // Keyboard support
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!selectedCell) return;
 
       const { row, col } = selectedCell;
 
-      // Arrow keys navigation
       if (e.key === "ArrowUp" && row > 0) {
         setSelectedCell({ row: row - 1, col });
         e.preventDefault();
@@ -387,19 +91,16 @@ export default function SudokuPage() {
       } else if (e.key === "ArrowRight" && col < 8) {
         setSelectedCell({ row, col: col + 1 });
         e.preventDefault();
-      }
-      // Number keys
-      else if (e.key >= "1" && e.key <= "9") {
+      } else if (e.key >= "1" && e.key <= "9") {
         if (initialGrid[row]?.[col] === null) {
+          const numericValue = parseInt(e.key, 10);
           if (inputMode === "Candidate") {
-            handleCandidateToggle(row, col, parseInt(e.key));
+            handleCandidateToggle(row, col, numericValue);
           } else {
-            handleCellChange(row, col, parseInt(e.key));
+            handleCellChange(row, col, numericValue);
           }
         }
-      }
-      // Backspace or Delete to clear
-      else if (e.key === "Backspace" || e.key === "Delete") {
+      } else if (e.key === "Backspace" || e.key === "Delete") {
         if (initialGrid[row]?.[col] === null) {
           handleClearCell(row, col);
         }
@@ -409,7 +110,48 @@ export default function SudokuPage() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedCell, initialGrid, currentGrid, inputMode, candidates]);
+  }, [
+    selectedCell,
+    initialGrid,
+    inputMode,
+    handleCandidateToggle,
+    handleCellChange,
+    handleClearCell,
+    setSelectedCell,
+  ]);
+
+  const isSelectedCellEditable =
+    selectedCell && initialGrid[selectedCell.row]?.[selectedCell.col] === null;
+  const canRevealCell = Boolean(
+    isSelectedCellEditable && currentGrid.length > 0 && hasSolution
+  );
+  const isMenuDisabled = isGenerating || currentGrid.length === 0;
+  const disablePuzzleWideActions = !hasSolution || currentGrid.length === 0;
+  const confirmContent =
+    pendingConfirm === "reveal"
+      ? {
+          title: "Reveal the entire puzzle?",
+          description:
+            "This will fill in every cell with the solution. You can still undo, but your current progress will be overwritten.",
+          actionLabel: "Reveal Puzzle",
+        }
+      : {
+          title: "Reset this puzzle?",
+          description:
+            "This clears all of your entries and notes so you can start over from the original puzzle.",
+          actionLabel: "Reset Puzzle",
+        };
+
+  const handleConfirmAction = () => {
+    if (!pendingConfirm) return;
+
+    if (pendingConfirm === "reveal") {
+      runHelperAction(handleRevealPuzzle);
+    } else {
+      runHelperAction(handleResetPuzzle);
+    }
+    setPendingConfirm(null);
+  };
 
   return (
     <div
@@ -455,20 +197,32 @@ export default function SudokuPage() {
                   {isGenerating ? "Preparing..." : "New Puzzle"}
                 </Button>
               </div>
-              <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-black/40 px-4 py-2">
-                <Checkbox
-                  id="auto-candidate-toolbar"
-                  checked={autoCandidateMode}
-                  onCheckedChange={(checked) =>
-                    setAutoCandidateMode(checked === true)
-                  }
+              <div className="flex items-center gap-3">
+                <SudokuHintMenu
+                  disabled={isMenuDisabled}
+                  disableRevealCell={!canRevealCell}
+                  disablePuzzleWideActions={disablePuzzleWideActions}
+                  onCheckCell={() => runHelperAction(handleCheckCell)}
+                  onCheckPuzzle={() => runHelperAction(handleCheckPuzzle)}
+                  onRevealCell={() => runHelperAction(handleRevealCell)}
+                  onRevealPuzzle={() => setPendingConfirm("reveal")}
+                  onResetPuzzle={() => setPendingConfirm("reset")}
                 />
-                <Label
-                  htmlFor="auto-candidate-toolbar"
-                  className="text-sm font-medium text-black dark:text-white cursor-pointer"
-                >
-                  Auto Candidate Mode
-                </Label>
+                <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-black/40 px-4 py-2">
+                  <Checkbox
+                    id="auto-candidate-toolbar"
+                    checked={autoCandidateMode}
+                    onCheckedChange={(checked) =>
+                      setAutoCandidateMode(checked === true)
+                    }
+                  />
+                  <Label
+                    htmlFor="auto-candidate-toolbar"
+                    className="text-sm font-medium text-black dark:text-white cursor-pointer"
+                  >
+                    Auto Candidate Mode
+                  </Label>
+                </div>
               </div>
             </div>
           </div>
@@ -510,7 +264,7 @@ export default function SudokuPage() {
               onCandidateToggle={handleCandidateToggle}
               onClearCell={handleClearCell}
               onUndo={handleUndo}
-              canUndo={history.length > 0}
+              canUndo={canUndo}
             />
           </div>
         </div>
@@ -537,6 +291,47 @@ export default function SudokuPage() {
           </DialogHeader>
         </DialogContent>
       </Dialog>
+
+      <Dialog
+        open={pendingConfirm !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setPendingConfirm(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md bg-white dark:bg-black border-gray-200 dark:border-gray-700">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-black dark:text-white">
+              {confirmContent.title}
+            </DialogTitle>
+            <DialogDescription className="text-sm text-gray-600 dark:text-gray-300">
+              {confirmContent.description}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 pt-4">
+            <Button variant="outline" onClick={() => setPendingConfirm(null)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirmAction}
+              className={
+                pendingConfirm === "reveal"
+                  ? "bg-orange-600 hover:bg-orange-700"
+                  : ""
+              }
+            >
+              {confirmContent.actionLabel}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <SudokuHelperToast
+        result={helperResult}
+        open={helperToastOpen}
+        onClose={handleToastClose}
+      />
     </div>
   );
 }
