@@ -61,7 +61,7 @@ export default function SudokuGrid({
   };
 
   return (
-    <div className="inline-block bg-black dark:bg-white p-1 shadow-lg">
+    <div className="inline-block bg-black dark:bg-white p-1 shadow-lg max-w-full">
       <div className="grid grid-cols-9 gap-0">
         {grid.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
@@ -86,7 +86,7 @@ export default function SudokuGrid({
                 key={`${rowIndex}-${colIndex}`}
                 onClick={() => handleCellClick(rowIndex, colIndex)}
                 className={cn(
-                  'w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center text-xl sm:text-2xl font-medium transition-colors relative',
+                  'w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 flex items-center justify-center text-lg sm:text-xl md:text-2xl font-medium transition-colors relative',
                   'border-black dark:border-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:z-10',
                   borderTop,
                   borderLeft,

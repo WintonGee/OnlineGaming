@@ -331,7 +331,7 @@ export default function SudokuPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-black py-12 px-4" data-game-page="sudoku">
-      <div className="mx-auto w-full max-w-6xl px-0 sm:px-4 lg:px-12" data-game-section="sudoku">
+      <div className="mx-auto w-full max-w-6xl px-2 sm:px-4 lg:px-12" data-game-section="sudoku">
         {/* Header */}
         <div className="mb-12 flex flex-col gap-6">
           <div className="text-center">
@@ -386,14 +386,13 @@ export default function SudokuPage() {
 
         {/* Main Game Area */}
         <div
-          className="flex flex-col lg:flex-row items-center lg:items-start justify-center lg:justify-start gap-6 lg:gap-16 pb-[420px] sm:pb-[450px] lg:pb-0"
+          className="flex flex-col lg:flex-row items-stretch lg:items-start justify-center lg:justify-start gap-6 lg:gap-16"
           data-game-layout="sudoku"
         >
           {/* Grid */}
           <div
-            className="flex-shrink-0 lg:self-start"
+            className="flex-shrink-0 lg:self-start w-full lg:w-auto flex justify-center"
             data-game-board="sudoku"
-            style={{ marginLeft: 'var(--game-home-offset, 0px)' }}
           >
             {currentGrid.length > 0 && (
               <SudokuGrid
@@ -408,8 +407,8 @@ export default function SudokuPage() {
             )}
           </div>
 
-          {/* Controls - Fixed at bottom on mobile, static on desktop */}
-          <div className="fixed bottom-0 left-0 right-0 lg:static w-full max-w-full lg:max-w-md lg:self-start lg:pl-6 bg-white dark:bg-black border-t border-gray-300 dark:border-gray-700 lg:border-t-0 px-4 pt-4 pb-safe pb-6 lg:p-0 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.1)] dark:shadow-[0_-4px_12px_rgba(0,0,0,0.3)] lg:shadow-none">
+          {/* Controls - Inline on mobile, static on desktop */}
+          <div className="w-full lg:max-w-md lg:self-start">
             <SudokuControls
               isGenerating={isGenerating}
               selectedCell={selectedCell}
