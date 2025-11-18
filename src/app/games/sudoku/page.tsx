@@ -1,31 +1,65 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Grid, Difficulty, CellPosition, InputMode, CandidatesGrid } from './types';
-import { generatePuzzle, checkSolution, copyGrid } from './logic/sudokuLogic';
-import SudokuGrid from './components/SudokuGrid';
-import SudokuControls from './components/SudokuControls';
+import { useState, useEffect } from "react";
+import {
+  Grid,
+  Difficulty,
+  CellPosition,
+  InputMode,
+  CandidatesGrid,
+} from "./types";
+import { generatePuzzle, checkSolution, copyGrid } from "./logic/sudokuLogic";
+import SudokuGrid from "./components/SudokuGrid";
+import SudokuControls from "./components/SudokuControls";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { Trophy } from 'lucide-react';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Trophy } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // Helper function to create an empty candidates grid
 function createEmptyCandidatesGrid(): CandidatesGrid {
-  return Array(9).fill(null).map(() => 
-    Array(9).fill(null).map(() => new Set<number>())
-  );
+  return Array(9)
+    .fill(null)
+    .map(() =>
+      Array(9)
+        .fill(null)
+        .map(() => new Set<number>())
+    );
 }
 
-const DIFFICULTY_OPTIONS: Difficulty[] = ['Easy', 'Medium', 'Hard'];
+const computeIncorrectCells = (
+  grid: Grid,
+  solutionGrid: Grid
+): CellPosition[] => {
+  if (!grid.length || !solutionGrid.length) {
+    return [];
+  }
+
+  const incorrect: CellPosition[] = [];
+
+  for (let row = 0; row < 9; row++) {
+    for (let col = 0; col < 9; col++) {
+      const current = grid[row]?.[col];
+      const correct = solutionGrid[row]?.[col];
+
+      if (current !== null && correct !== null && current !== correct) {
+        incorrect.push({ row, col });
+      }
+    }
+  }
+
+  return incorrect;
+};
+
+const DIFFICULTY_OPTIONS: Difficulty[] = ["Easy", "Medium", "Hard"];
 
 interface HistoryState {
   grid: Grid;
@@ -33,16 +67,20 @@ interface HistoryState {
 }
 
 export default function SudokuPage() {
-  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('Medium');
-  const [activeDifficulty, setActiveDifficulty] = useState<Difficulty>('Medium');
+  const [selectedDifficulty, setSelectedDifficulty] =
+    useState<Difficulty>("Medium");
+  const [activeDifficulty, setActiveDifficulty] =
+    useState<Difficulty>("Medium");
   const [initialGrid, setInitialGrid] = useState<Grid>([]);
   const [currentGrid, setCurrentGrid] = useState<Grid>([]);
   const [solution, setSolution] = useState<Grid>([]);
   const [selectedCell, setSelectedCell] = useState<CellPosition | null>(null);
   const [incorrectCells, setIncorrectCells] = useState<CellPosition[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [inputMode, setInputMode] = useState<InputMode>('Normal');
-  const [candidates, setCandidates] = useState<CandidatesGrid>(createEmptyCandidatesGrid());
+  const [inputMode, setInputMode] = useState<InputMode>("Normal");
+  const [candidates, setCandidates] = useState<CandidatesGrid>(
+    createEmptyCandidatesGrid()
+  );
   const [history, setHistory] = useState<HistoryState[]>([]);
   const [autoCandidateMode, setAutoCandidateMode] = useState(false);
   const [hasCompleted, setHasCompleted] = useState(false);
@@ -104,10 +142,13 @@ export default function SudokuPage() {
   };
 
   const saveToHistory = () => {
-    const newHistory = [...history, {
-      grid: copyGrid(currentGrid),
-      candidates: candidates.map(r => r.map(c => new Set(c)))
-    }];
+    const newHistory = [
+      ...history,
+      {
+        grid: copyGrid(currentGrid),
+        candidates: candidates.map((r) => r.map((c) => new Set(c))),
+      },
+    ];
     // Keep only last 50 moves
     if (newHistory.length > 50) {
       newHistory.shift();
@@ -116,17 +157,21 @@ export default function SudokuPage() {
   };
 
   // Calculate valid candidates for a specific cell
-  const calculateValidCandidates = (row: number, col: number, grid: Grid): Set<number> => {
+  const calculateValidCandidates = (
+    row: number,
+    col: number,
+    grid: Grid
+  ): Set<number> => {
     const validCandidates = new Set<number>();
-    
+
     // Skip if cell already has a value
     if (grid[row][col] !== null) {
       return validCandidates;
     }
-    
+
     for (let num = 1; num <= 9; num++) {
       let isValid = true;
-      
+
       // Check row
       for (let c = 0; c < 9; c++) {
         if (grid[row][c] === num) {
@@ -134,7 +179,7 @@ export default function SudokuPage() {
           break;
         }
       }
-      
+
       // Check column
       if (isValid) {
         for (let r = 0; r < 9; r++) {
@@ -144,7 +189,7 @@ export default function SudokuPage() {
           }
         }
       }
-      
+
       // Check 3x3 box
       if (isValid) {
         const boxRow = Math.floor(row / 3) * 3;
@@ -159,19 +204,19 @@ export default function SudokuPage() {
           if (!isValid) break;
         }
       }
-      
+
       if (isValid) {
         validCandidates.add(num);
       }
     }
-    
+
     return validCandidates;
   };
 
   // Update all candidates based on auto candidate mode
   const updateAllCandidates = (grid: Grid) => {
     const newCandidates = createEmptyCandidatesGrid();
-    
+
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
         // Only update candidates for empty cells that are not initial
@@ -181,21 +226,26 @@ export default function SudokuPage() {
         // Otherwise, candidates remain empty (default)
       }
     }
-    
+
     setCandidates(newCandidates);
   };
 
   const handleCellChange = (row: number, col: number, value: number | null) => {
     saveToHistory();
-    
+
     const newGrid = copyGrid(currentGrid);
     newGrid[row][col] = value;
     setCurrentGrid(newGrid);
-    setIncorrectCells([]); // Clear incorrect cells when user makes changes
-    
+
+    if (solution.length) {
+      setIncorrectCells(computeIncorrectCells(newGrid, solution));
+    } else {
+      setIncorrectCells([]);
+    }
+
     // If auto candidate mode is off, clear candidates for this cell when a value is set
     if (!autoCandidateMode) {
-      const newCandidates = candidates.map(r => r.map(c => new Set(c)));
+      const newCandidates = candidates.map((r) => r.map((c) => new Set(c)));
       if (value !== null) {
         newCandidates[row][col] = new Set<number>();
       }
@@ -217,15 +267,15 @@ export default function SudokuPage() {
 
     saveToHistory();
 
-    const newCandidates = candidates.map(r => r.map(c => new Set(c)));
+    const newCandidates = candidates.map((r) => r.map((c) => new Set(c)));
     const cellCandidates = newCandidates[row][col];
-    
+
     if (cellCandidates.has(value)) {
       cellCandidates.delete(value);
     } else {
       cellCandidates.add(value);
     }
-    
+
     setCandidates(newCandidates);
   };
 
@@ -235,7 +285,12 @@ export default function SudokuPage() {
       setCurrentGrid(previousState.grid);
       setCandidates(previousState.candidates);
       setHistory(history.slice(0, -1));
-      setIncorrectCells([]);
+
+      if (solution.length) {
+        setIncorrectCells(computeIncorrectCells(previousState.grid, solution));
+      } else {
+        setIncorrectCells([]);
+      }
     }
   };
 
@@ -258,10 +313,15 @@ export default function SudokuPage() {
     const newGrid = copyGrid(currentGrid);
     newGrid[row][col] = null;
     setCurrentGrid(newGrid);
-    setIncorrectCells([]);
+
+    if (solution.length) {
+      setIncorrectCells(computeIncorrectCells(newGrid, solution));
+    } else {
+      setIncorrectCells([]);
+    }
 
     if (!autoCandidateMode) {
-      const newCandidates = candidates.map(r => r.map(c => new Set(c)));
+      const newCandidates = candidates.map((r) => r.map((c) => new Set(c)));
       newCandidates[row][col] = new Set<number>();
       setCandidates(newCandidates);
     }
@@ -269,11 +329,7 @@ export default function SudokuPage() {
 
   // Auto-check completion once the grid is full
   useEffect(() => {
-    if (
-      hasCompleted ||
-      !currentGrid.length ||
-      !solution.length
-    ) {
+    if (hasCompleted || !currentGrid.length || !solution.length) {
       return;
     }
 
@@ -301,23 +357,23 @@ export default function SudokuPage() {
       const { row, col } = selectedCell;
 
       // Arrow keys navigation
-      if (e.key === 'ArrowUp' && row > 0) {
+      if (e.key === "ArrowUp" && row > 0) {
         setSelectedCell({ row: row - 1, col });
         e.preventDefault();
-      } else if (e.key === 'ArrowDown' && row < 8) {
+      } else if (e.key === "ArrowDown" && row < 8) {
         setSelectedCell({ row: row + 1, col });
         e.preventDefault();
-      } else if (e.key === 'ArrowLeft' && col > 0) {
+      } else if (e.key === "ArrowLeft" && col > 0) {
         setSelectedCell({ row, col: col - 1 });
         e.preventDefault();
-      } else if (e.key === 'ArrowRight' && col < 8) {
+      } else if (e.key === "ArrowRight" && col < 8) {
         setSelectedCell({ row, col: col + 1 });
         e.preventDefault();
       }
       // Number keys
-      else if (e.key >= '1' && e.key <= '9') {
+      else if (e.key >= "1" && e.key <= "9") {
         if (initialGrid[row]?.[col] === null) {
-          if (inputMode === 'Candidate') {
+          if (inputMode === "Candidate") {
             handleCandidateToggle(row, col, parseInt(e.key));
           } else {
             handleCellChange(row, col, parseInt(e.key));
@@ -325,7 +381,7 @@ export default function SudokuPage() {
         }
       }
       // Backspace or Delete to clear
-      else if (e.key === 'Backspace' || e.key === 'Delete') {
+      else if (e.key === "Backspace" || e.key === "Delete") {
         if (initialGrid[row]?.[col] === null) {
           handleClearCell(row, col);
         }
@@ -333,13 +389,19 @@ export default function SudokuPage() {
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedCell, initialGrid, currentGrid, inputMode, candidates]);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black py-12 px-4" data-game-page="sudoku">
-      <div className="mx-auto w-full max-w-6xl px-0 sm:px-4 lg:px-12" data-game-section="sudoku">
+    <div
+      className="min-h-screen bg-white dark:bg-black py-12 px-4"
+      data-game-page="sudoku"
+    >
+      <div
+        className="mx-auto w-full max-w-6xl px-0 sm:px-4 lg:px-12"
+        data-game-section="sudoku"
+      >
         {/* Header */}
         <div className="mb-12 flex flex-col gap-6">
           <div className="text-center">
@@ -357,10 +419,10 @@ export default function SudokuPage() {
                       key={level}
                       onClick={() => handleDifficultyChange(level)}
                       className={cn(
-                        'rounded-full border px-6 py-2 text-sm font-semibold transition-colors',
+                        "rounded-full border px-6 py-2 text-sm font-semibold transition-colors",
                         level === selectedDifficulty
-                          ? 'bg-black text-white dark:bg-white dark:text-black border-black dark:border-white'
-                          : 'bg-white text-black border-gray-300 hover:bg-gray-100 dark:bg-black dark:text-white dark:border-gray-700 dark:hover:bg-gray-800'
+                          ? "bg-black text-white dark:bg-white dark:text-black border-black dark:border-white"
+                          : "bg-white text-black border-gray-300 hover:bg-gray-100 dark:bg-black dark:text-white dark:border-gray-700 dark:hover:bg-gray-800"
                       )}
                     >
                       {level}
@@ -372,14 +434,16 @@ export default function SudokuPage() {
                   disabled={isGenerating}
                   className="rounded-full px-6 py-2 text-sm font-semibold uppercase tracking-wide ml-2 lg:ml-4 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white border-2 border-gray-400 dark:border-gray-500 hover:border-gray-600 dark:hover:border-gray-400 transition-all"
                 >
-                  {isGenerating ? 'Preparing...' : 'New Puzzle'}
+                  {isGenerating ? "Preparing..." : "New Puzzle"}
                 </Button>
               </div>
               <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-black/40 px-4 py-2">
                 <Checkbox
                   id="auto-candidate-toolbar"
                   checked={autoCandidateMode}
-                  onCheckedChange={(checked) => setAutoCandidateMode(checked === true)}
+                  onCheckedChange={(checked) =>
+                    setAutoCandidateMode(checked === true)
+                  }
                 />
                 <Label
                   htmlFor="auto-candidate-toolbar"
@@ -401,7 +465,7 @@ export default function SudokuPage() {
           <div
             className="flex-shrink-0 lg:self-start"
             data-game-board="sudoku"
-            style={{ marginLeft: 'var(--game-home-offset, 0px)' }}
+            style={{ marginLeft: "var(--game-home-offset, 0px)" }}
           >
             {currentGrid.length > 0 && (
               <SudokuGrid

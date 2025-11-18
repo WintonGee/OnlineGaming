@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Grid, CellPosition, CandidatesGrid } from '../types';
-import { cn } from '@/lib/utils';
+import { Grid, CellPosition, CandidatesGrid } from "../types";
+import { cn } from "@/lib/utils";
 
 interface SudokuGridProps {
   grid: Grid;
@@ -46,7 +46,7 @@ export default function SudokuGrid({
   };
 
   const isCellIncorrect = (row: number, col: number): boolean => {
-    return incorrectCells.some(cell => cell.row === row && cell.col === col);
+    return incorrectCells.some((cell) => cell.row === row && cell.col === col);
   };
 
   const handleCellClick = (row: number, col: number) => {
@@ -60,8 +60,13 @@ export default function SudokuGrid({
     return candidates[row][col];
   };
 
+  const selectedValue =
+    selectedCell && grid[selectedCell.row]?.[selectedCell.col] !== undefined
+      ? grid[selectedCell.row][selectedCell.col]
+      : null;
+
   return (
-    <div className="inline-block bg-black dark:bg-white p-3 shadow-lg">
+    <div className="inline-block rounded-2xl bg-white dark:bg-gray-950 p-3 shadow-lg border border-gray-200 dark:border-gray-800">
       <div className="grid grid-cols-9 gap-0">
         {grid.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
@@ -71,35 +76,61 @@ export default function SudokuGrid({
             const isIncorrect = isCellIncorrect(rowIndex, colIndex);
             const cellCandidates = getCellCandidates(rowIndex, colIndex);
             const hasCandidates = cellCandidates.size > 0 && cell === null;
+            const isSameValue =
+              selectedValue !== null &&
+              cell !== null &&
+              cell === selectedValue &&
+              !isSelected;
 
             // Border styling for 3x3 boxes
-            const borderTop = rowIndex % 3 === 0 ? 'border-t-[1.5px]' : 'border-t';
-            const borderLeft = colIndex % 3 === 0 ? 'border-l-[1.5px]' : 'border-l';
-            const borderRight = colIndex === 8 ? 'border-r-[1.5px]' : '';
-            const borderBottom = rowIndex === 8 ? 'border-b-[1.5px]' : '';
+            const borderTop =
+              rowIndex % 3 === 0 ? "border-t-[1.5px]" : "border-t";
+            const borderLeft =
+              colIndex % 3 === 0 ? "border-l-[1.5px]" : "border-l";
+            const borderRight = colIndex === 8 ? "border-r-[1.5px]" : "";
+            const borderBottom = rowIndex === 8 ? "border-b-[1.5px]" : "";
 
-            // Alternating background pattern (beige/grey)
-            const isAlternateCell = (rowIndex + colIndex) % 2 === 0;
-            
             return (
               <button
                 key={`${rowIndex}-${colIndex}`}
+                type="button"
                 onClick={() => handleCellClick(rowIndex, colIndex)}
                 className={cn(
-                  'w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center text-xl sm:text-2xl font-medium transition-colors relative',
-                  'border-black dark:border-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:z-10',
+                  "w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center text-xl sm:text-2xl font-medium transition-colors relative overflow-hidden",
+                  "border-black dark:border-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:z-10",
+                  "bg-white dark:bg-gray-900",
                   borderTop,
                   borderLeft,
                   borderRight,
                   borderBottom,
-                  isSelected && 'bg-orange-300 dark:bg-orange-600',
-                  !isSelected && isHighlighted && 'bg-gray-100 dark:bg-gray-800',
-                  !isSelected && !isHighlighted && isAlternateCell && 'bg-amber-50 dark:bg-amber-950',
-                  !isSelected && !isHighlighted && !isAlternateCell && 'bg-gray-100 dark:bg-gray-900',
-                  isInitial && 'text-black dark:text-white font-bold',
-                  !isInitial && cell !== null && 'text-black dark:text-white',
-                  !isInitial && !isSelected && 'hover:bg-gray-200 dark:hover:bg-gray-800',
-                  isIncorrect && 'bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400'
+                  isHighlighted &&
+                    !isSelected &&
+                    "!bg-blue-50 dark:!bg-slate-800/80",
+                  isInitial && "text-black dark:text-white font-bold",
+                  isInitial && !isSelected && "bg-gray-200 dark:bg-gray-800",
+                  !isInitial &&
+                    cell !== null &&
+                    !isSelected &&
+                    !isIncorrect &&
+                    "bg-blue-50/80 dark:bg-blue-900/40 text-black dark:text-white",
+                  !isInitial &&
+                    cell !== null &&
+                    !isIncorrect &&
+                    "text-black dark:text-white",
+                  isSelected && "!bg-orange-300 dark:!bg-orange-600",
+                  !isInitial &&
+                    !isSelected &&
+                    cell === null &&
+                    "hover:bg-gray-100 dark:hover:bg-gray-800",
+                  !isInitial &&
+                    cell === null &&
+                    !isHighlighted &&
+                    "text-black dark:text-white",
+                  isIncorrect &&
+                    "!bg-red-50 dark:!bg-red-900 text-red-600 dark:text-red-300 ring-2 ring-red-400 dark:ring-red-500",
+                  isSameValue &&
+                    !isIncorrect &&
+                    "!bg-amber-100 dark:!bg-amber-900/70 text-black dark:text-white"
                 )}
                 disabled={isInitial}
               >
@@ -111,10 +142,10 @@ export default function SudokuGrid({
                       <span
                         key={num}
                         className={cn(
-                          'text-[0.5rem] sm:text-[0.6rem] md:text-[0.8rem] leading-none flex items-center justify-center',
+                          "text-[0.5rem] sm:text-[0.6rem] md:text-[0.8rem] leading-none flex items-center justify-center",
                           cellCandidates.has(num)
-                            ? 'text-black dark:text-white'
-                            : 'text-transparent'
+                            ? "text-black dark:text-white"
+                            : "text-transparent"
                         )}
                       >
                         {num}
@@ -122,7 +153,13 @@ export default function SudokuGrid({
                     ))}
                   </div>
                 ) : (
-                  ''
+                  ""
+                )}
+                {isIncorrect && (
+                  <span
+                    className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 animate-pulse"
+                    aria-hidden="true"
+                  />
                 )}
               </button>
             );
