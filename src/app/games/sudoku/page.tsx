@@ -35,22 +35,59 @@ function createEmptyCandidatesGrid(): CandidatesGrid {
     );
 }
 
-const computeIncorrectCells = (
-  grid: Grid,
-  solutionGrid: Grid
-): CellPosition[] => {
-  if (!grid.length || !solutionGrid.length) {
+const computeIncorrectCells = (grid: Grid): CellPosition[] => {
+  if (!grid.length) {
     return [];
   }
 
   const incorrect: CellPosition[] = [];
 
+  // Check each cell for constraint violations (duplicates in row, column, or 3x3 box)
   for (let row = 0; row < 9; row++) {
     for (let col = 0; col < 9; col++) {
       const current = grid[row]?.[col];
-      const correct = solutionGrid[row]?.[col];
 
-      if (current !== null && correct !== null && current !== correct) {
+      // Skip empty cells
+      if (current === null) {
+        continue;
+      }
+
+      let hasViolation = false;
+
+      // Check row for duplicates
+      for (let c = 0; c < 9; c++) {
+        if (c !== col && grid[row][c] === current) {
+          hasViolation = true;
+          break;
+        }
+      }
+
+      // Check column for duplicates
+      if (!hasViolation) {
+        for (let r = 0; r < 9; r++) {
+          if (r !== row && grid[r][col] === current) {
+            hasViolation = true;
+            break;
+          }
+        }
+      }
+
+      // Check 3x3 box for duplicates
+      if (!hasViolation) {
+        const boxRow = Math.floor(row / 3) * 3;
+        const boxCol = Math.floor(col / 3) * 3;
+        for (let r = boxRow; r < boxRow + 3; r++) {
+          for (let c = boxCol; c < boxCol + 3; c++) {
+            if ((r !== row || c !== col) && grid[r][c] === current) {
+              hasViolation = true;
+              break;
+            }
+          }
+          if (hasViolation) break;
+        }
+      }
+
+      if (hasViolation) {
         incorrect.push({ row, col });
       }
     }
@@ -229,11 +266,7 @@ export default function SudokuPage() {
     newGrid[row][col] = value;
     setCurrentGrid(newGrid);
 
-    if (solution.length) {
-      setIncorrectCells(computeIncorrectCells(newGrid, solution));
-    } else {
-      setIncorrectCells([]);
-    }
+    setIncorrectCells(computeIncorrectCells(newGrid));
 
     // If auto candidate mode is off, clear candidates for this cell when a value is set
     if (!autoCandidateMode) {
@@ -278,11 +311,7 @@ export default function SudokuPage() {
       setCandidates(previousState.candidates);
       setHistory(history.slice(0, -1));
 
-      if (solution.length) {
-        setIncorrectCells(computeIncorrectCells(previousState.grid, solution));
-      } else {
-        setIncorrectCells([]);
-      }
+      setIncorrectCells(computeIncorrectCells(previousState.grid));
     }
   };
 
@@ -306,11 +335,7 @@ export default function SudokuPage() {
     newGrid[row][col] = null;
     setCurrentGrid(newGrid);
 
-    if (solution.length) {
-      setIncorrectCells(computeIncorrectCells(newGrid, solution));
-    } else {
-      setIncorrectCells([]);
-    }
+    setIncorrectCells(computeIncorrectCells(newGrid));
 
     if (!autoCandidateMode) {
       const newCandidates = candidates.map((r) => r.map((c) => new Set(c)));
@@ -336,7 +361,8 @@ export default function SudokuPage() {
       setHasCompleted(true);
       setIncorrectCells([]);
     } else {
-      setIncorrectCells(result.incorrectCells);
+      // Use constraint-based error highlighting for consistency
+      setIncorrectCells(computeIncorrectCells(currentGrid));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentGrid, solution, hasCompleted]);
