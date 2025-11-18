@@ -386,7 +386,7 @@ export default function SudokuPage() {
 
         {/* Main Game Area */}
         <div
-          className="flex flex-col lg:flex-row items-center lg:items-start justify-center lg:justify-start gap-10 lg:gap-16"
+          className="flex flex-col lg:flex-row items-center lg:items-start justify-center lg:justify-start gap-6 lg:gap-16 pb-[420px] sm:pb-[450px] lg:pb-0"
           data-game-layout="sudoku"
         >
           {/* Grid */}
@@ -408,8 +408,8 @@ export default function SudokuPage() {
             )}
           </div>
 
-          {/* Controls */}
-          <div className="w-full max-w-md lg:self-start lg:pl-6">
+          {/* Controls - Fixed at bottom on mobile, static on desktop */}
+          <div className="fixed bottom-0 left-0 right-0 lg:static w-full max-w-full lg:max-w-md lg:self-start lg:pl-6 bg-white dark:bg-black border-t border-gray-300 dark:border-gray-700 lg:border-t-0 px-4 pt-4 pb-safe pb-6 lg:p-0 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.1)] dark:shadow-[0_-4px_12px_rgba(0,0,0,0.3)] lg:shadow-none">
             <SudokuControls
               isGenerating={isGenerating}
               selectedCell={selectedCell}

@@ -53,18 +53,18 @@ export default function SudokuControls({
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full">
+    <div className="flex flex-col gap-3 lg:gap-6 w-full">
       <section>
         <Label className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
           Input Mode
         </Label>
-        <div className="mt-3 rounded-2xl border border-gray-300 dark:border-gray-700 overflow-hidden flex bg-white dark:bg-black">
+        <div className="mt-2 lg:mt-3 rounded-2xl border border-gray-300 dark:border-gray-700 overflow-hidden flex bg-white dark:bg-black">
           {(['Normal', 'Candidate'] as InputMode[]).map((mode) => (
             <button
               key={mode}
               onClick={() => onInputModeChange(mode)}
               className={cn(
-                'flex-1 py-3 text-base font-semibold transition-colors focus:outline-none',
+                'flex-1 py-2 lg:py-3 text-sm lg:text-base font-semibold transition-colors focus:outline-none',
                 inputMode === mode
                   ? 'bg-black text-white dark:bg-white dark:text-black'
                   : 'bg-white text-black hover:bg-gray-100 dark:bg-black dark:text-white dark:hover:bg-gray-800'
@@ -80,7 +80,7 @@ export default function SudokuControls({
         <Label className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
           Number Pad
         </Label>
-        <div className="mt-4 grid grid-cols-3 gap-3 w-full">
+        <div className="mt-2 lg:mt-4 grid grid-cols-3 gap-2 lg:gap-3 w-full">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
             <button
               key={num}
@@ -102,7 +102,7 @@ export default function SudokuControls({
         </div>
       </section>
 
-      <section className="grid grid-cols-2 gap-3">
+      <section className="grid grid-cols-2 gap-2 lg:gap-3">
         <Button
           variant="outline"
           onClick={handleClear}
@@ -110,7 +110,7 @@ export default function SudokuControls({
             !selectedCell ||
             isCellInitial(selectedCell?.row ?? 0, selectedCell?.col ?? 0)
           }
-          className="border border-gray-300 bg-gray-200 text-black dark:border-gray-700 dark:bg-gray-800 dark:text-white flex items-center justify-center gap-2 text-base"
+          className="border border-gray-300 bg-gray-200 text-black dark:border-gray-700 dark:bg-gray-800 dark:text-white flex items-center justify-center gap-2 text-sm lg:text-base py-2 lg:py-3"
         >
           <X className="h-4 w-4" />
           Clear Cell
@@ -120,7 +120,7 @@ export default function SudokuControls({
           onClick={onUndo}
           disabled={!canUndo}
           className={cn(
-            'border border-gray-300 bg-gray-200 text-black dark:border-gray-700 dark:bg-gray-800 dark:text-white',
+            'border border-gray-300 bg-gray-200 text-black dark:border-gray-700 dark:bg-gray-800 dark:text-white text-sm lg:text-base py-2 lg:py-3',
             !canUndo && 'opacity-50'
           )}
         >
