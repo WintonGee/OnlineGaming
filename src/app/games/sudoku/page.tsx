@@ -56,7 +56,7 @@ export default function SudokuPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Update candidates when auto candidate mode is toggled
+  // Update candidates when auto candidate mode changes or grid changes
   useEffect(() => {
     if (autoCandidateMode && currentGrid.length > 0) {
       updateAllCandidates(currentGrid);
@@ -65,15 +65,7 @@ export default function SudokuPage() {
       setCandidates(createEmptyCandidatesGrid());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoCandidateMode]);
-
-  // Update candidates when grid changes (only if auto candidate mode is enabled)
-  useEffect(() => {
-    if (autoCandidateMode && currentGrid.length > 0) {
-      updateAllCandidates(currentGrid);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentGrid]);
+  }, [autoCandidateMode, currentGrid]);
 
   const initializeGame = (diff: Difficulty) => {
     setIsGenerating(true);
