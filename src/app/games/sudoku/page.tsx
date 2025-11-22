@@ -155,7 +155,7 @@ export default function SudokuPage() {
 
   return (
     <div
-      className="min-h-screen bg-white dark:bg-black py-12 px-4"
+      className="min-h-screen bg-white dark:bg-black py-3 sm:py-8 lg:py-12 px-4"
       data-game-page="sudoku"
     >
       <div
@@ -163,15 +163,15 @@ export default function SudokuPage() {
         data-game-section="sudoku"
       >
         {/* Header */}
-        <div className="mb-12 flex flex-col gap-6">
+        <div className="mb-3 sm:mb-8 lg:mb-12 flex flex-col gap-2 sm:gap-4 lg:gap-6">
           <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-serif font-bold text-black dark:text-white mb-3">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold text-black dark:text-white mb-1 sm:mb-3">
               Sudoku
             </h1>
           </div>
           {/* Difficulty Toolbar */}
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col lg:flex-row w-full items-center gap-4 justify-between">
+          <div className="flex flex-col gap-2 sm:gap-4">
+            <div className="flex flex-col lg:flex-row w-full items-center gap-2 lg:gap-4 justify-between">
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2">
                 <div className="flex items-center gap-2">
                   {DIFFICULTY_OPTIONS.map((level) => (
@@ -230,7 +230,7 @@ export default function SudokuPage() {
 
         {/* Main Game Area */}
         <div
-          className="flex flex-col lg:flex-row items-center lg:items-start justify-center lg:justify-start gap-6 lg:gap-16 pb-[280px] sm:pb-[300px] lg:pb-0"
+          className="flex flex-col lg:flex-row items-center lg:items-start justify-center lg:justify-start gap-3 sm:gap-6 lg:gap-16 pb-[230px] sm:pb-[250px] lg:pb-0"
           data-game-layout="sudoku"
         >
           {/* Grid */}
@@ -253,7 +253,7 @@ export default function SudokuPage() {
           </div>
 
           {/* Controls - Fixed at bottom on mobile, static on desktop */}
-          <div className="fixed bottom-0 left-0 right-0 lg:static w-full max-w-full lg:max-w-md lg:self-start lg:pl-6 bg-white dark:bg-black border-t border-gray-300 dark:border-gray-700 lg:border-t-0 px-3 pt-3 pb-safe pb-4 lg:p-0 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.1)] dark:shadow-[0_-4px_12px_rgba(0,0,0,0.3)] lg:shadow-none">
+          <div className="fixed bottom-0 left-0 right-0 lg:static w-full max-w-full lg:max-w-md lg:self-start lg:pl-6 bg-white dark:bg-black border-t border-gray-300 dark:border-gray-700 lg:border-t-0 px-3 pt-2.5 pb-safe pb-3 lg:p-0 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.1)] dark:shadow-[0_-4px_12px_rgba(0,0,0,0.3)] lg:shadow-none">
             <SudokuControls
               isGenerating={isGenerating}
               selectedCell={selectedCell}

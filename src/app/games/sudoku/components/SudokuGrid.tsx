@@ -66,7 +66,7 @@ export default function SudokuGrid({
       : null;
 
   return (
-    <div className="inline-block rounded-2xl bg-white dark:bg-gray-950 p-3 shadow-lg border border-gray-200 dark:border-gray-800">
+    <div className="inline-block rounded-2xl bg-white dark:bg-gray-950 p-2 sm:p-3 shadow-lg border border-gray-200 dark:border-gray-800">
       <div className="grid grid-cols-9 gap-0">
         {grid.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
@@ -96,7 +96,7 @@ export default function SudokuGrid({
                 type="button"
                 onClick={() => handleCellClick(rowIndex, colIndex)}
                 className={cn(
-                  "w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center text-xl sm:text-2xl font-medium transition-colors relative overflow-hidden",
+                  "w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 flex items-center justify-center text-lg sm:text-xl md:text-2xl font-medium transition-colors relative overflow-hidden",
                   "border-black dark:border-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:z-10",
                   "bg-white dark:bg-gray-900",
                   borderTop,
@@ -142,7 +142,7 @@ export default function SudokuGrid({
                       <span
                         key={num}
                         className={cn(
-                          "text-[0.5rem] sm:text-[0.6rem] md:text-[0.8rem] leading-none flex items-center justify-center",
+                          "text-[0.45rem] sm:text-[0.5rem] md:text-[0.6rem] lg:text-[0.8rem] leading-none flex items-center justify-center",
                           cellCandidates.has(num)
                             ? "text-black dark:text-white"
                             : "text-transparent"
