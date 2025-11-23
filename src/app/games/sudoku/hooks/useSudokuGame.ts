@@ -15,19 +15,8 @@ import {
   createEmptyCandidatesGrid,
   generateAutoCandidates,
 } from "../utils/gameUtils";
-
-const dedupeCells = (cells: CellPosition[]): CellPosition[] => {
-  const map = new Map<string, CellPosition>();
-  cells.forEach((cell) => {
-    const key = `${cell.row}-${cell.col}`;
-    if (!map.has(key)) {
-      map.set(key, cell);
-    }
-  });
-  return Array.from(map.values());
-};
-
-const HISTORY_LIMIT = 50;
+import { dedupeCells } from "../utils/gridUtils";
+import { HISTORY_LIMIT } from "../constants";
 
 export function useSudokuGame() {
   const [selectedDifficulty, setSelectedDifficulty] =

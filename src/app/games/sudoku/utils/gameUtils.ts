@@ -1,10 +1,13 @@
 import { CandidatesGrid, CellPosition, Grid } from "../types";
+import { isValidPlacement } from "./validation";
+import { getBoxIndices } from "./gridUtils";
+import { GRID_SIZE, VALID_NUMBERS } from "../constants";
 
 export function createEmptyCandidatesGrid(): CandidatesGrid {
-  return Array(9)
+  return Array(GRID_SIZE)
     .fill(null)
     .map(() =>
-      Array(9)
+      Array(GRID_SIZE)
         .fill(null)
         .map(() => new Set<number>())
     );
@@ -21,8 +24,8 @@ export function computeIncorrectCells(grid: Grid): CellPosition[] {
 
   const incorrect: CellPosition[] = [];
 
-  for (let row = 0; row < 9; row++) {
-    for (let col = 0; col < 9; col++) {
+  for (let row = 0; row < GRID_SIZE; row++) {
+    for (let col = 0; col < GRID_SIZE; col++) {
       const current = grid[row]?.[col];
 
       if (current === null) {
@@ -31,15 +34,17 @@ export function computeIncorrectCells(grid: Grid): CellPosition[] {
 
       let hasViolation = false;
 
-      for (let c = 0; c < 9; c++) {
+      // Check row for duplicates
+      for (let c = 0; c < GRID_SIZE; c++) {
         if (c !== col && grid[row][c] === current) {
           hasViolation = true;
           break;
         }
       }
 
+      // Check column for duplicates
       if (!hasViolation) {
-        for (let r = 0; r < 9; r++) {
+        for (let r = 0; r < GRID_SIZE; r++) {
           if (r !== row && grid[r][col] === current) {
             hasViolation = true;
             break;
@@ -47,11 +52,11 @@ export function computeIncorrectCells(grid: Grid): CellPosition[] {
         }
       }
 
+      // Check 3x3 box for duplicates
       if (!hasViolation) {
-        const boxRow = Math.floor(row / 3) * 3;
-        const boxCol = Math.floor(col / 3) * 3;
-        for (let r = boxRow; r < boxRow + 3; r++) {
-          for (let c = boxCol; c < boxCol + 3; c++) {
+        const { boxStartRow, boxStartCol } = getBoxIndices(row, col);
+        for (let r = boxStartRow; r < boxStartRow + 3; r++) {
+          for (let c = boxStartCol; c < boxStartCol + 3; c++) {
             if ((r !== row || c !== col) && grid[r][c] === current) {
               hasViolation = true;
               break;
@@ -81,40 +86,8 @@ export function calculateValidCandidates(
     return validCandidates;
   }
 
-  for (let num = 1; num <= 9; num++) {
-    let isValid = true;
-
-    for (let c = 0; c < 9; c++) {
-      if (grid[row][c] === num) {
-        isValid = false;
-        break;
-      }
-    }
-
-    if (isValid) {
-      for (let r = 0; r < 9; r++) {
-        if (grid[r][col] === num) {
-          isValid = false;
-          break;
-        }
-      }
-    }
-
-    if (isValid) {
-      const boxRow = Math.floor(row / 3) * 3;
-      const boxCol = Math.floor(col / 3) * 3;
-      for (let r = boxRow; r < boxRow + 3; r++) {
-        for (let c = boxCol; c < boxCol + 3; c++) {
-          if (grid[r][c] === num) {
-            isValid = false;
-            break;
-          }
-        }
-        if (!isValid) break;
-      }
-    }
-
-    if (isValid) {
+  for (const num of VALID_NUMBERS) {
+    if (isValidPlacement(grid, row, col, num)) {
       validCandidates.add(num);
     }
   }
@@ -128,8 +101,8 @@ export function generateAutoCandidates(
 ): CandidatesGrid {
   const newCandidates = createEmptyCandidatesGrid();
 
-  for (let row = 0; row < 9; row++) {
-    for (let col = 0; col < 9; col++) {
+  for (let row = 0; row < GRID_SIZE; row++) {
+    for (let col = 0; col < GRID_SIZE; col++) {
       if (grid[row][col] === null && initialGrid[row][col] === null) {
         newCandidates[row][col] = calculateValidCandidates(row, col, grid);
       }
@@ -138,4 +111,3 @@ export function generateAutoCandidates(
 
   return newCandidates;
 }
-

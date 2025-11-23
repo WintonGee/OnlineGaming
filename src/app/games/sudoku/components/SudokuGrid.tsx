@@ -2,6 +2,13 @@
 
 import { Grid, CellPosition, CandidatesGrid } from "../types";
 import { cn } from "@/lib/utils";
+import {
+  isCellInitial,
+  getCellBorderClasses,
+  getBoxIndices,
+} from "../utils/gridUtils";
+import { getCellClassName } from "../utils/styleUtils";
+import { GRID_SIZE } from "../constants";
 
 interface SudokuGridProps {
   grid: Grid;
@@ -22,10 +29,6 @@ export default function SudokuGrid({
   incorrectCells = [],
   candidates,
 }: SudokuGridProps) {
-  const isCellInitial = (row: number, col: number): boolean => {
-    return initialGrid[row][col] !== null;
-  };
-
   const isCellSelected = (row: number, col: number): boolean => {
     return selectedCell?.row === row && selectedCell?.col === col;
   };
@@ -37,10 +40,11 @@ export default function SudokuGrid({
     if (selectedCell.row === row || selectedCell.col === col) return true;
 
     // Same 3x3 box
-    const boxRow = Math.floor(selectedCell.row / 3);
-    const boxCol = Math.floor(selectedCell.col / 3);
-    const cellBoxRow = Math.floor(row / 3);
-    const cellBoxCol = Math.floor(col / 3);
+    const { boxRow, boxCol } = getBoxIndices(
+      selectedCell.row,
+      selectedCell.col
+    );
+    const { boxRow: cellBoxRow, boxCol: cellBoxCol } = getBoxIndices(row, col);
 
     return boxRow === cellBoxRow && boxCol === cellBoxCol;
   };
@@ -67,10 +71,13 @@ export default function SudokuGrid({
 
   return (
     <div className="inline-block rounded-2xl bg-white dark:bg-gray-950 p-2 sm:p-3 shadow-lg border border-gray-200 dark:border-gray-800">
-      <div className="grid grid-cols-9 gap-0">
+      <div
+        className={`grid gap-0`}
+        style={{ gridTemplateColumns: `repeat(${GRID_SIZE}, minmax(0, 1fr))` }}
+      >
         {grid.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
-            const isInitial = isCellInitial(rowIndex, colIndex);
+            const isInitial = isCellInitial(initialGrid, rowIndex, colIndex);
             const isSelected = isCellSelected(rowIndex, colIndex);
             const isHighlighted = isCellHighlighted(rowIndex, colIndex);
             const isIncorrect = isCellIncorrect(rowIndex, colIndex);
@@ -82,74 +89,44 @@ export default function SudokuGrid({
               cell === selectedValue &&
               !isSelected;
 
-            // Border styling for 3x3 boxes
-            const borderTop =
-              rowIndex % 3 === 0 ? "border-t-[1.5px]" : "border-t";
-            const borderLeft =
-              colIndex % 3 === 0 ? "border-l-[1.5px]" : "border-l";
-            const borderRight = colIndex === 8 ? "border-r-[1.5px]" : "";
-            const borderBottom = rowIndex === 8 ? "border-b-[1.5px]" : "";
+            const borderClasses = getCellBorderClasses(rowIndex, colIndex);
+            const cellClassName = getCellClassName({
+              isInitial,
+              isSelected,
+              isHighlighted,
+              isIncorrect,
+              isSameValue,
+              hasValue: cell !== null,
+              ...borderClasses,
+            });
 
             return (
               <button
                 key={`${rowIndex}-${colIndex}`}
                 type="button"
                 onClick={() => handleCellClick(rowIndex, colIndex)}
-                className={cn(
-                  "w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 flex items-center justify-center text-lg sm:text-xl md:text-2xl font-medium transition-colors relative overflow-hidden",
-                  "border-black dark:border-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:z-10",
-                  "bg-white dark:bg-gray-900",
-                  borderTop,
-                  borderLeft,
-                  borderRight,
-                  borderBottom,
-                  isHighlighted &&
-                    !isSelected &&
-                    "!bg-blue-50 dark:!bg-slate-800/80",
-                  isInitial && "text-black dark:text-white font-bold",
-                  isInitial && !isSelected && "bg-gray-200 dark:bg-gray-800",
-                  !isInitial &&
-                    cell !== null &&
-                    !isSelected &&
-                    !isIncorrect &&
-                    "bg-blue-50/80 dark:bg-blue-900/40 text-black dark:text-white",
-                  !isInitial &&
-                    cell !== null &&
-                    !isIncorrect &&
-                    "text-black dark:text-white",
-                  isSelected && "!bg-orange-300 dark:!bg-orange-600",
-                  !isInitial &&
-                    !isSelected &&
-                    cell === null &&
-                    "hover:bg-gray-100 dark:hover:bg-gray-800",
-                  !isInitial &&
-                    cell === null &&
-                    !isHighlighted &&
-                    "text-black dark:text-white",
-                  isIncorrect && "!bg-red-50 dark:!bg-red-900",
-                  isSameValue &&
-                    !isIncorrect &&
-                    "!bg-amber-100 dark:!bg-amber-900/70 text-black dark:text-white"
-                )}
+                className={cellClassName}
                 disabled={isInitial}
               >
                 {cell !== null ? (
                   <span>{cell}</span>
                 ) : hasCandidates ? (
                   <div className="grid grid-cols-3 gap-0 w-full h-full p-0.5">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-                      <span
-                        key={num}
-                        className={cn(
-                          "text-[0.45rem] sm:text-[0.5rem] md:text-[0.6rem] lg:text-[0.8rem] leading-none flex items-center justify-center",
-                          cellCandidates.has(num)
-                            ? "text-black dark:text-white"
-                            : "text-transparent"
-                        )}
-                      >
-                        {num}
-                      </span>
-                    ))}
+                    {Array.from({ length: GRID_SIZE }, (_, i) => i + 1).map(
+                      (num) => (
+                        <span
+                          key={num}
+                          className={cn(
+                            "text-[0.45rem] sm:text-[0.5rem] md:text-[0.6rem] lg:text-[0.8rem] leading-none flex items-center justify-center",
+                            cellCandidates.has(num)
+                              ? "text-black dark:text-white"
+                              : "text-transparent"
+                          )}
+                        >
+                          {num}
+                        </span>
+                      )
+                    )}
                   </div>
                 ) : (
                   ""

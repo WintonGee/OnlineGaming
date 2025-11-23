@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { isCellInitial } from '../utils/gridUtils';
+import { GRID_SIZE } from '../constants';
 
 interface SudokuControlsProps {
   isGenerating?: boolean;
@@ -32,12 +34,8 @@ export default function SudokuControls({
   canUndo,
 }: SudokuControlsProps) {
 
-  const isCellInitial = (row: number, col: number): boolean => {
-    return initialGrid[row]?.[col] !== null;
-  };
-
   const handleNumberSelect = (num: number) => {
-    if (selectedCell && !isCellInitial(selectedCell.row, selectedCell.col)) {
+    if (selectedCell && !isCellInitial(initialGrid, selectedCell.row, selectedCell.col)) {
       if (inputMode === 'Candidate') {
         onCandidateToggle(selectedCell.row, selectedCell.col, num);
       } else {
@@ -47,7 +45,7 @@ export default function SudokuControls({
   };
 
   const handleClear = () => {
-    if (selectedCell && !isCellInitial(selectedCell.row, selectedCell.col)) {
+    if (selectedCell && !isCellInitial(initialGrid, selectedCell.row, selectedCell.col)) {
       onClearCell(selectedCell.row, selectedCell.col);
     }
   };
@@ -81,14 +79,14 @@ export default function SudokuControls({
           Number Pad
         </Label>
         <div className="mt-1 lg:mt-4 flex flex-row gap-1 lg:grid lg:grid-cols-3 lg:gap-3 w-full">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+          {Array.from({ length: GRID_SIZE }, (_, i) => i + 1).map((num) => (
             <button
               key={num}
               onClick={() => handleNumberSelect(num)}
               disabled={
                 isGenerating ||
                 !selectedCell ||
-                isCellInitial(selectedCell.row, selectedCell.col)
+                isCellInitial(initialGrid, selectedCell.row, selectedCell.col)
               }
               className={cn(
                 'h-10 px-2 text-base lg:h-auto lg:aspect-square lg:px-0 lg:text-xl rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-800 font-semibold text-black dark:text-white shadow-sm transition-colors',
@@ -109,7 +107,7 @@ export default function SudokuControls({
           onClick={handleClear}
           disabled={
             !selectedCell ||
-            isCellInitial(selectedCell?.row ?? 0, selectedCell?.col ?? 0)
+            isCellInitial(initialGrid, selectedCell?.row ?? 0, selectedCell?.col ?? 0)
           }
           className="border border-gray-300 bg-gray-200 text-black dark:border-gray-700 dark:bg-gray-800 dark:text-white flex items-center justify-center gap-2 text-xs lg:text-base py-1.5 lg:py-3"
         >
