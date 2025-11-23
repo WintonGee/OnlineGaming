@@ -126,8 +126,7 @@ export default function SudokuGrid({
                     cell === null &&
                     !isHighlighted &&
                     "text-black dark:text-white",
-                  isIncorrect &&
-                    "!bg-red-50 dark:!bg-red-900 text-red-600 dark:text-red-300 ring-2 ring-red-400 dark:ring-red-500",
+                  isIncorrect && "!bg-red-50 dark:!bg-red-900",
                   isSameValue &&
                     !isIncorrect &&
                     "!bg-amber-100 dark:!bg-amber-900/70 text-black dark:text-white"

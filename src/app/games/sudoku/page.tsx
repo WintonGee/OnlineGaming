@@ -75,6 +75,15 @@ export default function SudokuPage() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Handle Ctrl+Z (Windows/Linux) or Cmd+Z (Mac) for undo
+      if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+        if (canUndo) {
+          handleUndo();
+          e.preventDefault();
+        }
+        return;
+      }
+
       if (!selectedCell) return;
 
       const { row, col } = selectedCell;
@@ -118,6 +127,8 @@ export default function SudokuPage() {
     handleCellChange,
     handleClearCell,
     setSelectedCell,
+    canUndo,
+    handleUndo,
   ]);
 
   const isSelectedCellEditable =
