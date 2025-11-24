@@ -83,7 +83,6 @@ export function useSudokuGame() {
       setCurrentGrid((prevGrid) => {
         const updatedGrid = copyGrid(prevGrid);
         updatedGrid[row][col] = value;
-        setIncorrectCells(computeIncorrectCells(updatedGrid));
 
         if (!autoCandidateMode) {
           setCandidates((prevCandidates) => {
@@ -137,7 +136,6 @@ export function useSudokuGame() {
       const previousState = prev[prev.length - 1];
       setCurrentGrid(previousState.grid);
       setCandidates(previousState.candidates);
-      setIncorrectCells(computeIncorrectCells(previousState.grid));
       return prev.slice(0, -1);
     });
   }, []);
@@ -161,7 +159,6 @@ export function useSudokuGame() {
       setCurrentGrid((prevGrid) => {
         const updatedGrid = copyGrid(prevGrid);
         updatedGrid[row][col] = null;
-        setIncorrectCells(computeIncorrectCells(updatedGrid));
         return updatedGrid;
       });
 
@@ -291,9 +288,6 @@ export function useSudokuGame() {
     saveToHistory();
     setCurrentGrid(copyGrid(solution));
     setCandidates(createEmptyCandidatesGrid());
-    setIncorrectCells([]);
-    setHasCompleted(true);
-    setShowWinDialog(false);
     setSelectedCell(null);
 
     return {
@@ -341,8 +335,17 @@ export function useSudokuGame() {
     }
   }, [autoCandidateMode, currentGrid, initialGrid]);
 
+  // Update incorrect cells whenever the grid changes
   useEffect(() => {
-    if (hasCompleted || !currentGrid.length || !solution.length) {
+    if (!currentGrid.length || hasCompleted) {
+      return;
+    }
+    setIncorrectCells(computeIncorrectCells(currentGrid));
+  }, [currentGrid, hasCompleted]);
+
+  // Check for puzzle completion
+  useEffect(() => {
+    if (hasCompleted || !currentGrid.length || !solution.length || isGenerating) {
       return;
     }
 
@@ -356,10 +359,8 @@ export function useSudokuGame() {
       setShowWinDialog(true);
       setHasCompleted(true);
       setIncorrectCells([]);
-    } else {
-      setIncorrectCells(computeIncorrectCells(currentGrid));
     }
-  }, [currentGrid, solution, hasCompleted]);
+  }, [currentGrid, solution, hasCompleted, isGenerating]);
 
   const canUndo = history.length > 0;
   const hasSolution = solution.length > 0;
