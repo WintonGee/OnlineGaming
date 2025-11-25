@@ -1,0 +1,218 @@
+/* Classic Windows 95/98 Minesweeper Styling */
+
+/* Classic color palette */
+:root {
+  --ms-gray: #c0c0c0;
+  --ms-gray-light: #ffffff;
+  --ms-gray-dark: #808080;
+  --ms-gray-darker: #404040;
+  --ms-bg: #c0c0c0;
+  --ms-lcd-bg: #300000;
+  --ms-lcd-red: #ff0000;
+  --ms-lcd-red-dim: #400000;
+}
+
+/* 3D raised border effect (for buttons/unrevealed cells) */
+.ms-raised {
+  background-color: var(--ms-gray);
+  border-width: 3px;
+  border-style: solid;
+  border-color: var(--ms-gray-light) var(--ms-gray-dark) var(--ms-gray-dark) var(--ms-gray-light);
+}
+
+/* 3D sunken/inset border effect (for panels/revealed cells) */
+.ms-sunken {
+  background-color: var(--ms-gray);
+  border-width: 3px;
+  border-style: solid;
+  border-color: var(--ms-gray-dark) var(--ms-gray-light) var(--ms-gray-light) var(--ms-gray-dark);
+}
+
+/* Deep sunken effect (for LCD displays) */
+.ms-sunken-deep {
+  background-color: var(--ms-lcd-bg);
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--ms-gray-dark) var(--ms-gray-light) var(--ms-gray-light) var(--ms-gray-dark);
+}
+
+/* Main game container */
+.ms-container {
+  background-color: var(--ms-gray);
+  border-width: 4px;
+  border-style: solid;
+  border-color: var(--ms-gray-light) var(--ms-gray-dark) var(--ms-gray-dark) var(--ms-gray-light);
+  padding: 8px;
+}
+
+/* Header panel */
+.ms-header-panel {
+  background-color: var(--ms-gray);
+  border-width: 3px;
+  border-style: solid;
+  border-color: var(--ms-gray-dark) var(--ms-gray-light) var(--ms-gray-light) var(--ms-gray-dark);
+  padding: 6px 8px;
+  margin-bottom: 8px;
+}
+
+/* Board container */
+.ms-board-container {
+  border-width: 4px;
+  border-style: solid;
+  border-color: var(--ms-gray-dark) var(--ms-gray-light) var(--ms-gray-light) var(--ms-gray-dark);
+}
+
+/* Unrevealed cell (raised button look) */
+.ms-cell-unrevealed {
+  background-color: var(--ms-gray);
+  border-width: 3px;
+  border-style: solid;
+  border-color: var(--ms-gray-light) var(--ms-gray-dark) var(--ms-gray-dark) var(--ms-gray-light);
+  cursor: pointer;
+}
+
+.ms-cell-unrevealed:hover {
+  background-color: #d0d0d0;
+}
+
+.ms-cell-unrevealed:active {
+  border-color: var(--ms-gray-dark) var(--ms-gray-light) var(--ms-gray-light) var(--ms-gray-dark);
+}
+
+/* Revealed cell (flat/pressed look) */
+.ms-cell-revealed {
+  background-color: var(--ms-gray);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--ms-gray-dark);
+  cursor: default;
+}
+
+/* Mine cell that was clicked */
+.ms-cell-mine-clicked {
+  background-color: #ff0000;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--ms-gray-dark);
+}
+
+/* Incorrect flag (crossed out) */
+.ms-cell-incorrect-flag {
+  background-color: var(--ms-gray);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--ms-gray-dark);
+}
+
+/* LCD Display styling */
+.ms-lcd-display {
+  background-color: var(--ms-lcd-bg);
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--ms-gray-dark) var(--ms-gray-light) var(--ms-gray-light) var(--ms-gray-dark);
+  padding: 2px 4px;
+  min-width: 60px;
+}
+
+.ms-lcd-text {
+  color: var(--ms-lcd-red);
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-weight: bold;
+  font-size: 1.75rem;
+  line-height: 1;
+  text-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+  letter-spacing: 2px;
+}
+
+/* Face button */
+.ms-face-button {
+  background-color: var(--ms-gray);
+  border-width: 3px;
+  border-style: solid;
+  border-color: var(--ms-gray-light) var(--ms-gray-dark) var(--ms-gray-dark) var(--ms-gray-light);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  min-height: 42px;
+}
+
+.ms-face-button:hover {
+  background-color: #d0d0d0;
+}
+
+.ms-face-button:active {
+  border-color: var(--ms-gray-dark) var(--ms-gray-light) var(--ms-gray-light) var(--ms-gray-dark);
+}
+
+/* Classic number colors - exact Windows Minesweeper colors */
+.ms-num-1 { color: #0000ff; } /* Blue */
+.ms-num-2 { color: #008000; } /* Green */
+.ms-num-3 { color: #ff0000; } /* Red */
+.ms-num-4 { color: #000080; } /* Navy/Dark Blue */
+.ms-num-5 { color: #800000; } /* Maroon */
+.ms-num-6 { color: #008080; } /* Teal */
+.ms-num-7 { color: #000000; } /* Black */
+.ms-num-8 { color: #808080; } /* Gray */
+
+/* Mine icon styling */
+.ms-mine {
+  font-size: 1.1em;
+}
+
+/* Flag icon styling */
+.ms-flag {
+  font-size: 1em;
+}
+
+/* Title bar styling (optional Windows 95 look) */
+.ms-title-bar {
+  background: linear-gradient(90deg, #000080, #1084d0);
+  color: white;
+  padding: 3px 6px;
+  font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Classic button style for dialogs */
+.ms-button {
+  background-color: var(--ms-gray);
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--ms-gray-light) var(--ms-gray-dark) var(--ms-gray-dark) var(--ms-gray-light);
+  padding: 4px 16px;
+  font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
+  cursor: pointer;
+}
+
+.ms-button:hover {
+  background-color: #d0d0d0;
+}
+
+.ms-button:active {
+  border-color: var(--ms-gray-dark) var(--ms-gray-light) var(--ms-gray-light) var(--ms-gray-dark);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .ms-lcd-text {
+    font-size: 1.5rem;
+  }
+  
+  .ms-lcd-display {
+    min-width: 52px;
+    padding: 2px 3px;
+  }
+  
+  .ms-face-button {
+    min-width: 36px;
+    min-height: 36px;
+  }
+}
+

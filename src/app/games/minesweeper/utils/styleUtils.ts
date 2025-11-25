@@ -3,13 +3,13 @@ import { NUMBER_COLORS } from '../constants';
 import { cn } from '@/lib/utils';
 
 /**
- * Gets the className for a cell based on its state
+ * Gets the className for a cell based on its state (Classic Windows Minesweeper style)
  */
 export function getCellClassName(
   cell: Cell,
   isIncorrectFlag: boolean
 ): string {
-  const baseClasses = 'flex items-center justify-center font-bold cursor-pointer select-none transition-colors';
+  const baseClasses = 'flex items-center justify-center font-bold select-none';
 
   // Revealed cell
   if (cell.isRevealed) {
@@ -18,36 +18,36 @@ export function getCellClassName(
       if (cell.isClickedMine) {
         return cn(
           baseClasses,
-          'bg-red-500 dark:bg-red-600 text-white cursor-default'
+          'ms-cell-mine-clicked cursor-default'
         );
       }
-      // Regular mine
+      // Regular mine (revealed after game over)
       return cn(
         baseClasses,
-        'bg-gray-200 dark:bg-gray-700 cursor-default'
+        'ms-cell-revealed cursor-default'
       );
     }
 
-    // Empty revealed cell
+    // Empty revealed cell with number
     return cn(
       baseClasses,
-      'bg-gray-100 dark:bg-gray-800 cursor-default',
+      'ms-cell-revealed cursor-default',
       cell.adjacentMines > 0 && getNumberColor(cell.adjacentMines)
     );
   }
 
-  // Flagged cell with incorrect flag (red background)
+  // Flagged cell with incorrect flag (shown after game over)
   if (isIncorrectFlag) {
     return cn(
       baseClasses,
-      'bg-red-500 dark:bg-red-600 text-white'
+      'ms-cell-incorrect-flag'
     );
   }
 
-  // Unrevealed cell
+  // Unrevealed cell (raised 3D button look)
   return cn(
     baseClasses,
-    'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
+    'ms-cell-unrevealed'
   );
 }
 
@@ -79,10 +79,10 @@ export function getCellContent(cell: Cell): string {
 }
 
 /**
- * Formats time in seconds to MM:SS format
+ * Formats time in seconds to 3-digit format (like classic Minesweeper)
  */
 export function formatTime(seconds: number): string {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  // Classic minesweeper shows just seconds up to 999
+  const clamped = Math.min(seconds, 999);
+  return clamped.toString().padStart(3, '0');
 }

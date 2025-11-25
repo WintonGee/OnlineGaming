@@ -1,7 +1,5 @@
-import { Button } from '@/components/ui/button';
 import { formatTime } from '../utils/styleUtils';
 import { EMOJI_STATES } from '../constants';
-import { Flag } from 'lucide-react';
 
 interface GameHeaderProps {
   remainingMines: number;
@@ -22,40 +20,51 @@ export default function GameHeader({
 }: GameHeaderProps) {
   const emoji = gameOver ? (won ? EMOJI_STATES.won : EMOJI_STATES.lost) : EMOJI_STATES.playing;
 
+  // Format mine count (can be negative if more flags than mines)
+  const formatMineCount = (count: number): string => {
+    if (count < 0) {
+      return '-' + Math.abs(count).toString().padStart(2, '0');
+    }
+    return count.toString().padStart(3, '0');
+  };
+
   return (
-    <div className="w-full max-w-4xl mx-auto mb-4">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold">
-          Minesweeper
-        </h1>
-        <Button onClick={onOpenDifficulty} variant="outline">
-          Difficulty
-        </Button>
+    <div className="w-full max-w-4xl mx-auto mb-2">
+      {/* Title bar with Windows 95 style */}
+      <div className="ms-title-bar mb-0 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span>💣</span>
+          <span>Minesweeper</span>
+        </div>
+        <button
+          onClick={onOpenDifficulty}
+          className="ms-button text-black text-xs px-2 py-0.5"
+        >
+          Game
+        </button>
       </div>
 
-      <div className="flex items-center justify-between bg-gray-200 dark:bg-gray-800 border-2 border-gray-400 dark:border-gray-600 rounded-lg p-3 sm:p-4">
-        {/* Mine Counter */}
-        <div className="flex items-center gap-2">
-          <Flag className="w-5 h-5 sm:w-6 sm:h-6" />
-          <span className="text-xl sm:text-2xl font-bold font-mono tabular-nums">
-            {remainingMines.toString().padStart(3, '0')}
+      {/* Header panel with sunken border */}
+      <div className="ms-header-panel flex items-center justify-between">
+        {/* Mine Counter LCD */}
+        <div className="ms-lcd-display">
+          <span className="ms-lcd-text">
+            {formatMineCount(remainingMines)}
           </span>
         </div>
 
         {/* Emoji Face Button */}
-        <Button
+        <button
           onClick={onReset}
-          variant="ghost"
-          size="icon"
-          className="text-3xl sm:text-4xl h-12 w-12 sm:h-14 sm:w-14"
+          className="ms-face-button text-2xl sm:text-3xl"
           aria-label="New game"
         >
           {emoji}
-        </Button>
+        </button>
 
-        {/* Timer */}
-        <div className="flex items-center gap-2">
-          <span className="text-xl sm:text-2xl font-bold font-mono tabular-nums">
+        {/* Timer LCD */}
+        <div className="ms-lcd-display">
+          <span className="ms-lcd-text">
             {formatTime(time)}
           </span>
         </div>

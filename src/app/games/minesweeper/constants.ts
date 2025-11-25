@@ -18,15 +18,16 @@ export const BEST_TIMES_KEY = 'minesweeper-best-times';
 
 export const LONG_PRESS_DURATION = 500; // milliseconds
 
+// Classic Windows Minesweeper number colors
 export const NUMBER_COLORS = {
-  1: 'text-blue-600 dark:text-blue-400',
-  2: 'text-green-600 dark:text-green-400',
-  3: 'text-red-600 dark:text-red-400',
-  4: 'text-purple-600 dark:text-purple-400',
-  5: 'text-yellow-700 dark:text-yellow-500',
-  6: 'text-cyan-600 dark:text-cyan-400',
-  7: 'text-gray-900 dark:text-gray-100',
-  8: 'text-gray-600 dark:text-gray-400',
+  1: 'ms-num-1', // Blue (#0000ff)
+  2: 'ms-num-2', // Green (#008000)
+  3: 'ms-num-3', // Red (#ff0000)
+  4: 'ms-num-4', // Navy (#000080)
+  5: 'ms-num-5', // Maroon (#800000)
+  6: 'ms-num-6', // Teal (#008080)
+  7: 'ms-num-7', // Black (#000000)
+  8: 'ms-num-8', // Gray (#808080)
 } as const;
 
 export const EMOJI_STATES = {

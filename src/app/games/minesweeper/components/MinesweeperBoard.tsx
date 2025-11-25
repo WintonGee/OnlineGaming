@@ -33,20 +33,21 @@ const MinesweeperBoard = memo(function MinesweeperBoard({
   // Calculate cell size based on board dimensions
   const getCellSize = () => {
     // For mobile, ensure board fits within screen
-    if (width <= 9) return 'w-10 h-10 sm:w-12 sm:h-12 text-lg sm:text-xl';
-    if (width <= 16) return 'w-8 h-8 sm:w-10 sm:h-10 text-base sm:text-lg';
-    return 'w-6 h-6 sm:w-8 sm:h-8 text-sm sm:text-base';
+    if (width <= 9) return 'w-8 h-8 sm:w-9 sm:h-9 text-base sm:text-lg';
+    if (width <= 16) return 'w-7 h-7 sm:w-8 sm:h-8 text-sm sm:text-base';
+    return 'w-5 h-5 sm:w-6 sm:h-6 text-xs sm:text-sm';
   };
 
   const cellSizeClass = getCellSize();
 
   return (
-    <div className="flex justify-center items-center w-full overflow-auto p-2">
-      <div className="inline-block">
+    <div className="flex justify-center items-center w-full overflow-auto p-1">
+      <div className="ms-board-container inline-block">
         <div
-          className="grid gap-[1px] bg-gray-400 dark:bg-gray-900 border-2 border-gray-400 dark:border-gray-900 rounded"
+          className="grid"
           style={{
             gridTemplateColumns: `repeat(${width}, minmax(0, 1fr))`,
+            gap: 0,
           }}
         >
           {board.map((row, rowIndex) =>

@@ -1,5 +1,6 @@
 'use client';
 
+import './styles.css';
 import { useGameLogic } from './hooks/useGameLogic';
 import GameHeader from './components/GameHeader';
 import MinesweeperBoard from './components/MinesweeperBoard';
@@ -34,9 +35,10 @@ export default function MinesweeperPage() {
   } = useGameLogic();
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="container mx-auto px-4 py-6 sm:py-8 lg:py-12">
-        <div className="flex flex-col items-center">
+    <div className="min-h-screen bg-[#008080] text-foreground flex items-start justify-center pt-4 sm:pt-8 lg:pt-12">
+      <div className="flex flex-col items-center">
+        {/* Classic Windows-style game container */}
+        <div className="ms-container">
           <GameHeader
             remainingMines={remainingMines}
             time={time}
@@ -52,43 +54,43 @@ export default function MinesweeperPage() {
             onCellClick={handleCellClick}
             onCellRightClick={handleCellRightClick}
           />
-
-          <InputModeToggle
-            mode={inputMode}
-            onToggle={toggleMode}
-            hasMouse={hasMouse}
-          />
-
-          <DifficultyDialog
-            open={showDifficultyDialog}
-            currentDifficulty={difficulty}
-            currentCustomSettings={customSettings}
-            onClose={() => setShowDifficultyDialog(false)}
-            onStartGame={(newDifficulty, newCustomSettings) => {
-              handleNewGame(newDifficulty, newCustomSettings);
-              setShowDifficultyDialog(false);
-            }}
-          />
-
-          <WinDialog
-            open={showWinDialog}
-            time={time}
-            difficulty={difficulty}
-            bestTimes={bestTimes}
-            onNewGame={() => {
-              handleNewGame();
-              setShowWinDialog(false);
-            }}
-          />
-
-          <GameOverDialog
-            open={showGameOverDialog}
-            onNewGame={() => {
-              handleNewGame();
-              setShowGameOverDialog(false);
-            }}
-          />
         </div>
+
+        <InputModeToggle
+          mode={inputMode}
+          onToggle={toggleMode}
+          hasMouse={hasMouse}
+        />
+
+        <DifficultyDialog
+          open={showDifficultyDialog}
+          currentDifficulty={difficulty}
+          currentCustomSettings={customSettings}
+          onClose={() => setShowDifficultyDialog(false)}
+          onStartGame={(newDifficulty, newCustomSettings) => {
+            handleNewGame(newDifficulty, newCustomSettings);
+            setShowDifficultyDialog(false);
+          }}
+        />
+
+        <WinDialog
+          open={showWinDialog}
+          time={time}
+          difficulty={difficulty}
+          bestTimes={bestTimes}
+          onNewGame={() => {
+            handleNewGame();
+            setShowWinDialog(false);
+          }}
+        />
+
+        <GameOverDialog
+          open={showGameOverDialog}
+          onNewGame={() => {
+            handleNewGame();
+            setShowGameOverDialog(false);
+          }}
+        />
       </div>
     </div>
   );
