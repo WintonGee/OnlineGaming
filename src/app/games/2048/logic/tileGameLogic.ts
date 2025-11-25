@@ -176,10 +176,13 @@ export function performTileMove(
       // Only add the tile if it didn't merge
       if (!mergedPositions.has(`${farthestPos.row},${farthestPos.col}`)) {
         const movedTile: Tile = {
-          ...tile,
+          id: tile.id,
+          value: tile.value,
           position: farthestPos,
           previousPosition: tile.position,
+          // Clear animation flags - don't carry them over from previous moves
           isNew: false,
+          mergedFrom: undefined,
         };
 
         if (farthestPos.row !== row || farthestPos.col !== col) {

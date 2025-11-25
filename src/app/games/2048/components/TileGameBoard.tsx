@@ -139,10 +139,10 @@ export default function TileGameBoard({ tiles }: TileGameBoardProps) {
 
   return (
     <div className="mx-auto max-w-md w-full px-4 sm:px-0">
-      {/* Grid container with classic 2048 brown background */}
+      {/* Grid container with shadow and border like Sudoku */}
       <div
-        className="relative rounded-md"
-        style={{ backgroundColor: "#bbada0", padding: `${padding}px` }}
+        className="relative rounded-2xl bg-[#bbada0] dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700"
+        style={{ padding: `${padding}px` }}
       >
         {/* Background grid cells */}
         <div
@@ -152,8 +152,7 @@ export default function TileGameBoard({ tiles }: TileGameBoardProps) {
           {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, index) => (
             <div
               key={index}
-              className="aspect-square rounded-md"
-              style={{ backgroundColor: "#cdc1b4" }}
+              className="aspect-square rounded-md bg-[#cdc1b4] dark:bg-gray-700"
             />
           ))}
         </div>
@@ -165,11 +164,6 @@ export default function TileGameBoard({ tiles }: TileGameBoardProps) {
           ))}
         </div>
       </div>
-
-      {/* Instructions text */}
-      <p className="text-center mt-4 text-sm" style={{ color: "#776e65" }}>
-        Use arrow keys or swipe to move tiles
-      </p>
     </div>
   );
 }
