@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, RefObject } from "react";
 import { Direction } from "../types";
 import { SWIPE_THRESHOLD } from "../constants";
 
 interface UseSwipeInputProps {
   onMove: (direction: Direction) => void;
   enabled?: boolean;
+  elementRef: RefObject<HTMLElement | null>;
 }
 
 interface SwipeStart {
@@ -18,8 +19,13 @@ interface SwipeStart {
 /**
  * Custom hook for detecting swipe gestures
  * Optimized for mobile with smooth touch handling
+ * Only detects swipes that start within the referenced element
  */
-export function useSwipeInput({ onMove, enabled = true }: UseSwipeInputProps) {
+export function useSwipeInput({
+  onMove,
+  enabled = true,
+  elementRef,
+}: UseSwipeInputProps) {
   useEffect(() => {
     if (!enabled) {
       return;
@@ -27,9 +33,24 @@ export function useSwipeInput({ onMove, enabled = true }: UseSwipeInputProps) {
 
     let swipeStart: SwipeStart | null = null;
     let isSwipe = false;
+    let touchStartedInElement = false;
 
     const handleTouchStart = (event: TouchEvent) => {
+      // Only track swipes that start within the board element
+      const element = elementRef.current;
+      if (!element) return;
+
       const touch = event.touches[0];
+      const rect = element.getBoundingClientRect();
+
+      touchStartedInElement =
+        touch.clientX >= rect.left &&
+        touch.clientX <= rect.right &&
+        touch.clientY >= rect.top &&
+        touch.clientY <= rect.bottom;
+
+      if (!touchStartedInElement) return;
+
       swipeStart = {
         x: touch.clientX,
         y: touch.clientY,
@@ -39,7 +60,7 @@ export function useSwipeInput({ onMove, enabled = true }: UseSwipeInputProps) {
     };
 
     const handleTouchMove = (event: TouchEvent) => {
-      if (!swipeStart) return;
+      if (!swipeStart || !touchStartedInElement) return;
 
       const touch = event.touches[0];
       const deltaX = Math.abs(touch.clientX - swipeStart.x);
@@ -53,7 +74,11 @@ export function useSwipeInput({ onMove, enabled = true }: UseSwipeInputProps) {
     };
 
     const handleTouchEnd = (event: TouchEvent) => {
-      if (!swipeStart) return;
+      if (!swipeStart || !touchStartedInElement) {
+        swipeStart = null;
+        touchStartedInElement = false;
+        return;
+      }
 
       const touch = event.changedTouches[0];
       const deltaX = touch.clientX - swipeStart.x;
@@ -61,8 +86,9 @@ export function useSwipeInput({ onMove, enabled = true }: UseSwipeInputProps) {
       const absDeltaX = Math.abs(deltaX);
       const absDeltaY = Math.abs(deltaY);
 
-      // Reset swipe start
+      // Reset swipe state
       swipeStart = null;
+      touchStartedInElement = false;
 
       // Only process if it was a swipe gesture
       if (!isSwipe) return;
@@ -85,6 +111,7 @@ export function useSwipeInput({ onMove, enabled = true }: UseSwipeInputProps) {
     const handleTouchCancel = () => {
       swipeStart = null;
       isSwipe = false;
+      touchStartedInElement = false;
     };
 
     // Add event listeners
@@ -104,5 +131,5 @@ export function useSwipeInput({ onMove, enabled = true }: UseSwipeInputProps) {
       document.removeEventListener("touchend", handleTouchEnd);
       document.removeEventListener("touchcancel", handleTouchCancel);
     };
-  }, [onMove, enabled]);
+  }, [onMove, enabled, elementRef]);
 }

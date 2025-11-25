@@ -23,7 +23,7 @@ export default function GameOverDialog({
   onNewGame,
 }: GameOverDialogProps) {
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onNewGame()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex justify-center mb-4">

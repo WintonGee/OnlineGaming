@@ -2,7 +2,6 @@
 
 import { useTileGameState } from "./useTileGameState";
 import { useKeyboardInput } from "./useKeyboardInput";
-import { useSwipeInput } from "./useSwipeInput";
 import { useDialogState } from "./useDialogState";
 
 /**
@@ -13,13 +12,8 @@ export function useGameLogic() {
   const gameState = useTileGameState();
   const dialogState = useDialogState();
 
-  // Enable keyboard and swipe input
+  // Enable keyboard input (swipe is handled in TileGameBoard)
   useKeyboardInput({
-    onMove: gameState.handleMove,
-    enabled: true,
-  });
-
-  useSwipeInput({
     onMove: gameState.handleMove,
     enabled: true,
   });

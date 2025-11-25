@@ -3,7 +3,6 @@
 import { useGameLogic } from "./hooks/useGameLogic";
 import TileGameBoard from "./components/TileGameBoard";
 import GameHeader from "./components/GameHeader";
-import GameControls from "./components/GameControls";
 import WinDialog from "./components/WinDialog";
 import GameOverDialog from "./components/GameOverDialog";
 import InstructionsDialog from "./components/InstructionsDialog";
@@ -35,9 +34,7 @@ export default function Game2048Page() {
           onShowInstructions={openInstructions}
         />
 
-        <TileGameBoard tiles={tiles} />
-
-        <GameControls onMove={handleMove} />
+        <TileGameBoard tiles={tiles} onMove={handleMove} />
 
         {/* Win Dialog - only show if won and not continuing */}
         <WinDialog

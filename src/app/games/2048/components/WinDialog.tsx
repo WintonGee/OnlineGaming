@@ -22,8 +22,15 @@ export default function WinDialog({
   onContinue,
   onNewGame,
 }: WinDialogProps) {
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      // When closing, default to continuing the game
+      onContinue();
+    }
+  };
+
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex justify-center mb-4">
