@@ -17,7 +17,7 @@ interface SwipeStart {
 
 /**
  * Custom hook for detecting swipe gestures
- * Simplified and optimized for better performance
+ * Optimized for mobile with smooth touch handling
  */
 export function useSwipeInput({ onMove, enabled = true }: UseSwipeInputProps) {
   useEffect(() => {
@@ -26,6 +26,7 @@ export function useSwipeInput({ onMove, enabled = true }: UseSwipeInputProps) {
     }
 
     let swipeStart: SwipeStart | null = null;
+    let isSwipe = false;
 
     const handleTouchStart = (event: TouchEvent) => {
       const touch = event.touches[0];
@@ -34,6 +35,21 @@ export function useSwipeInput({ onMove, enabled = true }: UseSwipeInputProps) {
         y: touch.clientY,
         time: Date.now(),
       };
+      isSwipe = false;
+    };
+
+    const handleTouchMove = (event: TouchEvent) => {
+      if (!swipeStart) return;
+
+      const touch = event.touches[0];
+      const deltaX = Math.abs(touch.clientX - swipeStart.x);
+      const deltaY = Math.abs(touch.clientY - swipeStart.y);
+
+      // If we've moved enough to be considered a swipe, prevent scrolling
+      if (deltaX > 5 || deltaY > 5) {
+        isSwipe = true;
+        event.preventDefault();
+      }
     };
 
     const handleTouchEnd = (event: TouchEvent) => {
@@ -48,6 +64,9 @@ export function useSwipeInput({ onMove, enabled = true }: UseSwipeInputProps) {
       // Reset swipe start
       swipeStart = null;
 
+      // Only process if it was a swipe gesture
+      if (!isSwipe) return;
+
       // Check if swipe distance exceeds threshold
       if (Math.max(absDeltaX, absDeltaY) < SWIPE_THRESHOLD) {
         return;
@@ -59,19 +78,29 @@ export function useSwipeInput({ onMove, enabled = true }: UseSwipeInputProps) {
       } else {
         onMove(deltaY > 0 ? "down" : "up");
       }
+
+      isSwipe = false;
     };
 
     const handleTouchCancel = () => {
       swipeStart = null;
+      isSwipe = false;
     };
 
     // Add event listeners
-    document.addEventListener("touchstart", handleTouchStart, { passive: true });
+    // touchmove needs to be non-passive so we can preventDefault
+    document.addEventListener("touchstart", handleTouchStart, {
+      passive: true,
+    });
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
     document.addEventListener("touchend", handleTouchEnd, { passive: true });
-    document.addEventListener("touchcancel", handleTouchCancel, { passive: true });
+    document.addEventListener("touchcancel", handleTouchCancel, {
+      passive: true,
+    });
 
     return () => {
       document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("touchend", handleTouchEnd);
       document.removeEventListener("touchcancel", handleTouchCancel);
     };

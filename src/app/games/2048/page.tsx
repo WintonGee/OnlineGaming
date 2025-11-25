@@ -26,7 +26,7 @@ export default function Game2048Page() {
   } = useGameLogic();
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black py-8 px-4">
+    <div className="min-h-screen bg-white dark:bg-black pt-8 pb-0 px-4">
       <div className="max-w-2xl mx-auto">
         <GameHeader
           score={score}

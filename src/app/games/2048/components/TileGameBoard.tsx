@@ -142,7 +142,10 @@ export default function TileGameBoard({ tiles }: TileGameBoardProps) {
       {/* Grid container with shadow and border like Sudoku */}
       <div
         className="relative rounded-2xl bg-[#bbada0] dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700"
-        style={{ padding: `${padding}px` }}
+        style={{ 
+          padding: `${padding}px`,
+          touchAction: "none" // Prevent default touch behaviors (scrolling, zooming)
+        }}
       >
         {/* Background grid cells */}
         <div

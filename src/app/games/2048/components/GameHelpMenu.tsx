@@ -55,18 +55,18 @@ export default function GameHelpMenu({
         type="button"
         onClick={() => setOpen((prev) => !prev)}
         className={cn(
-          "flex items-center gap-2 rounded-2xl border border-gray-200 bg-white/80 px-4 py-2 text-sm font-semibold text-black shadow-sm transition-colors dark:border-gray-700 dark:bg-black/40 dark:text-white",
+          "flex items-center gap-1.5 sm:gap-2 rounded-2xl border border-gray-200 bg-white/80 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-black shadow-sm transition-colors dark:border-gray-700 dark:bg-black/40 dark:text-white",
           "hover:bg-gray-100 dark:hover:bg-gray-800"
         )}
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label="Help menu"
       >
-        <Wand2 className="h-4 w-4" />
-        Help
+        <Wand2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+        <span className="whitespace-nowrap">Help</span>
         <ChevronDown
           className={cn(
-            "h-4 w-4 transition-transform",
+            "h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform flex-shrink-0",
             open ? "rotate-180" : "rotate-0"
           )}
         />
