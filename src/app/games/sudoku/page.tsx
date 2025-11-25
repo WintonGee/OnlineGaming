@@ -1,29 +1,17 @@
 "use client";
 
-import { Difficulty } from "./types";
 import SudokuGrid from "./components/SudokuGrid";
 import SudokuControls from "./components/SudokuControls";
 import InstructionsDialog from "./components/InstructionsDialog";
 import ConfirmationDialog from "./components/ConfirmationDialog";
-import SudokuHintMenu from "./components/SudokuHintMenu";
 import SudokuHelperToast from "./components/SudokuHelperToast";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Trophy } from "lucide-react";
-import { cn } from "@/lib/utils";
+import WinDialog from "./components/WinDialog";
+import SudokuHeader from "./components/SudokuHeader";
+import SudokuToolbar from "./components/SudokuToolbar";
+import SudokuActionBar from "./components/SudokuActionBar";
 import { useSudokuGame } from "./hooks/useSudokuGame";
 import { useKeyboardNavigation } from "./hooks/useKeyboardNavigation";
 import { useDialogState } from "./hooks/useDialogState";
-
-const DIFFICULTY_OPTIONS: Difficulty[] = ["Easy", "Medium", "Hard"];
 
 export default function SudokuPage() {
   const {
@@ -112,69 +100,31 @@ export default function SudokuPage() {
       >
         {/* Header */}
         <div className="mb-3 sm:mb-8 lg:mb-12 flex flex-col gap-2 sm:gap-4 lg:gap-6">
-          <div className="text-center">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold text-black dark:text-white mb-1 sm:mb-3">
-              Sudoku
-            </h1>
-          </div>
+          <SudokuHeader />
 
           {/* Difficulty Toolbar */}
           <div className="flex flex-col gap-2 sm:gap-4">
             <div className="flex flex-col lg:flex-row w-full items-center gap-2 lg:gap-4 justify-between">
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2">
-                <div className="flex items-center gap-2">
-                  {DIFFICULTY_OPTIONS.map((level) => (
-                    <button
-                      key={level}
-                      onClick={() => handleDifficultyChange(level)}
-                      className={cn(
-                        "rounded-full border px-6 py-2 text-sm font-semibold transition-colors",
-                        level === selectedDifficulty
-                          ? "bg-black text-white dark:bg-white dark:text-black border-black dark:border-white"
-                          : "bg-white text-black border-gray-300 hover:bg-gray-100 dark:bg-black dark:text-white dark:border-gray-700 dark:hover:bg-gray-800"
-                      )}
-                    >
-                      {level}
-                    </button>
-                  ))}
-                </div>
-                <Button
-                  onClick={handleNewGame}
-                  disabled={isGenerating}
-                  className="rounded-full px-6 py-2 text-sm font-semibold uppercase tracking-wide ml-2 lg:ml-4 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white border-2 border-gray-400 dark:border-gray-500 hover:border-gray-600 dark:hover:border-gray-400 transition-all"
-                >
-                  {isGenerating ? "Preparing..." : "New Puzzle"}
-                </Button>
-              </div>
+              <SudokuToolbar
+                selectedDifficulty={selectedDifficulty}
+                onDifficultyChange={handleDifficultyChange}
+                onNewGame={handleNewGame}
+                isGenerating={isGenerating}
+              />
 
-              <div className="flex items-center gap-3">
-                <SudokuHintMenu
-                  disabled={isMenuDisabled}
-                  disableRevealCell={!canRevealCell}
-                  disablePuzzleWideActions={disablePuzzleWideActions}
-                  onHowToPlay={showInstructionsDialog}
-                  onCheckCell={() => runHelperAction(handleCheckCell)}
-                  onCheckPuzzle={() => runHelperAction(handleCheckPuzzle)}
-                  onRevealCell={() => runHelperAction(handleRevealCell)}
-                  onRevealPuzzle={() => showConfirmDialog("reveal")}
-                  onResetPuzzle={() => showConfirmDialog("reset")}
-                />
-                <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-black/40 px-4 py-2">
-                  <Checkbox
-                    id="auto-candidate-toolbar"
-                    checked={autoCandidateMode}
-                    onCheckedChange={(checked) =>
-                      setAutoCandidateMode(checked === true)
-                    }
-                  />
-                  <Label
-                    htmlFor="auto-candidate-toolbar"
-                    className="text-sm font-medium text-black dark:text-white cursor-pointer"
-                  >
-                    Auto Candidate Mode
-                  </Label>
-                </div>
-              </div>
+              <SudokuActionBar
+                isMenuDisabled={isMenuDisabled}
+                canRevealCell={canRevealCell}
+                disablePuzzleWideActions={disablePuzzleWideActions}
+                autoCandidateMode={autoCandidateMode}
+                onAutoCandidateModeChange={setAutoCandidateMode}
+                onHowToPlay={showInstructionsDialog}
+                onCheckCell={() => runHelperAction(handleCheckCell)}
+                onCheckPuzzle={() => runHelperAction(handleCheckPuzzle)}
+                onRevealCell={() => runHelperAction(handleRevealCell)}
+                onRevealPuzzle={() => showConfirmDialog("reveal")}
+                onResetPuzzle={() => showConfirmDialog("reset")}
+              />
             </div>
           </div>
         </div>
@@ -222,26 +172,7 @@ export default function SudokuPage() {
       </div>
 
       {/* Win Dialog */}
-      <Dialog open={showWinDialog} onOpenChange={setShowWinDialog}>
-        <DialogContent className="sm:max-w-md bg-white dark:bg-black border-gray-300 dark:border-gray-700">
-          <DialogHeader>
-            <div className="flex items-center justify-center mb-4">
-              <div className="bg-black dark:bg-white rounded-full p-3">
-                <Trophy className="h-12 w-12 text-white dark:text-black" />
-              </div>
-            </div>
-            <DialogTitle className="text-center text-2xl font-serif text-black dark:text-white">
-              Congratulations!
-            </DialogTitle>
-            <DialogDescription className="text-center text-base text-gray-700 dark:text-gray-300">
-              You solved the puzzle correctly!
-              <br />
-              <br />
-              Click &quot;New Game&quot; to try another puzzle.
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      <WinDialog open={showWinDialog} onOpenChange={setShowWinDialog} />
 
       {/* Confirmation Dialog */}
       <ConfirmationDialog
