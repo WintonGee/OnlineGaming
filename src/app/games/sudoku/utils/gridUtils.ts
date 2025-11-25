@@ -97,10 +97,10 @@ export function getCellBorderClasses(
   borderBottom: string;
 } {
   return {
-    borderTop: rowIndex % BOX_SIZE === 0 ? "border-t-[1.5px]" : "border-t",
-    borderLeft: colIndex % BOX_SIZE === 0 ? "border-l-[1.5px]" : "border-l",
-    borderRight: colIndex === 8 ? "border-r-[1.5px]" : "",
-    borderBottom: rowIndex === 8 ? "border-b-[1.5px]" : "",
+    borderTop: rowIndex % BOX_SIZE === 0 ? "border-t-[3px]" : "border-t",
+    borderLeft: colIndex % BOX_SIZE === 0 ? "border-l-[3px]" : "border-l",
+    borderRight: colIndex === 8 ? "border-r-[3px]" : "",
+    borderBottom: rowIndex === 8 ? "border-b-[3px]" : "",
   };
 }
 
