@@ -8,7 +8,7 @@ import { CellPosition, Difficulty, Grid, InputMode } from "../types";
  */
 export function useSudokuState() {
   const [selectedDifficulty, setSelectedDifficulty] =
-    useState<Difficulty>("Medium");
+    useState<Difficulty>("Easy");
   const [initialGrid, setInitialGrid] = useState<Grid>([]);
   const [currentGrid, setCurrentGrid] = useState<Grid>([]);
   const [solution, setSolution] = useState<Grid>([]);

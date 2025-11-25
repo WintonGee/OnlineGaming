@@ -25,7 +25,8 @@ export default function GameHeader({
         </h1>
       </div>
 
-      {/* Buttons and scores row */}
+      {/* Buttons and scores row - same width constraint as board */}
+      <div className="mx-auto max-w-md w-full px-4 sm:px-0">
       <div className="flex items-center justify-between mb-4">
         <div className="flex gap-3">
           <div className="bg-gray-200 dark:bg-gray-800 rounded-lg px-4 py-2 min-w-[100px]">
@@ -66,6 +67,7 @@ export default function GameHeader({
           >
             <RotateCcw className="h-5 w-5" />
           </Button>
+          </div>
         </div>
       </div>
     </div>

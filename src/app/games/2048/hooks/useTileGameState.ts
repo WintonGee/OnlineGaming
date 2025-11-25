@@ -6,15 +6,21 @@ import { initializeTiles, performTileMove, canMoveTiles } from "../logic/tileGam
 import { BEST_SCORE_KEY } from "../constants";
 
 export function useTileGameState() {
-  const [tiles, setTiles] = useState<Tile[]>(() => initializeTiles());
+  // Initialize with empty array to avoid hydration mismatch
+  // (initializeTiles uses random values that differ between server and client)
+  const [tiles, setTiles] = useState<Tile[]>([]);
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
   const [keepPlaying, setKeepPlaying] = useState(false);
 
-  // Load best score from localStorage on mount
+  // Initialize tiles and load best score on mount (client-side only)
   useEffect(() => {
+    // Initialize tiles
+    setTiles(initializeTiles());
+
+    // Load best score from localStorage
     if (typeof window !== "undefined") {
       const savedBestScore = localStorage.getItem(BEST_SCORE_KEY);
       if (savedBestScore) {
