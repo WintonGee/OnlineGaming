@@ -1,32 +1,57 @@
 /* Animations for 2048 tiles */
+/* Optimized for mobile performance with GPU-accelerated properties */
 
+/* Optimized position transitions */
+.tile-position {
+  /* Only transition position properties - much faster than transition-all */
+  transition: left 100ms ease-out, top 100ms ease-out;
+  /* Force GPU compositing for smoother animations */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  /* Prevent subpixel rendering issues on mobile */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* New tile pop-in animation */
 @keyframes tileNew {
   0% {
-    transform: scale(0);
+    scale: 0;
     opacity: 0;
   }
   100% {
-    transform: scale(1);
+    scale: 1;
     opacity: 1;
   }
 }
 
+/* Merge pulse animation */
 @keyframes tileMerge {
   0% {
-    transform: scale(1);
+    scale: 1;
   }
   50% {
-    transform: scale(1.15);
+    scale: 1.15;
   }
   100% {
-    transform: scale(1);
+    scale: 1;
   }
 }
 
 .tile-new {
-  animation: tileNew 100ms ease-out;
+  animation: tileNew 100ms ease-out forwards;
 }
 
 .tile-merged {
   animation: tileMerge 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .tile-position {
+    transition: none;
+  }
+  .tile-new,
+  .tile-merged {
+    animation: none;
+  }
 }

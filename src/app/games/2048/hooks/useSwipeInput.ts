@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, RefObject } from "react";
+import { useEffect, useRef, useCallback, RefObject } from "react";
 import { Direction } from "../types";
 import { SWIPE_THRESHOLD } from "../constants";
 
@@ -10,11 +10,15 @@ interface UseSwipeInputProps {
   elementRef: RefObject<HTMLElement | null>;
 }
 
-interface SwipeStart {
-  x: number;
-  y: number;
-  time: number;
+interface SwipeState {
+  startX: number;
+  startY: number;
+  isSwipe: boolean;
+  touchStartedInElement: boolean;
 }
+
+// Minimum movement to consider it a swipe (prevents accidental triggers)
+const MIN_SWIPE_START = 10;
 
 /**
  * Custom hook for detecting swipe gestures
@@ -26,72 +30,99 @@ export function useSwipeInput({
   enabled = true,
   elementRef,
 }: UseSwipeInputProps) {
+  // Use refs to avoid recreating handlers on every render
+  const onMoveRef = useRef(onMove);
+  const swipeStateRef = useRef<SwipeState | null>(null);
+  const cachedRectRef = useRef<DOMRect | null>(null);
+
+  // Keep onMove ref updated
+  useEffect(() => {
+    onMoveRef.current = onMove;
+  }, [onMove]);
+
+  // Cache bounding rect - update on resize/scroll
+  const updateCachedRect = useCallback(() => {
+    const element = elementRef.current;
+    if (element) {
+      cachedRectRef.current = element.getBoundingClientRect();
+    }
+  }, [elementRef]);
+
   useEffect(() => {
     if (!enabled) {
       return;
     }
 
-    let swipeStart: SwipeStart | null = null;
-    let isSwipe = false;
-    let touchStartedInElement = false;
+    // Initial rect calculation
+    updateCachedRect();
 
     const handleTouchStart = (event: TouchEvent) => {
-      // Only track swipes that start within the board element
       const element = elementRef.current;
       if (!element) return;
 
       const touch = event.touches[0];
-      const rect = element.getBoundingClientRect();
 
-      touchStartedInElement =
+      // Use cached rect, refresh if null
+      let rect = cachedRectRef.current;
+      if (!rect) {
+        rect = element.getBoundingClientRect();
+        cachedRectRef.current = rect;
+      }
+
+      const touchStartedInElement =
         touch.clientX >= rect.left &&
         touch.clientX <= rect.right &&
         touch.clientY >= rect.top &&
         touch.clientY <= rect.bottom;
 
-      if (!touchStartedInElement) return;
+      if (!touchStartedInElement) {
+        swipeStateRef.current = null;
+        return;
+      }
 
-      swipeStart = {
-        x: touch.clientX,
-        y: touch.clientY,
-        time: Date.now(),
+      swipeStateRef.current = {
+        startX: touch.clientX,
+        startY: touch.clientY,
+        isSwipe: false,
+        touchStartedInElement: true,
       };
-      isSwipe = false;
     };
 
     const handleTouchMove = (event: TouchEvent) => {
-      if (!swipeStart || !touchStartedInElement) return;
+      const state = swipeStateRef.current;
+      if (!state || !state.touchStartedInElement) return;
 
       const touch = event.touches[0];
-      const deltaX = Math.abs(touch.clientX - swipeStart.x);
-      const deltaY = Math.abs(touch.clientY - swipeStart.y);
+      const deltaX = Math.abs(touch.clientX - state.startX);
+      const deltaY = Math.abs(touch.clientY - state.startY);
 
       // If we've moved enough to be considered a swipe, prevent scrolling
-      if (deltaX > 5 || deltaY > 5) {
-        isSwipe = true;
+      // Increased threshold slightly for better differentiation from scrolling
+      if (deltaX > MIN_SWIPE_START || deltaY > MIN_SWIPE_START) {
+        state.isSwipe = true;
         event.preventDefault();
       }
     };
 
     const handleTouchEnd = (event: TouchEvent) => {
-      if (!swipeStart || !touchStartedInElement) {
-        swipeStart = null;
-        touchStartedInElement = false;
+      const state = swipeStateRef.current;
+      if (!state || !state.touchStartedInElement) {
+        swipeStateRef.current = null;
         return;
       }
 
       const touch = event.changedTouches[0];
-      const deltaX = touch.clientX - swipeStart.x;
-      const deltaY = touch.clientY - swipeStart.y;
+      const deltaX = touch.clientX - state.startX;
+      const deltaY = touch.clientY - state.startY;
       const absDeltaX = Math.abs(deltaX);
       const absDeltaY = Math.abs(deltaY);
+      const wasSwipe = state.isSwipe;
 
-      // Reset swipe state
-      swipeStart = null;
-      touchStartedInElement = false;
+      // Reset state immediately
+      swipeStateRef.current = null;
 
       // Only process if it was a swipe gesture
-      if (!isSwipe) return;
+      if (!wasSwipe) return;
 
       // Check if swipe distance exceeds threshold
       if (Math.max(absDeltaX, absDeltaY) < SWIPE_THRESHOLD) {
@@ -99,19 +130,23 @@ export function useSwipeInput({
       }
 
       // Determine swipe direction based on dominant axis
-      if (absDeltaX > absDeltaY) {
-        onMove(deltaX > 0 ? "right" : "left");
-      } else {
-        onMove(deltaY > 0 ? "down" : "up");
-      }
-
-      isSwipe = false;
+      // Use requestAnimationFrame to batch with next paint
+      requestAnimationFrame(() => {
+        if (absDeltaX > absDeltaY) {
+          onMoveRef.current(deltaX > 0 ? "right" : "left");
+        } else {
+          onMoveRef.current(deltaY > 0 ? "down" : "up");
+        }
+      });
     };
 
     const handleTouchCancel = () => {
-      swipeStart = null;
-      isSwipe = false;
-      touchStartedInElement = false;
+      swipeStateRef.current = null;
+    };
+
+    // Update cached rect on scroll/resize (debounced via passive)
+    const handleScrollOrResize = () => {
+      cachedRectRef.current = null; // Invalidate cache, will refresh on next touchstart
     };
 
     // Add event listeners
@@ -124,12 +159,16 @@ export function useSwipeInput({
     document.addEventListener("touchcancel", handleTouchCancel, {
       passive: true,
     });
+    window.addEventListener("scroll", handleScrollOrResize, { passive: true });
+    window.addEventListener("resize", handleScrollOrResize, { passive: true });
 
     return () => {
       document.removeEventListener("touchstart", handleTouchStart);
       document.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("touchend", handleTouchEnd);
       document.removeEventListener("touchcancel", handleTouchCancel);
+      window.removeEventListener("scroll", handleScrollOrResize);
+      window.removeEventListener("resize", handleScrollOrResize);
     };
-  }, [onMove, enabled, elementRef]);
+  }, [enabled, elementRef, updateCachedRect]);
 }

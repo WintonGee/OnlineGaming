@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, memo } from "react";
 import { Tile, Direction } from "../types";
 import { GRID_SIZE } from "../constants";
 import { cn } from "@/lib/utils";
@@ -17,28 +17,41 @@ interface TileGameBoardProps {
   onMove: (direction: Direction) => void;
 }
 
+interface TileComponentProps {
+  tile: Tile;
+  gap: number;
+}
+
 /**
- * Individual tile component with animations
+ * Individual tile component with GPU-accelerated animations
+ * Memoized to prevent unnecessary re-renders
  */
-function TileComponent({ tile, gap }: { tile: Tile; gap: number }) {
+const TileComponent = memo(function TileComponent({ tile, gap }: TileComponentProps) {
   const isMerged = tile.mergedFrom && tile.mergedFrom.length > 0;
 
-  // Calculate tile size: (container width - total gaps) / 4
-  // There are 3 gaps between 4 tiles
-  const tileSize = `calc((100% - ${gap * 3}px) / 4)`;
-
-  // Calculate position: (tile width + gap) * index
-  const getCellPosition = (index: number) => {
+  // Calculate tile size and position
+  // Tile width = (100% - 3 gaps) / 4
+  // Position = col/row * (tile width + gap)
+  const gapTotal = gap * 3; // Total gap space between 4 tiles
+  const tileSize = `calc((100% - ${gapTotal}px) / 4)`;
+  
+  // Position calculation: index * (25% of remaining space + gap offset)
+  // This correctly positions each tile accounting for gaps
+  const getPosition = (index: number) => {
     if (index === 0) return "0px";
-    return `calc((100% - ${gap * 3}px) / 4 * ${index} + ${gap * index}px)`;
+    // Position = index * tile_width + index * gap
+    // = index * ((100% - 3*gap) / 4) + index * gap
+    // = index * ((100% - 3*gap) / 4 + gap)
+    // = index * ((100% - 3*gap + 4*gap) / 4)
+    // = index * ((100% + gap) / 4)
+    return `calc(${index} * (100% + ${gap}px) / 4)`;
   };
 
   return (
     <div
-      key={tile.id}
       className={cn(
         "absolute rounded-md flex items-center justify-center font-bold",
-        "transition-all duration-100 ease-out",
+        "tile-position", // Custom class for optimized transitions
         getTileTextColor(tile.value),
         getTileFontSize(tile.value),
         tile.isNew && "tile-new",
@@ -47,15 +60,18 @@ function TileComponent({ tile, gap }: { tile: Tile; gap: number }) {
       style={{
         width: tileSize,
         height: tileSize,
-        left: getCellPosition(tile.position.col),
-        top: getCellPosition(tile.position.row),
+        // Use left/top but with will-change for compositor optimization
+        left: getPosition(tile.position.col),
+        top: getPosition(tile.position.row),
         backgroundColor: getTileBackground(tile.value),
+        // Hint to browser to promote to compositor layer
+        willChange: "left, top",
       }}
     >
       {tile.value}
     </div>
   );
-}
+});
 
 export default function TileGameBoard({ tiles, onMove }: TileGameBoardProps) {
   // Use responsive sizes that match Tailwind's breakpoints
