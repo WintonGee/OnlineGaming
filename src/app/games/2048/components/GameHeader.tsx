@@ -1,7 +1,6 @@
 "use client";
 
-import { RotateCcw, HelpCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import GameHelpMenu from "./GameHelpMenu";
 
 interface GameHeaderProps {
   score: number;
@@ -17,7 +16,7 @@ export default function GameHeader({
   onShowInstructions,
 }: GameHeaderProps) {
   return (
-    <div className="mb-6">
+    <div className="mb-6 mx-auto max-w-md w-full px-4 sm:px-0">
       {/* Title */}
       <div className="text-center mb-4">
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold text-black dark:text-white mb-4">
@@ -25,8 +24,7 @@ export default function GameHeader({
         </h1>
       </div>
 
-      {/* Buttons and scores row - same width constraint as board */}
-      <div className="mx-auto max-w-md w-full px-4 sm:px-0">
+      {/* Buttons and scores row */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex gap-3">
           <div className="bg-gray-200 dark:bg-gray-800 rounded-lg px-4 py-2 min-w-[100px]">
@@ -48,27 +46,7 @@ export default function GameHeader({
           </div>
         </div>
 
-        <div className="flex gap-2">
-          <Button
-            onClick={onShowInstructions}
-            variant="outline"
-            size="icon"
-            className="h-10 w-10"
-            title="How to play"
-          >
-            <HelpCircle className="h-5 w-5" />
-          </Button>
-          <Button
-            onClick={onNewGame}
-            variant="default"
-            size="icon"
-            className="h-10 w-10"
-            title="New game"
-          >
-            <RotateCcw className="h-5 w-5" />
-          </Button>
-          </div>
-        </div>
+        <GameHelpMenu onHowToPlay={onShowInstructions} onNewGame={onNewGame} />
       </div>
     </div>
   );
