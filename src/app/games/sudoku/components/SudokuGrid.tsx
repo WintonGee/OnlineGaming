@@ -106,7 +106,6 @@ export default function SudokuGrid({
                 type="button"
                 onClick={() => handleCellClick(rowIndex, colIndex)}
                 className={cellClassName}
-                disabled={isInitial}
               >
                 {cell !== null ? (
                   <span>{cell}</span>

@@ -45,6 +45,7 @@ export function getCellClassName(state: CellState): string {
     "border-black dark:border-white",
     "focus:outline-none focus:ring-2 focus:ring-gray-500 focus:z-10",
     "bg-white dark:bg-gray-900",
+    "cursor-pointer",
     
     // Border classes
     borderTop,
