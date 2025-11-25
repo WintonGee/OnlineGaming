@@ -1,6 +1,7 @@
 "use client";
 
-import { RotateCcw, Wand2, Info } from "lucide-react";
+import { useState } from "react";
+import { RotateCcw, Wand2, Info, ChevronDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,8 +20,10 @@ export default function GameHelpMenu({
   onHowToPlay,
   onNewGame,
 }: GameHelpMenuProps) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <button
           type="button"
@@ -32,6 +35,12 @@ export default function GameHelpMenu({
         >
           <Wand2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
           <span className="whitespace-nowrap">Help</span>
+          <ChevronDown
+            className={cn(
+              "h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform flex-shrink-0",
+              open ? "rotate-180" : "rotate-0"
+            )}
+          />
         </button>
       </DropdownMenuTrigger>
 
