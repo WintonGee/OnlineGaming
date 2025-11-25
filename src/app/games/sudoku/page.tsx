@@ -1,13 +1,10 @@
 "use client";
 
-import { useCallback, useState } from "react";
 import { Difficulty } from "./types";
 import SudokuGrid from "./components/SudokuGrid";
 import SudokuControls from "./components/SudokuControls";
 import InstructionsDialog from "./components/InstructionsDialog";
-import ConfirmationDialog, {
-  ConfirmationType,
-} from "./components/ConfirmationDialog";
+import ConfirmationDialog from "./components/ConfirmationDialog";
 import SudokuHintMenu from "./components/SudokuHintMenu";
 import SudokuHelperToast from "./components/SudokuHelperToast";
 import {
@@ -24,7 +21,7 @@ import { Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSudokuGame } from "./hooks/useSudokuGame";
 import { useKeyboardNavigation } from "./hooks/useKeyboardNavigation";
-import { HelperActionResult } from "./types";
+import { useDialogState } from "./hooks/useDialogState";
 
 const DIFFICULTY_OPTIONS: Difficulty[] = ["Easy", "Medium", "Hard"];
 
@@ -59,14 +56,18 @@ export default function SudokuPage() {
     showWinDialog,
   } = useSudokuGame();
 
-  const [helperResult, setHelperResult] = useState<HelperActionResult | null>(
-    null
-  );
-  const [pendingConfirm, setPendingConfirm] = useState<ConfirmationType | null>(
-    null
-  );
-  const [helperToastOpen, setHelperToastOpen] = useState(false);
-  const [showInstructions, setShowInstructions] = useState(false);
+  const {
+    helperResult,
+    helperToastOpen,
+    runHelperAction,
+    handleToastClose,
+    pendingConfirm,
+    showConfirmDialog,
+    hideConfirmDialog,
+    showInstructions,
+    showInstructionsDialog,
+    setShowInstructions,
+  } = useDialogState();
 
   // Use the keyboard navigation hook
   useKeyboardNavigation({
@@ -81,17 +82,6 @@ export default function SudokuPage() {
     onUndo: handleUndo,
   });
 
-  const runHelperAction = (action: () => HelperActionResult) => {
-    const result = action();
-    setHelperResult(result);
-    setHelperToastOpen(true);
-  };
-
-  const handleToastClose = useCallback(() => {
-    setHelperToastOpen(false);
-    setHelperResult(null);
-  }, []);
-
   const handleConfirmAction = () => {
     if (!pendingConfirm) return;
 
@@ -100,7 +90,7 @@ export default function SudokuPage() {
     } else {
       runHelperAction(handleResetPuzzle);
     }
-    setPendingConfirm(null);
+    hideConfirmDialog();
   };
 
   const isSelectedCellEditable =
@@ -162,12 +152,12 @@ export default function SudokuPage() {
                   disabled={isMenuDisabled}
                   disableRevealCell={!canRevealCell}
                   disablePuzzleWideActions={disablePuzzleWideActions}
-                  onHowToPlay={() => setShowInstructions(true)}
+                  onHowToPlay={showInstructionsDialog}
                   onCheckCell={() => runHelperAction(handleCheckCell)}
                   onCheckPuzzle={() => runHelperAction(handleCheckPuzzle)}
                   onRevealCell={() => runHelperAction(handleRevealCell)}
-                  onRevealPuzzle={() => setPendingConfirm("reveal")}
-                  onResetPuzzle={() => setPendingConfirm("reset")}
+                  onRevealPuzzle={() => showConfirmDialog("reveal")}
+                  onResetPuzzle={() => showConfirmDialog("reset")}
                 />
                 <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-black/40 px-4 py-2">
                   <Checkbox
@@ -258,7 +248,7 @@ export default function SudokuPage() {
         open={pendingConfirm !== null}
         type={pendingConfirm}
         onConfirm={handleConfirmAction}
-        onCancel={() => setPendingConfirm(null)}
+        onCancel={hideConfirmDialog}
       />
 
       {/* Helper Toast */}

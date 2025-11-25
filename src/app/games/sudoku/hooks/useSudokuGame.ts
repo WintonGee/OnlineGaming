@@ -1,145 +1,110 @@
-import { useCallback, useEffect, useState } from "react";
-import { checkSolution, copyGrid, generatePuzzle } from "../logic/sudokuLogic";
-import {
-  CandidatesGrid,
-  CellPosition,
-  Difficulty,
-  Grid,
-  HistoryState,
-  InputMode,
-  HelperActionResult,
-} from "../types";
-import {
-  cloneCandidatesGrid,
-  computeIncorrectCells,
-  createEmptyCandidatesGrid,
-  generateAutoCandidates,
-} from "../utils/gameUtils";
-import { dedupeCells } from "../utils/gridUtils";
-import { HISTORY_LIMIT } from "../constants";
+import { useCallback, useEffect } from "react";
+import { checkSolution } from "../logic/sudokuLogic";
+import { HelperActionResult } from "../types";
+import { useSudokuState } from "./useSudokuState";
+import { useSudokuValidation } from "./useSudokuValidation";
+import { useSudokuHistory } from "./useSudokuHistory";
+import { useSudokuCandidates } from "./useSudokuCandidates";
 
+/**
+ * Main Sudoku game hook - orchestrates all game functionality
+ * Composes state, validation, history, and candidate management
+ */
 export function useSudokuGame() {
-  const [selectedDifficulty, setSelectedDifficulty] =
-    useState<Difficulty>("Medium");
-  const [initialGrid, setInitialGrid] = useState<Grid>([]);
-  const [currentGrid, setCurrentGrid] = useState<Grid>([]);
-  const [solution, setSolution] = useState<Grid>([]);
-  const [selectedCell, setSelectedCell] = useState<CellPosition | null>(null);
-  const [incorrectCells, setIncorrectCells] = useState<CellPosition[]>([]);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [inputMode, setInputMode] = useState<InputMode>("Normal");
-  const [candidates, setCandidates] = useState<CandidatesGrid>(
-    createEmptyCandidatesGrid()
+  // Core game state
+  const {
+    selectedDifficulty,
+    initialGrid,
+    currentGrid,
+    solution,
+    selectedCell,
+    isGenerating,
+    inputMode,
+    hasCompleted,
+    showWinDialog,
+    hasSolution,
+    setSelectedCell,
+    setInputMode,
+    setCurrentGrid,
+    setHasCompleted,
+    setShowWinDialog,
+    handleNewGame,
+    handleDifficultyChange,
+    handleCellChange: baseCellChange,
+    resetToInitialGrid,
+    revealSolution,
+  } = useSudokuState();
+
+  // Validation logic
+  const {
+    incorrectCells,
+    handleCheckCell,
+    handleCheckPuzzle,
+    clearIncorrectCells,
+    setIncorrectCells,
+  } = useSudokuValidation(
+    currentGrid,
+    initialGrid,
+    solution,
+    selectedCell,
+    hasCompleted
   );
-  const [history, setHistory] = useState<HistoryState[]>([]);
-  const [autoCandidateMode, setAutoCandidateMode] = useState(false);
-  const [hasCompleted, setHasCompleted] = useState(false);
-  const [showWinDialog, setShowWinDialog] = useState(false);
 
-  const saveToHistory = useCallback(() => {
-    setHistory((prev) => {
-      const nextHistory = [
-        ...prev,
-        {
-          grid: copyGrid(currentGrid),
-          candidates: cloneCandidatesGrid(candidates),
-        },
-      ];
-      if (nextHistory.length > HISTORY_LIMIT) {
-        nextHistory.shift();
-      }
-      return nextHistory;
-    });
-  }, [candidates, currentGrid]);
+  // History management
+  const { canUndo, saveToHistory, handleUndo, clearHistory } =
+    useSudokuHistory();
 
-  const initializeGame = useCallback((difficulty: Difficulty) => {
-    setIsGenerating(true);
-    setIncorrectCells([]);
-    setSelectedCell(null);
-    setCandidates(createEmptyCandidatesGrid());
-    setHasCompleted(false);
-    setShowWinDialog(false);
+  // Candidate management
+  const {
+    candidates,
+    autoCandidateMode,
+    setAutoCandidateMode,
+    setCandidates,
+    handleCandidateToggle: baseCandidateToggle,
+    clearCellCandidates,
+    resetCandidates,
+  } = useSudokuCandidates(currentGrid, initialGrid);
 
-    setTimeout(() => {
-      const { puzzle, solution: sol } = generatePuzzle(difficulty);
-      setInitialGrid(puzzle);
-      setCurrentGrid(copyGrid(puzzle));
-      setSolution(sol);
-      setIsGenerating(false);
-    }, 100);
-  }, []);
-
-  const handleNewGame = useCallback(() => {
-    initializeGame(selectedDifficulty);
-  }, [initializeGame, selectedDifficulty]);
-
-  const handleDifficultyChange = useCallback((difficulty: Difficulty) => {
-    setSelectedDifficulty(difficulty);
-  }, []);
-
+  // Wrapped cell change handler that saves to history and clears candidates
   const handleCellChange = useCallback(
     (row: number, col: number, value: number | null) => {
-      saveToHistory();
-      setCurrentGrid((prevGrid) => {
-        const updatedGrid = copyGrid(prevGrid);
-        updatedGrid[row][col] = value;
+      saveToHistory(currentGrid, candidates);
+      baseCellChange(row, col, value);
 
-        if (!autoCandidateMode) {
-          setCandidates((prevCandidates) => {
-            const updatedCandidates = cloneCandidatesGrid(prevCandidates);
-            if (value !== null) {
-              updatedCandidates[row][col].clear();
-            }
-            return updatedCandidates;
-          });
-        }
-
-        return updatedGrid;
-      });
+      if (!autoCandidateMode && value !== null) {
+        clearCellCandidates(row, col);
+      }
     },
-    [autoCandidateMode, saveToHistory]
+    [
+      saveToHistory,
+      currentGrid,
+      candidates,
+      baseCellChange,
+      autoCandidateMode,
+      clearCellCandidates,
+    ]
   );
 
+  // Wrapped candidate toggle that saves to history
   const handleCandidateToggle = useCallback(
     (row: number, col: number, value: number) => {
-      if (initialGrid[row][col] !== null || currentGrid[row][col] !== null) {
-        return;
+      const toggled = baseCandidateToggle(row, col, value);
+      if (toggled) {
+        saveToHistory(currentGrid, candidates);
       }
-
-      if (autoCandidateMode) {
-        return;
-      }
-
-      saveToHistory();
-      setCandidates((prev) => {
-        const next = cloneCandidatesGrid(prev);
-        const cellCandidates = next[row][col];
-
-        if (cellCandidates.has(value)) {
-          cellCandidates.delete(value);
-        } else {
-          cellCandidates.add(value);
-        }
-
-        return next;
-      });
     },
-    [autoCandidateMode, currentGrid, initialGrid, saveToHistory]
+    [baseCandidateToggle, saveToHistory, currentGrid, candidates]
   );
 
-  const handleUndo = useCallback(() => {
-    setHistory((prev) => {
-      if (!prev.length) {
-        return prev;
-      }
-
-      const previousState = prev[prev.length - 1];
-      setCurrentGrid(previousState.grid);
-      setCandidates(previousState.candidates);
-      return prev.slice(0, -1);
+  // Undo handler that restores both grid and candidates
+  const handleUndoAction = useCallback(() => {
+    handleUndo((grid, restoredCandidates) => {
+      setCurrentGrid(grid);
+      setCandidates(restoredCandidates);
     });
-  }, []);
+  }, [handleUndo, setCurrentGrid, setCandidates]);
 
+  // Clear cell handler
   const handleClearCell = useCallback(
     (row: number, col: number) => {
       if (initialGrid[row][col] !== null) {
@@ -155,106 +120,25 @@ export function useSudokuGame() {
         return;
       }
 
-      saveToHistory();
-      setCurrentGrid((prevGrid) => {
-        const updatedGrid = copyGrid(prevGrid);
-        updatedGrid[row][col] = null;
-        return updatedGrid;
-      });
+      saveToHistory(currentGrid, candidates);
+      baseCellChange(row, col, null);
 
       if (!autoCandidateMode) {
-        setCandidates((prev) => {
-          const next = cloneCandidatesGrid(prev);
-          next[row][col].clear();
-          return next;
-        });
+        clearCellCandidates(row, col);
       }
     },
-    [autoCandidateMode, candidates, currentGrid, initialGrid, saveToHistory]
+    [
+      autoCandidateMode,
+      candidates,
+      currentGrid,
+      initialGrid,
+      saveToHistory,
+      baseCellChange,
+      clearCellCandidates,
+    ]
   );
 
-  const handleCheckCell = useCallback((): HelperActionResult => {
-    if (!selectedCell) {
-      return { status: "info", message: "Select a cell to check." };
-    }
-
-    if (!solution.length || !currentGrid.length) {
-      return { status: "info", message: "Puzzle is still loading." };
-    }
-
-    const { row, col } = selectedCell;
-
-    if (initialGrid[row]?.[col] !== null) {
-      return {
-        status: "info",
-        message: "Given cells are already correct.",
-      };
-    }
-
-    const currentValue = currentGrid[row]?.[col] ?? null;
-
-    if (currentValue === null) {
-      return {
-        status: "info",
-        message: "Enter a value before checking the cell.",
-      };
-    }
-
-    const duplicates = computeIncorrectCells(currentGrid);
-
-    if (currentValue === solution[row][col]) {
-      setIncorrectCells(dedupeCells(duplicates));
-      return {
-        status: "success",
-        message: "Nice work! That cell is correct.",
-      };
-    }
-
-    setIncorrectCells(dedupeCells([...duplicates, { row, col }]));
-    return {
-      status: "error",
-      message: "That cell is incorrect. Try a different value.",
-    };
-  }, [currentGrid, initialGrid, selectedCell, solution]);
-
-  const handleCheckPuzzle = useCallback((): HelperActionResult => {
-    if (!solution.length || !currentGrid.length) {
-      return { status: "info", message: "Puzzle is still loading." };
-    }
-
-    const result = checkSolution(currentGrid, solution);
-    const duplicates = computeIncorrectCells(currentGrid);
-    const highlighted = dedupeCells([...duplicates, ...result.incorrectCells]);
-    setIncorrectCells(highlighted);
-
-    if (result.isCorrect) {
-      return { status: "success", message: "Everything looks perfect!" };
-    }
-
-    if (result.isComplete) {
-      return {
-        status: "error",
-        message: `${result.incorrectCells.length} cell${
-          result.incorrectCells.length === 1 ? "" : "s"
-        } need attention.`,
-      };
-    }
-
-    if (result.incorrectCells.length === 0) {
-      return {
-        status: "info",
-        message: "No mistakes detected yet. Keep solving!",
-      };
-    }
-
-    return {
-      status: "info",
-      message: `${result.incorrectCells.length} incorrect cell${
-        result.incorrectCells.length === 1 ? "" : "s"
-      } highlighted.`,
-    };
-  }, [currentGrid, solution]);
-
+  // Reveal single cell
   const handleRevealCell = useCallback((): HelperActionResult => {
     if (!selectedCell) {
       return { status: "info", message: "Select a cell to reveal." };
@@ -280,72 +164,60 @@ export function useSudokuGame() {
     };
   }, [currentGrid, handleCellChange, initialGrid, selectedCell, solution]);
 
+  // Reveal entire puzzle
   const handleRevealPuzzle = useCallback((): HelperActionResult => {
     if (!solution.length || !currentGrid.length) {
       return { status: "info", message: "Puzzle is still loading." };
     }
 
-    saveToHistory();
-    setCurrentGrid(copyGrid(solution));
-    setCandidates(createEmptyCandidatesGrid());
-    setSelectedCell(null);
+    saveToHistory(currentGrid, candidates);
+    revealSolution();
+    resetCandidates();
 
     return {
       status: "warning",
       message: "Puzzle revealed.",
     };
-  }, [currentGrid, saveToHistory, solution]);
+  }, [
+    currentGrid,
+    saveToHistory,
+    solution,
+    candidates,
+    revealSolution,
+    resetCandidates,
+  ]);
 
+  // Reset puzzle to initial state
   const handleResetPuzzle = useCallback((): HelperActionResult => {
     if (!initialGrid.length) {
       return { status: "info", message: "Puzzle is still loading." };
     }
 
-    setHistory([]);
-    setCurrentGrid(copyGrid(initialGrid));
-    setIncorrectCells([]);
-    setSelectedCell(null);
-    setHasCompleted(false);
-    setShowWinDialog(false);
-    setCandidates(
-      autoCandidateMode
-        ? generateAutoCandidates(initialGrid, initialGrid)
-        : createEmptyCandidatesGrid()
-    );
+    clearHistory();
+    resetToInitialGrid();
+    clearIncorrectCells();
+    resetCandidates();
 
     return {
       status: "success",
       message: "Puzzle reset to its initial state.",
     };
-  }, [autoCandidateMode, initialGrid]);
-
-  useEffect(() => {
-    initializeGame(selectedDifficulty);
-  }, [initializeGame]);
-
-  useEffect(() => {
-    if (!currentGrid.length) {
-      return;
-    }
-
-    if (autoCandidateMode) {
-      setCandidates(generateAutoCandidates(currentGrid, initialGrid));
-    } else {
-      setCandidates(createEmptyCandidatesGrid());
-    }
-  }, [autoCandidateMode, currentGrid, initialGrid]);
-
-  // Update incorrect cells whenever the grid changes
-  useEffect(() => {
-    if (!currentGrid.length || hasCompleted) {
-      return;
-    }
-    setIncorrectCells(computeIncorrectCells(currentGrid));
-  }, [currentGrid, hasCompleted]);
+  }, [
+    initialGrid,
+    clearHistory,
+    resetToInitialGrid,
+    clearIncorrectCells,
+    resetCandidates,
+  ]);
 
   // Check for puzzle completion
   useEffect(() => {
-    if (hasCompleted || !currentGrid.length || !solution.length || isGenerating) {
+    if (
+      hasCompleted ||
+      !currentGrid.length ||
+      !solution.length ||
+      isGenerating
+    ) {
       return;
     }
 
@@ -358,18 +230,40 @@ export function useSudokuGame() {
     if (result.isCorrect) {
       setShowWinDialog(true);
       setHasCompleted(true);
-      setIncorrectCells([]);
+      clearIncorrectCells();
     }
-  }, [currentGrid, solution, hasCompleted, isGenerating]);
-
-  const canUndo = history.length > 0;
-  const hasSolution = solution.length > 0;
+  }, [
+    currentGrid,
+    solution,
+    hasCompleted,
+    isGenerating,
+    setShowWinDialog,
+    setHasCompleted,
+    clearIncorrectCells,
+  ]);
 
   return {
+    // State
     autoCandidateMode,
     candidates,
     canUndo,
     currentGrid,
+    hasSolution,
+    incorrectCells,
+    initialGrid,
+    inputMode,
+    isGenerating,
+    selectedCell,
+    selectedDifficulty,
+    showWinDialog,
+
+    // Setters
+    setAutoCandidateMode,
+    setInputMode,
+    setSelectedCell,
+    setShowWinDialog,
+
+    // Actions
     handleCheckCell,
     handleCheckPuzzle,
     handleCandidateToggle,
@@ -380,19 +274,6 @@ export function useSudokuGame() {
     handleResetPuzzle,
     handleRevealCell,
     handleRevealPuzzle,
-    handleUndo,
-    hasSolution,
-    incorrectCells,
-    initialGrid,
-    inputMode,
-    isGenerating,
-    selectedCell,
-    selectedDifficulty,
-    setAutoCandidateMode,
-    setInputMode,
-    setSelectedCell,
-    setShowWinDialog,
-    showWinDialog,
+    handleUndo: handleUndoAction,
   };
 }
-
