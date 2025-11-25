@@ -1,0 +1,153 @@
+import { useState, useCallback, useEffect } from 'react';
+import { Board, Difficulty, CustomSettings, BestTimes } from '../types';
+import { generateBoard } from '../logic/boardGeneration';
+import { revealCell, toggleFlag, countFlaggedCells, revealAllMines, flagAllMines } from '../logic/cellReveal';
+import { checkWinCondition, checkLoseCondition, getIncorrectFlags } from '../logic/gameValidation';
+import { DIFFICULTY_CONFIG, DEFAULT_DIFFICULTY, BEST_TIMES_KEY } from '../constants';
+import { useTimer } from './useTimer';
+
+interface UseGameStateProps {
+  initialDifficulty?: Difficulty;
+  customSettings?: CustomSettings;
+}
+
+export function useGameState({ initialDifficulty = DEFAULT_DIFFICULTY, customSettings }: UseGameStateProps = {}) {
+  const [difficulty, setDifficulty] = useState<Difficulty>(initialDifficulty);
+  const [currentCustomSettings, setCurrentCustomSettings] = useState<CustomSettings | undefined>(customSettings);
+  const [board, setBoard] = useState<Board>(() => initializeBoard(initialDifficulty, customSettings));
+  const [gameOver, setGameOver] = useState(false);
+  const [won, setWon] = useState(false);
+  const [firstClick, setFirstClick] = useState(true);
+  const [bestTimes, setBestTimes] = useState<BestTimes>(() => loadBestTimes());
+
+  const timer = useTimer();
+
+  const totalMines = getCurrentMineCount(difficulty, currentCustomSettings);
+  const flagsUsed = countFlaggedCells(board);
+  const remainingMines = totalMines - flagsUsed;
+
+  // Initialize board based on difficulty
+  function initializeBoard(diff: Difficulty, custom?: CustomSettings): Board {
+    if (diff === 'Custom' && custom) {
+      return generateBoard(custom.width, custom.height, custom.mines);
+    }
+    const config = DIFFICULTY_CONFIG[diff as keyof typeof DIFFICULTY_CONFIG] || DIFFICULTY_CONFIG.Beginner;
+    return generateBoard(config.width, config.height, config.mines);
+  }
+
+  // Get current mine count
+  function getCurrentMineCount(diff: Difficulty, custom?: CustomSettings): number {
+    if (diff === 'Custom' && custom) {
+      return custom.mines;
+    }
+    const config = DIFFICULTY_CONFIG[diff as keyof typeof DIFFICULTY_CONFIG] || DIFFICULTY_CONFIG.Beginner;
+    return config.mines;
+  }
+
+  // Load best times from localStorage
+  function loadBestTimes(): BestTimes {
+    if (typeof window === 'undefined') return {};
+    const saved = localStorage.getItem(BEST_TIMES_KEY);
+    return saved ? JSON.parse(saved) : {};
+  }
+
+  // Save best times to localStorage
+  function saveBestTimes(times: BestTimes) {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(BEST_TIMES_KEY, JSON.stringify(times));
+  }
+
+  // Handle cell click (reveal)
+  const handleCellReveal = useCallback((row: number, col: number) => {
+    if (gameOver || board[row][col].isRevealed || board[row][col].isFlagged) {
+      return;
+    }
+
+    // Start timer on first click
+    if (firstClick) {
+      timer.start();
+      setFirstClick(false);
+    }
+
+    const newBoard = revealCell(board, row, col);
+    setBoard(newBoard);
+
+    // Check for loss
+    if (checkLoseCondition(newBoard)) {
+      const boardWithMines = revealAllMines(newBoard);
+      setBoard(boardWithMines);
+      setGameOver(true);
+      setWon(false);
+      timer.stop();
+      return;
+    }
+
+    // Check for win
+    if (checkWinCondition(newBoard, totalMines)) {
+      const boardWithFlags = flagAllMines(newBoard);
+      setBoard(boardWithFlags);
+      setGameOver(true);
+      setWon(true);
+      timer.stop();
+
+      // Update best time
+      const currentTime = timer.time;
+      const currentBest = bestTimes[difficulty];
+      if (!currentBest || currentTime < currentBest) {
+        const newBestTimes = { ...bestTimes, [difficulty]: currentTime };
+        setBestTimes(newBestTimes);
+        saveBestTimes(newBestTimes);
+      }
+    }
+  }, [board, gameOver, firstClick, timer, totalMines, difficulty, bestTimes]);
+
+  // Handle cell flag toggle
+  const handleCellFlag = useCallback((row: number, col: number) => {
+    if (gameOver || board[row][col].isRevealed) {
+      return;
+    }
+
+    // Start timer on first click
+    if (firstClick) {
+      timer.start();
+      setFirstClick(false);
+    }
+
+    const newBoard = toggleFlag(board, row, col);
+    setBoard(newBoard);
+  }, [board, gameOver, firstClick, timer]);
+
+  // Start new game
+  const startNewGame = useCallback((newDifficulty?: Difficulty, newCustomSettings?: CustomSettings) => {
+    const diff = newDifficulty || difficulty;
+    const custom = newCustomSettings || currentCustomSettings;
+
+    setDifficulty(diff);
+    setCurrentCustomSettings(custom);
+    setBoard(initializeBoard(diff, custom));
+    setGameOver(false);
+    setWon(false);
+    setFirstClick(true);
+    timer.reset();
+  }, [difficulty, currentCustomSettings, timer]);
+
+  // Get incorrect flags for display when game is lost
+  const incorrectFlags = gameOver && !won ? getIncorrectFlags(board) : [];
+
+  return {
+    board,
+    difficulty,
+    customSettings: currentCustomSettings,
+    gameOver,
+    won,
+    totalMines,
+    flagsUsed,
+    remainingMines,
+    time: timer.time,
+    bestTimes,
+    incorrectFlags,
+    handleCellReveal,
+    handleCellFlag,
+    startNewGame,
+  };
+}
