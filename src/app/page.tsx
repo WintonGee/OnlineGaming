@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Grid3x3 } from 'lucide-react';
+import { Grid3x3, Grid2x2 } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -30,6 +30,23 @@ export default function Home() {
               </h2>
               <p className="text-gray-600 dark:text-gray-400 text-sm">
                 Fill the grid with numbers 1-9
+              </p>
+            </div>
+          </Link>
+
+          <Link
+            href="/games/2048"
+            className="group border border-gray-300 dark:border-gray-700 rounded-lg p-6 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 flex items-center justify-center mb-4">
+                <Grid2x2 className="h-10 w-10 text-black dark:text-white group-hover:scale-110 transition-transform" />
+              </div>
+              <h2 className="text-2xl font-serif font-bold text-black dark:text-white mb-2">
+                2048
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Combine tiles to reach 2048
               </p>
             </div>
           </Link>

@@ -1,0 +1,32 @@
+/* Animations for 2048 tiles */
+
+@keyframes tileNew {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes tileMerge {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.tile-new {
+  animation: tileNew 300ms ease-out;
+}
+
+.tile-merged {
+  animation: tileMerge 300ms ease-in-out;
+}
