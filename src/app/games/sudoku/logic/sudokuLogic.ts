@@ -1,7 +1,16 @@
-import { Grid, Difficulty, CheckResult, CellPosition } from '../types';
-import { isValidPlacement } from '../utils/validation';
-import { shuffleArray } from '../utils/arrayUtils';
-import { GRID_SIZE, BOX_SIZE, DIFFICULTY_CONFIG, VALID_NUMBERS } from '../constants';
+import { Grid, Difficulty, CheckResult, CellPosition } from "../types";
+import { shuffleArray } from "../utils/arrayUtils";
+import {
+  GRID_SIZE,
+  BOX_SIZE,
+  DIFFICULTY_CONFIG,
+  VALID_NUMBERS,
+} from "../constants";
+import {
+  initializeConstraints,
+  solveFast,
+  countSolutionsFast,
+} from "../utils/bitmaskSolver";
 
 /**
  * Create an empty 9x9 grid
@@ -20,74 +29,40 @@ export function copyGrid(grid: Grid): Grid {
 }
 
 /**
- * Internal solver that uses a callback pattern for flexibility
- * This eliminates duplication between solvePuzzle and countSolutions
- * 
- * @param grid - The grid to solve (will be modified)
- * @param onSolutionFound - Callback when a solution is found, return false to stop
- * @returns true if solving should continue, false if stopped
- */
-function solveWithCallback(
-  grid: Grid,
-  onSolutionFound: () => boolean
-): boolean {
-  for (let row = 0; row < GRID_SIZE; row++) {
-    for (let col = 0; col < GRID_SIZE; col++) {
-      if (grid[row][col] === null) {
-        for (let num = 1; num <= GRID_SIZE; num++) {
-          if (isValidPlacement(grid, row, col, num)) {
-            grid[row][col] = num;
-
-            if (solveWithCallback(grid, onSolutionFound)) {
-              return true;
-            }
-
-            grid[row][col] = null;
-          }
-        }
-        return false;
-      }
-    }
-  }
-  // Found a complete solution
-  return !onSolutionFound();
-}
-
-/**
- * Solve a Sudoku puzzle using backtracking
+ * Solve a Sudoku puzzle using optimized backtracking with:
+ * - Bitmask constraints for O(1) validity checking
+ * - MRV (Minimum Remaining Values) heuristic for cell selection
+ *
+ * Performance improvement: ~10-100x faster than naive backtracking
  */
 export function solvePuzzle(grid: Grid): Grid | null {
   const gridCopy = copyGrid(grid);
-  let solved = false;
+  const constraints = initializeConstraints(gridCopy);
 
-  solveWithCallback(gridCopy, () => {
-    solved = true;
-    return false; // Stop after first solution
-  });
+  if (solveFast(gridCopy, constraints)) {
+    return gridCopy;
+  }
 
-  return solved ? gridCopy : null;
+  return null;
 }
 
 /**
  * Count the number of solutions for a given puzzle (max 2)
+ * Uses optimized solver with bitmasks and MRV heuristic
  */
 function countSolutions(grid: Grid, maxCount: number = 2): number {
   const gridCopy = copyGrid(grid);
-  let count = 0;
-
-  solveWithCallback(gridCopy, () => {
-    count++;
-    return count < maxCount; // Continue until maxCount reached
-  });
-
-  return count;
+  const constraints = initializeConstraints(gridCopy);
+  return countSolutionsFast(gridCopy, constraints, maxCount);
 }
 
 /**
  * Generate a complete, valid Sudoku grid
+ * Uses optimized bitmask constraints for faster generation
  */
 function generateCompleteGrid(): Grid {
   const grid = createEmptyGrid();
+  const constraints = initializeConstraints(grid);
 
   // Fill diagonal 3x3 boxes first (they don't affect each other)
   function fillDiagonalBoxes() {
@@ -98,7 +73,17 @@ function generateCompleteGrid(): Grid {
       let idx = 0;
       for (let i = 0; i < BOX_SIZE; i++) {
         for (let j = 0; j < BOX_SIZE; j++) {
-          grid[box + i][box + j] = nums[idx++];
+          const num = nums[idx++];
+          const row = box + i;
+          const col = box + j;
+          grid[row][col] = num;
+          // Update constraints
+          const bit = 1 << num;
+          constraints.rowMask[row] |= bit;
+          constraints.colMask[col] |= bit;
+          const boxIdx =
+            Math.floor(row / BOX_SIZE) * BOX_SIZE + Math.floor(col / BOX_SIZE);
+          constraints.boxMask[boxIdx] |= bit;
         }
       }
     }
@@ -106,7 +91,7 @@ function generateCompleteGrid(): Grid {
 
   fillDiagonalBoxes();
 
-  // Fill remaining cells
+  // Fill remaining cells using optimized validity checking
   function fillRemaining(row: number, col: number): boolean {
     if (col >= GRID_SIZE && row < GRID_SIZE - 1) {
       row++;
@@ -136,13 +121,32 @@ function generateCompleteGrid(): Grid {
     const nums = [...VALID_NUMBERS];
     shuffleArray(nums);
 
+    const boxIdx =
+      Math.floor(row / BOX_SIZE) * BOX_SIZE + Math.floor(col / BOX_SIZE);
+
     for (const num of nums) {
-      if (isValidPlacement(grid, row, col, num)) {
+      // Use O(1) bitmask check instead of O(27) isValidPlacement
+      const bit = 1 << num;
+      if (
+        (constraints.rowMask[row] & bit) === 0 &&
+        (constraints.colMask[col] & bit) === 0 &&
+        (constraints.boxMask[boxIdx] & bit) === 0
+      ) {
+        // Place number
         grid[row][col] = num;
+        constraints.rowMask[row] |= bit;
+        constraints.colMask[col] |= bit;
+        constraints.boxMask[boxIdx] |= bit;
+
         if (fillRemaining(row, col + 1)) {
           return true;
         }
+
+        // Remove number (backtrack)
         grid[row][col] = null;
+        constraints.rowMask[row] &= ~bit;
+        constraints.colMask[col] &= ~bit;
+        constraints.boxMask[boxIdx] &= ~bit;
       }
     }
 
@@ -187,7 +191,10 @@ function removeCells(grid: Grid, cellsToRemove: number): Grid {
 /**
  * Generate a Sudoku puzzle based on difficulty
  */
-export function generatePuzzle(difficulty: Difficulty): { puzzle: Grid; solution: Grid } {
+export function generatePuzzle(difficulty: Difficulty): {
+  puzzle: Grid;
+  solution: Grid;
+} {
   const completeGrid = generateCompleteGrid();
   const solution = copyGrid(completeGrid);
 
