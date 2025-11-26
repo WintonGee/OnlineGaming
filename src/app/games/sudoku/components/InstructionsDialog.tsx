@@ -28,7 +28,7 @@ export default function InstructionsDialog({
 }: InstructionsDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl bg-white dark:bg-black border-gray-300 dark:border-gray-700 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-3xl bg-white dark:bg-black border-gray-300 dark:border-gray-700 max-h-[90vh] overflow-y-auto mx-4">
         <DialogHeader>
           <DialogTitle className="text-3xl font-serif font-bold text-black dark:text-white flex items-center gap-3">
             <div className="bg-black dark:bg-white rounded-lg p-2">

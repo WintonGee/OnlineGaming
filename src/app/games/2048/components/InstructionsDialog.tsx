@@ -11,16 +11,16 @@ import { Button } from "@/components/ui/button";
 
 interface InstructionsDialogProps {
   open: boolean;
-  onClose: () => void;
+  onOpenChange: (open: boolean) => void;
 }
 
 export default function InstructionsDialog({
   open,
-  onClose,
+  onOpenChange,
 }: InstructionsDialogProps) {
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto mx-4">
         <DialogHeader>
           <DialogTitle className="text-2xl">How to Play 2048</DialogTitle>
           <DialogDescription className="sr-only">
@@ -99,7 +99,7 @@ export default function InstructionsDialog({
         </div>
 
         <div className="flex justify-end mt-4">
-          <Button onClick={onClose}>Got it!</Button>
+          <Button onClick={() => onOpenChange(false)}>Got it!</Button>
         </div>
       </DialogContent>
     </Dialog>

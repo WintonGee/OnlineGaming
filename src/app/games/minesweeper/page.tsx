@@ -1,12 +1,14 @@
 'use client';
 
 import './styles.css';
+import { useState } from 'react';
 import { useGameLogic } from './hooks/useGameLogic';
 import GameHeader from './components/GameHeader';
 import MinesweeperBoard from './components/MinesweeperBoard';
 import MinesweeperToolbar from './components/MinesweeperToolbar';
 import DifficultyDialog from './components/DifficultyDialog';
 import WinDialog from './components/WinDialog';
+import InstructionsDialog from './components/InstructionsDialog';
 
 export default function MinesweeperPage() {
   const {
@@ -27,6 +29,8 @@ export default function MinesweeperPage() {
     showWinDialog,
     setShowWinDialog,
   } = useGameLogic();
+
+  const [showInstructions, setShowInstructions] = useState(false);
 
   return (
     <div className="min-h-screen bg-white dark:bg-black text-foreground py-3 sm:py-8 lg:py-12 px-4">
@@ -54,6 +58,7 @@ export default function MinesweeperPage() {
                 }}
                 onNewGame={() => handleNewGame()}
                 onCustomClick={() => setShowDifficultyDialog(true)}
+                onHowToPlay={() => setShowInstructions(true)}
               />
             </div>
           </div>
@@ -101,6 +106,11 @@ export default function MinesweeperPage() {
             setShowWinDialog(false);
           }}
           onClose={() => setShowWinDialog(false)}
+        />
+
+        <InstructionsDialog
+          open={showInstructions}
+          onOpenChange={() => setShowInstructions(false)}
         />
       </div>
     </div>

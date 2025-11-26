@@ -53,7 +53,7 @@ export default function Game2048Page() {
         {/* Instructions Dialog */}
         <InstructionsDialog
           open={showInstructions}
-          onClose={closeInstructions}
+          onOpenChange={closeInstructions}
         />
       </div>
     </div>

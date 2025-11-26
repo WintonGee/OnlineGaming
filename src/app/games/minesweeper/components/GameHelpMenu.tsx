@@ -28,16 +28,16 @@ export default function GameHelpMenu({
         <button
           type="button"
           className={cn(
-            "flex items-center gap-2 rounded-2xl border border-gray-200 bg-white/80 px-4 py-2.5 text-sm font-semibold text-black shadow-sm transition-colors dark:border-gray-700 dark:bg-black/40 dark:text-white",
-            "hover:bg-gray-100 dark:hover:bg-gray-800"
+            "flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors",
+            "bg-white text-black border-gray-300 hover:bg-gray-100 dark:bg-black dark:text-white dark:border-gray-700 dark:hover:bg-gray-800"
           )}
           aria-label="Help menu"
         >
-          <Wand2 className="h-4 w-4 flex-shrink-0" />
-          <span className="whitespace-nowrap">Help</span>
+          <Wand2 className="h-4 w-4" />
+          <span>Help</span>
           <ChevronDown
             className={cn(
-              "h-4 w-4 transition-transform flex-shrink-0",
+              "h-4 w-4 transition-transform",
               open ? "rotate-180" : "rotate-0"
             )}
           />
