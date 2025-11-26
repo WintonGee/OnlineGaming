@@ -66,6 +66,20 @@
   border-style: solid;
   border-color: var(--ms-gray-dark) var(--ms-gray-light) var(--ms-gray-light)
     var(--ms-gray-dark);
+  display: inline-block;
+}
+
+/* Grid for equal cell sizing */
+.ms-grid {
+  display: grid;
+  gap: 0;
+}
+
+/* Base cell - fixed dimensions for equal sizing */
+.ms-cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  box-sizing: border-box;
 }
 
 /* Unrevealed cell (raised button look) */

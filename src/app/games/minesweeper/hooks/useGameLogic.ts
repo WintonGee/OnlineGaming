@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useGameState } from './useGameState';
 import { useInputMode } from './useInputMode';
 import { Difficulty, CustomSettings } from '../types';
@@ -10,37 +10,41 @@ export function useGameLogic() {
   const gameState = useGameState();
   const inputMode = useInputMode();
 
+  const { gameOver, won, handleCellReveal, handleCellFlag, startNewGame } = gameState;
+  const { hasMouse, inputMode: currentInputMode } = inputMode;
+
   // Handle cell click based on input mode
   const handleCellClick = useCallback((row: number, col: number) => {
-    if (inputMode.hasMouse) {
+    if (hasMouse) {
       // On desktop, left click always reveals
-      gameState.handleCellReveal(row, col);
+      handleCellReveal(row, col);
     } else {
       // On mobile, use input mode
-      if (inputMode.inputMode === 'reveal') {
-        gameState.handleCellReveal(row, col);
+      if (currentInputMode === 'reveal') {
+        handleCellReveal(row, col);
       } else {
-        gameState.handleCellFlag(row, col);
+        handleCellFlag(row, col);
       }
     }
-  }, [gameState, inputMode]);
+  }, [hasMouse, currentInputMode, handleCellReveal, handleCellFlag]);
 
   // Handle right click (flagging on desktop)
   const handleCellRightClick = useCallback((row: number, col: number) => {
-    gameState.handleCellFlag(row, col);
-  }, [gameState]);
+    handleCellFlag(row, col);
+  }, [handleCellFlag]);
 
   // Handle new game
   const handleNewGame = useCallback((newDifficulty?: Difficulty, newCustomSettings?: CustomSettings) => {
-    gameState.startNewGame(newDifficulty, newCustomSettings);
+    startNewGame(newDifficulty, newCustomSettings);
     setShowWinDialog(false);
-  }, [gameState]);
+  }, [startNewGame]);
 
-  // Show win dialog when game is won
-  const { gameOver, won } = gameState;
-  if (gameOver && won && !showWinDialog) {
-    setShowWinDialog(true);
-  }
+  // Show win dialog when game is won (proper effect, not during render)
+  useEffect(() => {
+    if (gameOver && won) {
+      setShowWinDialog(true);
+    }
+  }, [gameOver, won]);
 
   return {
     ...gameState,

@@ -1,6 +1,11 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { Board, CellPosition } from "../types";
-import { getCellClassName, getCellContent } from "../utils/styleUtils";
+import {
+  getCellClassName,
+  getCellContent,
+  getFontSizeClass,
+} from "../utils/styleUtils";
+import { useResponsiveCellSize } from "../hooks/useResponsiveDimensions";
 
 interface MinesweeperBoardProps {
   board: Board;
@@ -15,45 +20,32 @@ const MinesweeperBoard = memo(function MinesweeperBoard({
   onCellClick,
   onCellRightClick,
 }: MinesweeperBoardProps) {
-  const height = board.length;
-  const width = board[0]?.length || 0;
+  const cols = board[0]?.length || 0;
 
   // Create a set of incorrect flag positions for quick lookup
-  const incorrectFlagSet = new Set(
-    incorrectFlags.map((pos) => `${pos.row},${pos.col}`)
+  const incorrectFlagSet = useMemo(
+    () => new Set(incorrectFlags.map((pos) => `${pos.row},${pos.col}`)),
+    [incorrectFlags]
   );
 
-  const handleCellClick = (row: number, col: number) => {
-    onCellClick(row, col);
-  };
-
-  const handleCellRightClick = (
-    e: React.MouseEvent,
-    row: number,
-    col: number
-  ) => {
-    e.preventDefault();
-    onCellRightClick(row, col);
-  };
-
-  // Calculate cell size based on board dimensions
-  const getCellSize = () => {
-    // For mobile, ensure board fits within screen
-    if (width <= 9) return "w-8 h-8 sm:w-9 sm:h-9 text-base sm:text-lg";
-    if (width <= 16) return "w-7 h-7 sm:w-8 sm:h-8 text-sm sm:text-base";
-    return "w-5 h-5 sm:w-6 sm:h-6 text-xs sm:text-sm";
-  };
-
-  const cellSizeClass = getCellSize();
+  // Use responsive cell size based on viewport width
+  const cellSize = useResponsiveCellSize(cols);
+  const fontSizeClass = getFontSizeClass(cellSize);
 
   return (
-    <div className="flex justify-center items-center w-full overflow-auto p-1">
-      <div className="ms-board-container inline-block">
+    <div className="flex justify-center items-center w-full p-1">
+      <div
+        className="ms-board-container"
+        style={
+          {
+            "--cell-size": `${cellSize}px`,
+          } as React.CSSProperties
+        }
+      >
         <div
-          className="grid"
+          className="ms-grid"
           style={{
-            gridTemplateColumns: `repeat(${width}, minmax(0, 1fr))`,
-            gap: 0,
+            gridTemplateColumns: `repeat(${cols}, var(--cell-size))`,
           }}
         >
           {board.map((row, rowIndex) =>
@@ -64,14 +56,15 @@ const MinesweeperBoard = memo(function MinesweeperBoard({
               return (
                 <button
                   key={`${rowIndex}-${colIndex}`}
-                  className={`${cellSizeClass} ${getCellClassName(
+                  className={`ms-cell ${fontSizeClass} ${getCellClassName(
                     cell,
                     isIncorrectFlag
                   )}`}
-                  onClick={() => handleCellClick(rowIndex, colIndex)}
-                  onContextMenu={(e) =>
-                    handleCellRightClick(e, rowIndex, colIndex)
-                  }
+                  onClick={() => onCellClick(rowIndex, colIndex)}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    onCellRightClick(rowIndex, colIndex);
+                  }}
                   aria-label={`Cell ${rowIndex + 1}, ${colIndex + 1}`}
                 >
                   {getCellContent(cell)}

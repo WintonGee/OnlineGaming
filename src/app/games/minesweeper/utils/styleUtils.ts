@@ -3,6 +3,19 @@ import { NUMBER_COLORS } from '../constants';
 import { cn } from '@/lib/utils';
 
 /**
+ * Gets the appropriate font size class based on cell size
+ */
+export function getFontSizeClass(cellSize: number): string {
+  if (cellSize >= 32) {
+    return 'text-base sm:text-lg';
+  }
+  if (cellSize >= 24) {
+    return 'text-sm sm:text-base';
+  }
+  return 'text-xs sm:text-sm';
+}
+
+/**
  * Gets the className for a cell based on its state (Classic Windows Minesweeper style)
  */
 export function getCellClassName(
