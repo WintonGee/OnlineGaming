@@ -7,7 +7,6 @@ import MinesweeperBoard from './components/MinesweeperBoard';
 import MinesweeperToolbar from './components/MinesweeperToolbar';
 import DifficultyDialog from './components/DifficultyDialog';
 import WinDialog from './components/WinDialog';
-import InputModeToggle from './components/InputModeToggle';
 
 export default function MinesweeperPage() {
   const {
@@ -20,12 +19,9 @@ export default function MinesweeperPage() {
     won,
     bestTimes,
     incorrectFlags,
-    inputMode,
-    hasMouse,
     handleCellClick,
     handleCellRightClick,
     handleNewGame,
-    toggleMode,
     showDifficultyDialog,
     setShowDifficultyDialog,
     showWinDialog,
@@ -82,12 +78,6 @@ export default function MinesweeperPage() {
               onCellRightClick={handleCellRightClick}
             />
           </div>
-
-          <InputModeToggle
-            mode={inputMode}
-            onToggle={toggleMode}
-            hasMouse={hasMouse}
-          />
         </div>
 
         <DifficultyDialog
