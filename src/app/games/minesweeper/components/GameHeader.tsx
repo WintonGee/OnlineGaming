@@ -7,7 +7,6 @@ interface GameHeaderProps {
   gameOver: boolean;
   won: boolean;
   onReset: () => void;
-  onOpenDifficulty: () => void;
 }
 
 export default function GameHeader({
@@ -16,7 +15,6 @@ export default function GameHeader({
   gameOver,
   won,
   onReset,
-  onOpenDifficulty,
 }: GameHeaderProps) {
   const emoji = gameOver ? (won ? EMOJI_STATES.won : EMOJI_STATES.lost) : EMOJI_STATES.playing;
 
@@ -30,20 +28,6 @@ export default function GameHeader({
 
   return (
     <div className="w-full max-w-4xl mx-auto mb-2">
-      {/* Title bar with Windows 95 style */}
-      <div className="ms-title-bar mb-0 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span>💣</span>
-          <span>Minesweeper</span>
-        </div>
-        <button
-          onClick={onOpenDifficulty}
-          className="ms-button text-black text-xs px-2 py-0.5"
-        >
-          Game
-        </button>
-      </div>
-
       {/* Header panel with sunken border */}
       <div className="ms-header-panel flex items-center justify-between">
         {/* Mine Counter LCD */}

@@ -1,10 +1,11 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { Board, Difficulty, CustomSettings, BestTimes } from '../types';
 import { generateBoard } from '../logic/boardGeneration';
 import { revealCell, toggleFlag, countFlaggedCells, revealAllMines, flagAllMines } from '../logic/cellReveal';
 import { checkWinCondition, checkLoseCondition, getIncorrectFlags } from '../logic/gameValidation';
 import { DIFFICULTY_CONFIG, DEFAULT_DIFFICULTY, BEST_TIMES_KEY } from '../constants';
 import { useTimer } from './useTimer';
+import { useIsMobile, getExpertDimensions } from './useResponsiveDimensions';
 
 interface UseGameStateProps {
   initialDifficulty?: Difficulty;
@@ -14,7 +15,12 @@ interface UseGameStateProps {
 export function useGameState({ initialDifficulty = DEFAULT_DIFFICULTY, customSettings }: UseGameStateProps = {}) {
   const [difficulty, setDifficulty] = useState<Difficulty>(initialDifficulty);
   const [currentCustomSettings, setCurrentCustomSettings] = useState<CustomSettings | undefined>(customSettings);
-  const [board, setBoard] = useState<Board>(() => initializeBoard(initialDifficulty, customSettings));
+  const isMobile = useIsMobile();
+  const [board, setBoard] = useState<Board>(() => {
+    // Use initial mobile state for first render
+    const initialIsMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
+    return initializeBoard(initialDifficulty, customSettings, initialIsMobile);
+  });
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
   const [firstClick, setFirstClick] = useState(true);
@@ -27,9 +33,13 @@ export function useGameState({ initialDifficulty = DEFAULT_DIFFICULTY, customSet
   const remainingMines = totalMines - flagsUsed;
 
   // Initialize board based on difficulty
-  function initializeBoard(diff: Difficulty, custom?: CustomSettings): Board {
+  function initializeBoard(diff: Difficulty, custom?: CustomSettings, mobile?: boolean): Board {
     if (diff === 'Custom' && custom) {
       return generateBoard(custom.width, custom.height, custom.mines);
+    }
+    if (diff === 'Expert') {
+      const expertDims = getExpertDimensions(mobile ?? false);
+      return generateBoard(expertDims.width, expertDims.height, DIFFICULTY_CONFIG.Expert.mines);
     }
     const config = DIFFICULTY_CONFIG[diff as keyof typeof DIFFICULTY_CONFIG] || DIFFICULTY_CONFIG.Beginner;
     return generateBoard(config.width, config.height, config.mines);
@@ -124,12 +134,12 @@ export function useGameState({ initialDifficulty = DEFAULT_DIFFICULTY, customSet
 
     setDifficulty(diff);
     setCurrentCustomSettings(custom);
-    setBoard(initializeBoard(diff, custom));
+    setBoard(initializeBoard(diff, custom, isMobile));
     setGameOver(false);
     setWon(false);
     setFirstClick(true);
     timer.reset();
-  }, [difficulty, currentCustomSettings, timer]);
+  }, [difficulty, currentCustomSettings, isMobile, timer]);
 
   // Get incorrect flags for display when game is lost
   const incorrectFlags = gameOver && !won ? getIncorrectFlags(board) : [];

@@ -6,7 +6,6 @@ import { Difficulty, CustomSettings } from '../types';
 export function useGameLogic() {
   const [showDifficultyDialog, setShowDifficultyDialog] = useState(false);
   const [showWinDialog, setShowWinDialog] = useState(false);
-  const [showGameOverDialog, setShowGameOverDialog] = useState(false);
 
   const gameState = useGameState();
   const inputMode = useInputMode();
@@ -35,16 +34,12 @@ export function useGameLogic() {
   const handleNewGame = useCallback((newDifficulty?: Difficulty, newCustomSettings?: CustomSettings) => {
     gameState.startNewGame(newDifficulty, newCustomSettings);
     setShowWinDialog(false);
-    setShowGameOverDialog(false);
   }, [gameState]);
 
-  // Show appropriate dialog when game ends
+  // Show win dialog when game is won
   const { gameOver, won } = gameState;
   if (gameOver && won && !showWinDialog) {
     setShowWinDialog(true);
-  }
-  if (gameOver && !won && !showGameOverDialog) {
-    setShowGameOverDialog(true);
   }
 
   return {
@@ -57,7 +52,5 @@ export function useGameLogic() {
     setShowDifficultyDialog,
     showWinDialog,
     setShowWinDialog,
-    showGameOverDialog,
-    setShowGameOverDialog,
   };
 }

@@ -3,7 +3,7 @@ import { Difficulty } from './types';
 export const DIFFICULTY_CONFIG = {
   Beginner: { width: 9, height: 9, mines: 10 },
   Intermediate: { width: 16, height: 16, mines: 40 },
-  Expert: { width: 30, height: 16, mines: 99 },
+  Expert: { width: 16, height: 30, mines: 99 },
 } as const;
 
 export const CUSTOM_CONSTRAINTS = {
@@ -11,7 +11,7 @@ export const CUSTOM_CONSTRAINTS = {
   maxWidth: 50,
   minHeight: 5,
   maxHeight: 50,
-  maxMinePercentage: 0.99, // Up to 99% mines (at least 1 safe cell required)
+  maxMinePercentage: 0.80, // Up to 80% mines (20% safe tiles minimum)
 } as const;
 
 export const BEST_TIMES_KEY = 'minesweeper-best-times';

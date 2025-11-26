@@ -1,4 +1,5 @@
 import { Board } from '../types';
+import { CUSTOM_CONSTRAINTS } from '../constants';
 
 /**
  * Checks if the game is won
@@ -48,27 +49,36 @@ export function validateCustomSettings(
   height: number,
   mines: number
 ): { valid: boolean; error?: string } {
-  if (width < 5 || width > 50) {
-    return { valid: false, error: 'Width must be between 5 and 50' };
+  if (isNaN(width) || width < CUSTOM_CONSTRAINTS.minWidth || width > CUSTOM_CONSTRAINTS.maxWidth) {
+    return { 
+      valid: false, 
+      error: `Width must be between ${CUSTOM_CONSTRAINTS.minWidth} and ${CUSTOM_CONSTRAINTS.maxWidth}` 
+    };
   }
 
-  if (height < 5 || height > 50) {
-    return { valid: false, error: 'Height must be between 5 and 50' };
+  if (isNaN(height) || height < CUSTOM_CONSTRAINTS.minHeight || height > CUSTOM_CONSTRAINTS.maxHeight) {
+    return { 
+      valid: false, 
+      error: `Height must be between ${CUSTOM_CONSTRAINTS.minHeight} and ${CUSTOM_CONSTRAINTS.maxHeight}` 
+    };
   }
 
   const totalCells = width * height;
-  const maxMines = Math.floor(totalCells * 0.99); // 99% of cells
+  const maxMines = Math.floor(totalCells * CUSTOM_CONSTRAINTS.maxMinePercentage);
+  const minMines = 1;
 
-  if (mines < 1) {
-    return { valid: false, error: 'Must have at least 1 mine' };
-  }
-
-  if (mines >= totalCells) {
-    return { valid: false, error: 'Must have at least 1 safe cell' };
+  if (isNaN(mines) || mines < minMines) {
+    return { 
+      valid: false, 
+      error: `Mines must be between ${minMines} and ${maxMines} for a ${width}x${height} board` 
+    };
   }
 
   if (mines > maxMines) {
-    return { valid: false, error: `Maximum ${maxMines} mines for ${width}x${height} board` };
+    return { 
+      valid: false, 
+      error: `Mines must be between ${minMines} and ${maxMines} for a ${width}x${height} board (max 80% of cells)` 
+    };
   }
 
   return { valid: true };

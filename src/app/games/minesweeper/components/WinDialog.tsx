@@ -17,14 +17,19 @@ interface WinDialogProps {
   difficulty: Difficulty;
   bestTimes: BestTimes;
   onNewGame: () => void;
+  onClose: () => void;
 }
 
-export default function WinDialog({ open, time, difficulty, bestTimes, onNewGame }: WinDialogProps) {
+export default function WinDialog({ open, time, difficulty, bestTimes, onNewGame, onClose }: WinDialogProps) {
   const currentBest = bestTimes[difficulty];
   const isNewRecord = !currentBest || time < currentBest;
 
   return (
-    <Dialog open={open} onOpenChange={() => {}}>
+    <Dialog open={open} onOpenChange={(isOpen) => {
+      if (!isOpen) {
+        onClose();
+      }
+    }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex justify-center mb-4">

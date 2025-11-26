@@ -4,9 +4,9 @@ import './styles.css';
 import { useGameLogic } from './hooks/useGameLogic';
 import GameHeader from './components/GameHeader';
 import MinesweeperBoard from './components/MinesweeperBoard';
+import MinesweeperToolbar from './components/MinesweeperToolbar';
 import DifficultyDialog from './components/DifficultyDialog';
 import WinDialog from './components/WinDialog';
-import GameOverDialog from './components/GameOverDialog';
 import InputModeToggle from './components/InputModeToggle';
 
 export default function MinesweeperPage() {
@@ -30,37 +30,65 @@ export default function MinesweeperPage() {
     setShowDifficultyDialog,
     showWinDialog,
     setShowWinDialog,
-    showGameOverDialog,
-    setShowGameOverDialog,
   } = useGameLogic();
 
   return (
-    <div className="min-h-screen bg-[#008080] text-foreground flex items-start justify-center pt-4 sm:pt-8 lg:pt-12">
-      <div className="flex flex-col items-center">
-        {/* Classic Windows-style game container */}
-        <div className="ms-container">
-          <GameHeader
-            remainingMines={remainingMines}
-            time={time}
-            gameOver={gameOver}
-            won={won}
-            onReset={() => handleNewGame()}
-            onOpenDifficulty={() => setShowDifficultyDialog(true)}
-          />
+    <div className="min-h-screen bg-white dark:bg-black text-foreground py-3 sm:py-8 lg:py-12 px-4">
+      <div className="mx-auto w-full max-w-6xl px-0 sm:px-4 lg:px-12">
+        {/* Header */}
+        <div className="mb-3 sm:mb-8 lg:mb-12 flex flex-col gap-2 sm:gap-4 lg:gap-6">
+          {/* Title */}
+          <div className="text-center">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold text-black dark:text-white mb-1 sm:mb-3">
+              Minesweeper
+            </h1>
+          </div>
 
-          <MinesweeperBoard
-            board={board}
-            incorrectFlags={incorrectFlags}
-            onCellClick={handleCellClick}
-            onCellRightClick={handleCellRightClick}
-          />
+          {/* Difficulty Toolbar */}
+          <div className="flex flex-col gap-2 sm:gap-4">
+            <div className="flex flex-col lg:flex-row w-full items-center gap-2 lg:gap-4 justify-center">
+              <MinesweeperToolbar
+                selectedDifficulty={difficulty}
+                onDifficultyChange={(newDifficulty) => {
+                  if (newDifficulty !== 'Custom') {
+                    handleNewGame(newDifficulty);
+                  } else {
+                    setShowDifficultyDialog(true);
+                  }
+                }}
+                onNewGame={() => handleNewGame()}
+                onCustomClick={() => setShowDifficultyDialog(true)}
+              />
+            </div>
+          </div>
         </div>
 
-        <InputModeToggle
-          mode={inputMode}
-          onToggle={toggleMode}
-          hasMouse={hasMouse}
-        />
+        {/* Main Game Area */}
+        <div className="flex flex-col items-center justify-center">
+          {/* Classic Windows-style game container */}
+          <div className="ms-container">
+            <GameHeader
+              remainingMines={remainingMines}
+              time={time}
+              gameOver={gameOver}
+              won={won}
+              onReset={() => handleNewGame()}
+            />
+
+            <MinesweeperBoard
+              board={board}
+              incorrectFlags={incorrectFlags}
+              onCellClick={handleCellClick}
+              onCellRightClick={handleCellRightClick}
+            />
+          </div>
+
+          <InputModeToggle
+            mode={inputMode}
+            onToggle={toggleMode}
+            hasMouse={hasMouse}
+          />
+        </div>
 
         <DifficultyDialog
           open={showDifficultyDialog}
@@ -82,14 +110,7 @@ export default function MinesweeperPage() {
             handleNewGame();
             setShowWinDialog(false);
           }}
-        />
-
-        <GameOverDialog
-          open={showGameOverDialog}
-          onNewGame={() => {
-            handleNewGame();
-            setShowGameOverDialog(false);
-          }}
+          onClose={() => setShowWinDialog(false)}
         />
       </div>
     </div>
