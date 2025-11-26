@@ -80,7 +80,7 @@ export default function MinesweeperToolbar({
 
       {/* Help Menu */}
       <div className="ml-4 sm:ml-6">
-        <GameHelpMenu onHowToPlay={onHowToPlay} onNewGame={onNewGame} />
+        <GameHelpMenu onHowToPlay={onHowToPlay} onNewGame={onNewGame} variant="rounded" />
       </div>
     </div>
   );

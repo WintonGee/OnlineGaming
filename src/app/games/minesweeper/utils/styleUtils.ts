@@ -4,15 +4,16 @@ import { cn } from '@/lib/utils';
 
 /**
  * Gets the appropriate font size class based on cell size
+ * Numbers should be large, bold, and fill most of the cell
  */
 export function getFontSizeClass(cellSize: number): string {
   if (cellSize >= 32) {
-    return 'text-base sm:text-lg';
+    return 'text-2xl sm:text-3xl';
   }
   if (cellSize >= 24) {
-    return 'text-sm sm:text-base';
+    return 'text-xl sm:text-2xl';
   }
-  return 'text-xs sm:text-sm';
+  return 'text-lg sm:text-xl';
 }
 
 /**
@@ -22,7 +23,7 @@ export function getCellClassName(
   cell: Cell,
   isIncorrectFlag: boolean
 ): string {
-  const baseClasses = 'flex items-center justify-center font-bold select-none';
+  const baseClasses = 'flex items-center justify-center font-black select-none';
 
   // Revealed cell
   if (cell.isRevealed) {

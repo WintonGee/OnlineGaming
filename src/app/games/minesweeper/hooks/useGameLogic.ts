@@ -1,11 +1,12 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useDialogState } from '@/hooks/useDialogState';
 import { useGameState } from './useGameState';
 import { useInputMode } from './useInputMode';
 import { Difficulty, CustomSettings } from '../types';
 
 export function useGameLogic() {
-  const [showDifficultyDialog, setShowDifficultyDialog] = useState(false);
-  const [showWinDialog, setShowWinDialog] = useState(false);
+  const difficultyDialog = useDialogState();
+  const winDialog = useDialogState();
 
   const gameState = useGameState();
   const inputMode = useInputMode();
@@ -36,15 +37,15 @@ export function useGameLogic() {
   // Handle new game
   const handleNewGame = useCallback((newDifficulty?: Difficulty, newCustomSettings?: CustomSettings) => {
     startNewGame(newDifficulty, newCustomSettings);
-    setShowWinDialog(false);
-  }, [startNewGame]);
+    winDialog.close();
+  }, [startNewGame, winDialog]);
 
   // Show win dialog when game is won (proper effect, not during render)
   useEffect(() => {
     if (gameOver && won) {
-      setShowWinDialog(true);
+      winDialog.open();
     }
-  }, [gameOver, won]);
+  }, [gameOver, won, winDialog]);
 
   return {
     ...gameState,
@@ -52,9 +53,9 @@ export function useGameLogic() {
     handleCellClick,
     handleCellRightClick,
     handleNewGame,
-    showDifficultyDialog,
-    setShowDifficultyDialog,
-    showWinDialog,
-    setShowWinDialog,
+    showDifficultyDialog: difficultyDialog.isOpen,
+    setShowDifficultyDialog: difficultyDialog.setIsOpen,
+    showWinDialog: winDialog.isOpen,
+    setShowWinDialog: winDialog.setIsOpen,
   };
 }

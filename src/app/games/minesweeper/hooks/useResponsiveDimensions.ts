@@ -1,25 +1,13 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
+import { useIsMobile as useIsMobileShared } from '@/hooks/useResponsive';
 
 /**
  * Hook to detect if we're on a mobile device
  * Uses a breakpoint of 768px (md breakpoint in Tailwind)
+ * Re-exports shared hook for game-specific usage
  */
 export function useIsMobile(): boolean {
-  const [isMobile, setIsMobile] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false;
-    return window.innerWidth < 768;
-  });
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  return isMobile;
+  return useIsMobileShared(768);
 }
 
 /**

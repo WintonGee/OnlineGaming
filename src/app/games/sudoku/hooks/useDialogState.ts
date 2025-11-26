@@ -39,10 +39,6 @@ export function useDialogState() {
     setShowInstructions(true);
   }, []);
 
-  const hideInstructionsDialog = useCallback(() => {
-    setShowInstructions(false);
-  }, []);
-
   return {
     // Helper toast state
     helperResult,
@@ -58,7 +54,6 @@ export function useDialogState() {
     // Instructions dialog state
     showInstructions,
     showInstructionsDialog,
-    hideInstructionsDialog,
     setShowInstructions,
   };
 }
