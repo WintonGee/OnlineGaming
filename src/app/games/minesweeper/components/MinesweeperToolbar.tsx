@@ -16,6 +16,8 @@ interface MinesweeperToolbarProps {
   onNewGame: () => void;
   onCustomClick: () => void;
   onHowToPlay: () => void;
+  onRevealHint?: () => void;
+  onFlagHint?: () => void;
 }
 
 const STANDARD_DIFFICULTIES: Difficulty[] = ["Beginner", "Intermediate", "Expert"];
@@ -27,6 +29,8 @@ export default function MinesweeperToolbar({
   onNewGame,
   onCustomClick,
   onHowToPlay,
+  onRevealHint,
+  onFlagHint,
 }: MinesweeperToolbarProps) {
   const handleDifficultySelect = (difficulty: Difficulty) => {
     if (difficulty === "Custom") {
@@ -80,7 +84,13 @@ export default function MinesweeperToolbar({
 
       {/* Help Menu */}
       <div className="ml-4 sm:ml-6">
-        <GameHelpMenu onHowToPlay={onHowToPlay} onNewGame={onNewGame} variant="rounded" />
+        <GameHelpMenu
+          onHowToPlay={onHowToPlay}
+          onNewGame={onNewGame}
+          onRevealHint={onRevealHint}
+          onFlagHint={onFlagHint}
+          variant="rounded"
+        />
       </div>
     </div>
   );

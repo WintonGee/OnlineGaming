@@ -11,7 +11,7 @@ export function useGameLogic() {
   const gameState = useGameState();
   const inputMode = useInputMode();
 
-  const { gameOver, won, handleCellReveal, handleCellFlag, startNewGame } = gameState;
+  const { gameOver, won, handleCellReveal, handleCellFlag, handleRevealHint, handleFlagHint, startNewGame } = gameState;
   const { hasMouse, inputMode: currentInputMode } = inputMode;
 
   // Handle cell click based on input mode
@@ -52,6 +52,8 @@ export function useGameLogic() {
     ...inputMode,
     handleCellClick,
     handleCellRightClick,
+    handleRevealHint,
+    handleFlagHint,
     handleNewGame,
     showDifficultyDialog: difficultyDialog.isOpen,
     setShowDifficultyDialog: difficultyDialog.setIsOpen,

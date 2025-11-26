@@ -23,6 +23,8 @@ export default function MinesweeperPage() {
     incorrectFlags,
     handleCellClick,
     handleCellRightClick,
+    handleRevealHint,
+    handleFlagHint,
     handleNewGame,
     showDifficultyDialog,
     setShowDifficultyDialog,
@@ -59,6 +61,8 @@ export default function MinesweeperPage() {
                 onNewGame={() => handleNewGame()}
                 onCustomClick={() => setShowDifficultyDialog(true)}
                 onHowToPlay={instructionsDialog.open}
+                onRevealHint={handleRevealHint}
+                onFlagHint={handleFlagHint}
               />
             </div>
           </div>

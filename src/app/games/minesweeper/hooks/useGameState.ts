@@ -6,6 +6,7 @@ import { checkWinCondition, checkLoseCondition, getIncorrectFlags } from '../log
 import { DIFFICULTY_CONFIG, DEFAULT_DIFFICULTY, BEST_TIMES_KEY } from '../constants';
 import { useTimer } from './useTimer';
 import { useIsMobile, getExpertDimensions } from './useResponsiveDimensions';
+import { revealRandomNumber, flagRandomMine } from '../logic/hints';
 
 interface UseGameStateProps {
   initialDifficulty?: Difficulty;
@@ -141,6 +142,62 @@ export function useGameState({ initialDifficulty = DEFAULT_DIFFICULTY, customSet
     timer.reset();
   }, [difficulty, currentCustomSettings, isMobile, timer]);
 
+  // Handle hint: reveal a random number
+  const handleRevealHint = useCallback(() => {
+    if (gameOver) return;
+
+    // Start timer on first hint if game hasn't started
+    if (firstClick) {
+      timer.start();
+      setFirstClick(false);
+    }
+
+    const newBoard = revealRandomNumber(board);
+    if (!newBoard) {
+      // No safe cells available to reveal
+      return;
+    }
+
+    setBoard(newBoard);
+
+    // Check for win after revealing
+    if (checkWinCondition(newBoard, totalMines)) {
+      const boardWithFlags = flagAllMines(newBoard);
+      setBoard(boardWithFlags);
+      setGameOver(true);
+      setWon(true);
+      timer.stop();
+
+      // Update best time
+      const currentTime = timer.time;
+      const currentBest = bestTimes[difficulty];
+      if (!currentBest || currentTime < currentBest) {
+        const newBestTimes = { ...bestTimes, [difficulty]: currentTime };
+        setBestTimes(newBestTimes);
+        saveBestTimes(newBestTimes);
+      }
+    }
+  }, [board, gameOver, firstClick, timer, totalMines, difficulty, bestTimes]);
+
+  // Handle hint: flag a random mine
+  const handleFlagHint = useCallback(() => {
+    if (gameOver) return;
+
+    // Start timer on first hint if game hasn't started
+    if (firstClick) {
+      timer.start();
+      setFirstClick(false);
+    }
+
+    const newBoard = flagRandomMine(board);
+    if (!newBoard) {
+      // No unflagged mines available
+      return;
+    }
+
+    setBoard(newBoard);
+  }, [board, gameOver, firstClick, timer]);
+
   // Get incorrect flags for display when game is lost
   const incorrectFlags = gameOver && !won ? getIncorrectFlags(board) : [];
 
@@ -158,6 +215,8 @@ export function useGameState({ initialDifficulty = DEFAULT_DIFFICULTY, customSet
     incorrectFlags,
     handleCellReveal,
     handleCellFlag,
+    handleRevealHint,
+    handleFlagHint,
     startNewGame,
   };
 }
