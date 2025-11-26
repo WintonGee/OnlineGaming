@@ -8,6 +8,7 @@ import {
   canMoveTiles,
 } from "../logic/tileGameLogic";
 import { BEST_SCORE_KEY, GAME_STATE_KEY } from "../constants";
+import { createStorage, storage } from "@/lib/storage";
 
 interface SavedGameState {
   tiles: Tile[];
@@ -16,53 +17,8 @@ interface SavedGameState {
   keepPlaying: boolean;
 }
 
-/**
- * Loads saved game state from localStorage
- */
-function loadSavedGameState(): SavedGameState | null {
-  if (typeof window === "undefined") return null;
-
-  try {
-    const saved = localStorage.getItem(GAME_STATE_KEY);
-    if (!saved) return null;
-
-    const parsed = JSON.parse(saved) as SavedGameState;
-
-    // Validate the saved state has required properties
-    if (
-      !parsed.tiles ||
-      !Array.isArray(parsed.tiles) ||
-      typeof parsed.score !== "number"
-    ) {
-      return null;
-    }
-
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Saves game state to localStorage
- */
-function saveGameState(state: SavedGameState): void {
-  if (typeof window === "undefined") return;
-
-  try {
-    localStorage.setItem(GAME_STATE_KEY, JSON.stringify(state));
-  } catch {
-    // Silently fail if localStorage is full or unavailable
-  }
-}
-
-/**
- * Clears saved game state from localStorage
- */
-function clearSavedGameState(): void {
-  if (typeof window === "undefined") return;
-  localStorage.removeItem(GAME_STATE_KEY);
-}
+// Create type-safe storage for game state
+const gameStateStorage = createStorage<SavedGameState>(GAME_STATE_KEY);
 
 export function useTileGameState() {
   // Initialize with empty array to avoid hydration mismatch
@@ -83,13 +39,13 @@ export function useTileGameState() {
     hasInitialized.current = true;
 
     // Load best score from localStorage
-    const savedBestScore = localStorage.getItem(BEST_SCORE_KEY);
+    const savedBestScore = storage.get<number>(BEST_SCORE_KEY);
     if (savedBestScore) {
-      setBestScore(parseInt(savedBestScore, 10));
+      setBestScore(savedBestScore);
     }
 
     // Try to load saved game state
-    const savedState = loadSavedGameState();
+    const savedState = gameStateStorage.load();
 
     if (savedState && savedState.tiles.length > 0) {
       // Restore saved game
@@ -115,11 +71,11 @@ export function useTileGameState() {
 
     // Don't save if game is over (let them start fresh next time)
     if (gameOver) {
-      clearSavedGameState();
+      gameStateStorage.clear();
       return;
     }
 
-    saveGameState({
+    gameStateStorage.save({
       tiles,
       score,
       won,
@@ -131,9 +87,7 @@ export function useTileGameState() {
   useEffect(() => {
     if (score > bestScore) {
       setBestScore(score);
-      if (typeof window !== "undefined") {
-        localStorage.setItem(BEST_SCORE_KEY, score.toString());
-      }
+      storage.set(BEST_SCORE_KEY, score);
     }
   }, [score, bestScore]);
 
@@ -144,7 +98,7 @@ export function useTileGameState() {
     setGameOver(false);
     setWon(false);
     setKeepPlaying(false);
-    clearSavedGameState();
+    gameStateStorage.clear();
   }, []);
 
   const handleMove = useCallback(

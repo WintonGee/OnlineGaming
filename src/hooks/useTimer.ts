@@ -1,5 +1,30 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+"use client";
 
+import { useState, useEffect, useRef, useCallback } from "react";
+
+/**
+ * Timer hook for games
+ * Provides a simple elapsed time counter in seconds
+ *
+ * @returns Object with time state and control functions
+ *
+ * @example
+ * ```tsx
+ * const timer = useTimer();
+ *
+ * // Start timer on first move
+ * if (firstMove) {
+ *   timer.start();
+ * }
+ *
+ * // Stop timer when game ends
+ * if (gameOver) {
+ *   timer.stop();
+ * }
+ *
+ * // Display: {timer.time} seconds
+ * ```
+ */
 export function useTimer() {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -29,7 +54,7 @@ export function useTimer() {
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
-        setTime(t => t + 1);
+        setTime((t) => t + 1);
       }, 1000);
     } else {
       if (intervalRef.current) {
@@ -45,5 +70,5 @@ export function useTimer() {
     };
   }, [isRunning]);
 
-  return { time, start, stop, reset };
+  return { time, start, stop, reset, isRunning };
 }

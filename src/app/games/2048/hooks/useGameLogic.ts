@@ -2,7 +2,7 @@
 
 import { useTileGameState } from "./useTileGameState";
 import { useKeyboardInput } from "./useKeyboardInput";
-import { useDialogState } from "./useDialogState";
+import { useDialogState } from "@/hooks/useDialogState";
 
 /**
  * Main orchestrator hook that composes all game logic hooks
@@ -10,7 +10,7 @@ import { useDialogState } from "./useDialogState";
 export function useGameLogic() {
   // Compose all sub-hooks
   const gameState = useTileGameState();
-  const dialogState = useDialogState();
+  const instructionsDialog = useDialogState();
 
   // Enable keyboard input (swipe is handled in TileGameBoard)
   useKeyboardInput({
@@ -34,8 +34,8 @@ export function useGameLogic() {
     continueAfterWin: gameState.continueAfterWin,
 
     // Dialog state
-    showInstructions: dialogState.showInstructions,
-    openInstructions: dialogState.openInstructions,
-    closeInstructions: dialogState.closeInstructions,
+    showInstructions: instructionsDialog.isOpen,
+    openInstructions: instructionsDialog.open,
+    closeInstructions: instructionsDialog.close,
   };
 }

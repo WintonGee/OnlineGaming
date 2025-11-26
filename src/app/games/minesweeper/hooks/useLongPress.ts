@@ -13,13 +13,16 @@ export function useLongPress({
 }: LongPressOptions) {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const isLongPressRef = useRef(false);
+  const preventClickRef = useRef(false);
 
   const start = useCallback(
     (event: React.TouchEvent | React.MouseEvent) => {
       isLongPressRef.current = false;
+      preventClickRef.current = false;
 
       timerRef.current = setTimeout(() => {
         isLongPressRef.current = true;
+        preventClickRef.current = true;
         // Provide haptic feedback on mobile devices
         if ('vibrate' in navigator) {
           navigator.vibrate(50);
@@ -32,16 +35,23 @@ export function useLongPress({
 
   const clear = useCallback(
     (event: React.TouchEvent | React.MouseEvent, shouldTriggerClick = true) => {
+      const wasLongPress = isLongPressRef.current;
+
       if (timerRef.current) {
         clearTimeout(timerRef.current);
         timerRef.current = null;
       }
 
-      if (shouldTriggerClick && !isLongPressRef.current && onClick) {
+      // Only trigger onClick if it wasn't a long press and click handler exists
+      if (shouldTriggerClick && !preventClickRef.current && !wasLongPress && onClick) {
         onClick(event);
       }
 
-      isLongPressRef.current = false;
+      // Reset the flag after a short delay to allow for the next interaction
+      setTimeout(() => {
+        isLongPressRef.current = false;
+        preventClickRef.current = false;
+      }, 50);
     },
     [onClick]
   );

@@ -4,14 +4,18 @@ import { generateBoard } from '../logic/boardGeneration';
 import { revealCell, toggleFlag, countFlaggedCells, revealAllMines, flagAllMines } from '../logic/cellReveal';
 import { checkWinCondition, checkLoseCondition, getIncorrectFlags } from '../logic/gameValidation';
 import { DIFFICULTY_CONFIG, DEFAULT_DIFFICULTY, BEST_TIMES_KEY } from '../constants';
-import { useTimer } from './useTimer';
+import { useTimer } from '@/hooks/useTimer';
 import { useIsMobile, getExpertDimensions } from './useResponsiveDimensions';
 import { revealRandomNumber, flagRandomMine } from '../logic/hints';
+import { createStorage } from '@/lib/storage';
 
 interface UseGameStateProps {
   initialDifficulty?: Difficulty;
   customSettings?: CustomSettings;
 }
+
+// Create type-safe storage for best times
+const bestTimesStorage = createStorage<BestTimes>(BEST_TIMES_KEY);
 
 export function useGameState({ initialDifficulty = DEFAULT_DIFFICULTY, customSettings }: UseGameStateProps = {}) {
   const [difficulty, setDifficulty] = useState<Difficulty>(initialDifficulty);
@@ -57,15 +61,12 @@ export function useGameState({ initialDifficulty = DEFAULT_DIFFICULTY, customSet
 
   // Load best times from localStorage
   function loadBestTimes(): BestTimes {
-    if (typeof window === 'undefined') return {};
-    const saved = localStorage.getItem(BEST_TIMES_KEY);
-    return saved ? JSON.parse(saved) : {};
+    return bestTimesStorage.load() ?? {};
   }
 
   // Save best times to localStorage
   function saveBestTimes(times: BestTimes) {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem(BEST_TIMES_KEY, JSON.stringify(times));
+    bestTimesStorage.save(times);
   }
 
   // Handle cell click (reveal)
