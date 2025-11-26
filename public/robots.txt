@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://gamesadfree.com
+
+# Sitemaps
+Sitemap: https://gamesadfree.com/sitemap.xml
