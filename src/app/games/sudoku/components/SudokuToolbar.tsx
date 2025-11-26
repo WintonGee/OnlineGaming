@@ -40,7 +40,7 @@ export default function SudokuToolbar({
         disabled={isGenerating}
         className="rounded-full px-6 py-2 text-sm font-semibold uppercase tracking-wide ml-2 lg:ml-4 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white border-2 border-gray-400 dark:border-gray-500 hover:border-gray-600 dark:hover:border-gray-400 transition-all"
       >
-        {isGenerating ? "Preparing..." : "New Puzzle"}
+        {isGenerating ? "Preparing..." : "New Game"}
       </Button>
     </div>
   );
