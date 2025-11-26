@@ -20,7 +20,7 @@ export default function InstructionsDialog({
 }: InstructionsDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto mx-4">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">How to Play 2048</DialogTitle>
           <DialogDescription className="sr-only">

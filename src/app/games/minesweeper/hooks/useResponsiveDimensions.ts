@@ -39,10 +39,8 @@ export function getExpertDimensions(isMobile: boolean): { width: number; height:
  * Ensures the board fits within the screen with a small gap from edges.
  */
 export function useResponsiveCellSize(cols: number): number {
-  const [cellSize, setCellSize] = useState<number>(() => {
-    if (typeof window === 'undefined') return 24;
-    return calculateCellSize(window.innerWidth, cols);
-  });
+  // Always start with server-side default to avoid hydration mismatch
+  const [cellSize, setCellSize] = useState<number>(24);
 
   useEffect(() => {
     const handleResize = () => {
@@ -68,16 +66,16 @@ function calculateCellSize(viewportWidth: number, cols: number): number {
   // - Page px-4: 16px * 2 = 32px
   // - ms-container padding (8px) + border (4px) on each side = 24px total
   // - ms-board-container border: 4px * 2 = 8px
-  // - Extra gap from screen edges: 16px on each side = 32px
-  const horizontalPadding = 32 + 24 + 8 + 32; // 96px total
-  
+  // - Minimum edge spacing: 48px on each side = 96px (ensures visible edges on large boards)
+  const horizontalPadding = 32 + 24 + 8 + 96; // 160px total
+
   const availableWidth = viewportWidth - horizontalPadding;
   const calculatedSize = Math.floor(availableWidth / cols);
-  
+
   // Clamp between reasonable min/max sizes
   const minSize = 16;
   const maxSize = 36;
-  
+
   return Math.max(minSize, Math.min(maxSize, calculatedSize));
 }
 
