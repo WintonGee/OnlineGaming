@@ -6,12 +6,14 @@ import {
   getFontSizeClass,
 } from "../utils/styleUtils";
 import { useResponsiveCellSize } from "../hooks/useResponsiveDimensions";
+import { useLongPress } from "../hooks/useLongPress";
 
 interface MinesweeperBoardProps {
   board: Board;
   incorrectFlags: CellPosition[];
   onCellClick: (row: number, col: number) => void;
   onCellRightClick: (row: number, col: number) => void;
+  onCellLongPress: (row: number, col: number) => void;
 }
 
 const MinesweeperBoard = memo(function MinesweeperBoard({
@@ -19,6 +21,7 @@ const MinesweeperBoard = memo(function MinesweeperBoard({
   incorrectFlags,
   onCellClick,
   onCellRightClick,
+  onCellLongPress,
 }: MinesweeperBoardProps) {
   const cols = board[0]?.length || 0;
 
@@ -31,6 +34,36 @@ const MinesweeperBoard = memo(function MinesweeperBoard({
   // Use responsive cell size based on viewport width
   const cellSize = useResponsiveCellSize(cols);
   const fontSizeClass = getFontSizeClass(cellSize);
+
+  // Cell component with long press support
+  const Cell = ({ rowIndex, colIndex }: { rowIndex: number; colIndex: number }) => {
+    const cell = board[rowIndex][colIndex];
+    const isIncorrectFlag = incorrectFlagSet.has(`${rowIndex},${colIndex}`);
+
+    const longPressHandlers = useLongPress({
+      onLongPress: () => onCellLongPress(rowIndex, colIndex),
+      onClick: () => onCellClick(rowIndex, colIndex),
+      delay: 500,
+    });
+
+    return (
+      <button
+        key={`${rowIndex}-${colIndex}`}
+        className={`ms-cell ${fontSizeClass} ${getCellClassName(
+          cell,
+          isIncorrectFlag
+        )}`}
+        {...longPressHandlers}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          onCellRightClick(rowIndex, colIndex);
+        }}
+        aria-label={`Cell ${rowIndex + 1}, ${colIndex + 1}`}
+      >
+        {getCellContent(cell)}
+      </button>
+    );
+  };
 
   return (
     <div className="flex justify-center items-center w-full p-1">
@@ -49,28 +82,9 @@ const MinesweeperBoard = memo(function MinesweeperBoard({
           }}
         >
           {board.map((row, rowIndex) =>
-            row.map((cell, colIndex) => {
-              const isIncorrectFlag = incorrectFlagSet.has(
-                `${rowIndex},${colIndex}`
-              );
-              return (
-                <button
-                  key={`${rowIndex}-${colIndex}`}
-                  className={`ms-cell ${fontSizeClass} ${getCellClassName(
-                    cell,
-                    isIncorrectFlag
-                  )}`}
-                  onClick={() => onCellClick(rowIndex, colIndex)}
-                  onContextMenu={(e) => {
-                    e.preventDefault();
-                    onCellRightClick(rowIndex, colIndex);
-                  }}
-                  aria-label={`Cell ${rowIndex + 1}, ${colIndex + 1}`}
-                >
-                  {getCellContent(cell)}
-                </button>
-              );
-            })
+            row.map((_, colIndex) => (
+              <Cell key={`${rowIndex}-${colIndex}`} rowIndex={rowIndex} colIndex={colIndex} />
+            ))
           )}
         </div>
       </div>

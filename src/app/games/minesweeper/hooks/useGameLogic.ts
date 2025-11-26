@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useDialogState } from '@/hooks/useDialogState';
 import { useGameState } from './useGameState';
 import { useInputMode } from './useInputMode';
@@ -7,6 +7,7 @@ import { Difficulty, CustomSettings } from '../types';
 export function useGameLogic() {
   const difficultyDialog = useDialogState();
   const winDialog = useDialogState();
+  const hasShownWinDialog = useRef(false);
 
   const gameState = useGameState();
   const inputMode = useInputMode();
@@ -34,16 +35,23 @@ export function useGameLogic() {
     handleCellFlag(row, col);
   }, [handleCellFlag]);
 
+  // Handle long press (flagging on mobile)
+  const handleCellLongPress = useCallback((row: number, col: number) => {
+    handleCellFlag(row, col);
+  }, [handleCellFlag]);
+
   // Handle new game
   const handleNewGame = useCallback((newDifficulty?: Difficulty, newCustomSettings?: CustomSettings) => {
     startNewGame(newDifficulty, newCustomSettings);
     winDialog.close();
+    hasShownWinDialog.current = false;
   }, [startNewGame, winDialog]);
 
-  // Show win dialog when game is won (proper effect, not during render)
+  // Show win dialog when game is won (only once per game)
   useEffect(() => {
-    if (gameOver && won) {
+    if (gameOver && won && !hasShownWinDialog.current) {
       winDialog.open();
+      hasShownWinDialog.current = true;
     }
   }, [gameOver, won, winDialog]);
 
@@ -52,6 +60,7 @@ export function useGameLogic() {
     ...inputMode,
     handleCellClick,
     handleCellRightClick,
+    handleCellLongPress,
     handleRevealHint,
     handleFlagHint,
     handleNewGame,

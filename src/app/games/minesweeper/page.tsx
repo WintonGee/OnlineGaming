@@ -23,6 +23,7 @@ export default function MinesweeperPage() {
     incorrectFlags,
     handleCellClick,
     handleCellRightClick,
+    handleCellLongPress,
     handleRevealHint,
     handleFlagHint,
     handleNewGame,
@@ -85,6 +86,7 @@ export default function MinesweeperPage() {
               incorrectFlags={incorrectFlags}
               onCellClick={handleCellClick}
               onCellRightClick={handleCellRightClick}
+              onCellLongPress={handleCellLongPress}
             />
           </div>
         </div>
