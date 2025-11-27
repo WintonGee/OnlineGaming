@@ -1,4 +1,4 @@
-import { createGameMetadataAndStructuredData } from "@/lib/gameMetadata";
+import { createGameMetadataAndStructuredData } from "@/lib/games/metadata";
 
 export const gameOptions = {
   title: "Play Sudoku Free Online - No Ads | Multiple Difficulty Levels",

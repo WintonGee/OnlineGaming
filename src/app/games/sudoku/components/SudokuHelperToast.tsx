@@ -2,14 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import {
-  AlertTriangle,
-  CheckCircle2,
-  Info,
-  X,
-  XCircle,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { AlertTriangle, CheckCircle2, Info, X, XCircle } from "lucide-react";
+import { cn } from "@/lib/shared/utils/cn";
 import { HelperActionResult } from "../types";
 
 const STATUS_CONFIG = {
@@ -22,8 +16,7 @@ const STATUS_CONFIG = {
   info: {
     title: "FYI",
     icon: Info,
-    accent:
-      "bg-blue-100 text-blue-900 dark:bg-blue-900/30 dark:text-blue-100",
+    accent: "bg-blue-100 text-blue-900 dark:bg-blue-900/30 dark:text-blue-100",
   },
   warning: {
     title: "Heads up",
@@ -105,4 +98,3 @@ export default function SudokuHelperToast({
     document.body
   );
 }
-

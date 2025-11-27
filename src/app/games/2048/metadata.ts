@@ -1,4 +1,4 @@
-import { createGameMetadataAndStructuredData } from "@/lib/gameMetadata";
+import { createGameMetadataAndStructuredData } from "@/lib/games/metadata";
 
 export const gameOptions = {
   title: "Play 2048 Game Free Online - No Ads | Classic Tile Puzzle",

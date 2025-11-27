@@ -1,8 +1,8 @@
 "use client";
 
 import { useTileGameState } from "./useTileGameState";
-import { useKeyboardInput } from "./useKeyboardInput";
-import { useDialogState } from "@/hooks/useDialogState";
+import { useKeyboardInput } from "@/lib/games/hooks/useKeyboardInput";
+import { useDialogState } from "@/lib/shared/hooks/useDialogState";
 
 /**
  * Main orchestrator hook that composes all game logic hooks

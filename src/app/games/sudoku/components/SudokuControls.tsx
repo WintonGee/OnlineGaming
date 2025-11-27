@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { CellPosition, Grid, InputMode } from '../types';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { X } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { isCellInitial } from '../utils/gridUtils';
-import { GRID_SIZE } from '../constants';
+import { CellPosition, Grid, InputMode } from "../types";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { X } from "lucide-react";
+import { cn } from "@/lib/shared/utils/cn";
+import { isCellInitial } from "../utils/gridUtils";
+import { GRID_SIZE } from "../constants";
 
 interface SudokuControlsProps {
   isGenerating?: boolean;
@@ -33,10 +33,12 @@ export default function SudokuControls({
   onUndo,
   canUndo,
 }: SudokuControlsProps) {
-
   const handleNumberSelect = (num: number) => {
-    if (selectedCell && !isCellInitial(initialGrid, selectedCell.row, selectedCell.col)) {
-      if (inputMode === 'Candidate') {
+    if (
+      selectedCell &&
+      !isCellInitial(initialGrid, selectedCell.row, selectedCell.col)
+    ) {
+      if (inputMode === "Candidate") {
         onCandidateToggle(selectedCell.row, selectedCell.col, num);
       } else {
         onCellChange(selectedCell.row, selectedCell.col, num);
@@ -45,7 +47,10 @@ export default function SudokuControls({
   };
 
   const handleClear = () => {
-    if (selectedCell && !isCellInitial(initialGrid, selectedCell.row, selectedCell.col)) {
+    if (
+      selectedCell &&
+      !isCellInitial(initialGrid, selectedCell.row, selectedCell.col)
+    ) {
       onClearCell(selectedCell.row, selectedCell.col);
     }
   };
@@ -57,15 +62,15 @@ export default function SudokuControls({
           Input Mode
         </Label>
         <div className="mt-1 lg:mt-3 rounded-2xl border border-gray-300 dark:border-gray-700 overflow-hidden flex bg-white dark:bg-black">
-          {(['Normal', 'Candidate'] as InputMode[]).map((mode) => (
+          {(["Normal", "Candidate"] as InputMode[]).map((mode) => (
             <button
               key={mode}
               onClick={() => onInputModeChange(mode)}
               className={cn(
-                'flex-1 py-1.5 lg:py-3 text-xs lg:text-base font-semibold transition-colors focus:outline-none',
+                "flex-1 py-1.5 lg:py-3 text-xs lg:text-base font-semibold transition-colors focus:outline-none",
                 inputMode === mode
-                  ? 'bg-black text-white dark:bg-white dark:text-black'
-                  : 'bg-white text-black hover:bg-gray-100 dark:bg-black dark:text-white dark:hover:bg-gray-800'
+                  ? "bg-black text-white dark:bg-white dark:text-black"
+                  : "bg-white text-black hover:bg-gray-100 dark:bg-black dark:text-white dark:hover:bg-gray-800"
               )}
             >
               {mode}
@@ -89,10 +94,10 @@ export default function SudokuControls({
                 isCellInitial(initialGrid, selectedCell.row, selectedCell.col)
               }
               className={cn(
-                'h-10 px-2 text-base lg:h-auto lg:aspect-square lg:px-0 lg:text-xl rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-800 font-semibold text-black dark:text-white shadow-sm transition-colors',
-                'hover:bg-gray-300 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500',
-                'disabled:cursor-not-allowed disabled:opacity-30',
-                'flex-1 lg:flex-none'
+                "h-10 px-2 text-base lg:h-auto lg:aspect-square lg:px-0 lg:text-xl rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-800 font-semibold text-black dark:text-white shadow-sm transition-colors",
+                "hover:bg-gray-300 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500",
+                "disabled:cursor-not-allowed disabled:opacity-30",
+                "flex-1 lg:flex-none"
               )}
             >
               {num}
@@ -107,7 +112,11 @@ export default function SudokuControls({
           onClick={handleClear}
           disabled={
             !selectedCell ||
-            isCellInitial(initialGrid, selectedCell?.row ?? 0, selectedCell?.col ?? 0)
+            isCellInitial(
+              initialGrid,
+              selectedCell?.row ?? 0,
+              selectedCell?.col ?? 0
+            )
           }
           className="border border-gray-300 bg-gray-200 text-black dark:border-gray-700 dark:bg-gray-800 dark:text-white flex items-center justify-center gap-2 text-xs lg:text-base py-1.5 lg:py-3"
         >
@@ -119,14 +128,13 @@ export default function SudokuControls({
           onClick={onUndo}
           disabled={!canUndo}
           className={cn(
-            'border border-gray-300 bg-gray-200 text-black dark:border-gray-700 dark:bg-gray-800 dark:text-white text-xs lg:text-base py-1.5 lg:py-3',
-            !canUndo && 'opacity-50'
+            "border border-gray-300 bg-gray-200 text-black dark:border-gray-700 dark:bg-gray-800 dark:text-white text-xs lg:text-base py-1.5 lg:py-3",
+            !canUndo && "opacity-50"
           )}
         >
           Undo
         </Button>
       </section>
-
     </div>
   );
 }

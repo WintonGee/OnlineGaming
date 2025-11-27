@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils/cn";
 
 /**
  * Cell state for className generation
@@ -18,7 +18,7 @@ export interface CellState {
 
 /**
  * Generate className string for a Sudoku grid cell
- * 
+ *
  * @param state - The state of the cell
  * @returns Combined className string
  */
@@ -46,20 +46,20 @@ export function getCellClassName(state: CellState): string {
     "focus:outline-none focus:ring-2 focus:ring-gray-500 focus:z-10",
     "bg-white dark:bg-gray-900",
     "cursor-pointer",
-    
+
     // Border classes
     borderTop,
     borderLeft,
     borderRight,
     borderBottom,
-    
+
     // Highlighted state (not selected)
     isHighlighted && !isSelected && "!bg-blue-50 dark:!bg-slate-800/80",
-    
+
     // Initial cell styles
     isInitial && "text-black dark:text-white font-bold",
     isInitial && !isSelected && "bg-gray-200 dark:bg-gray-800",
-    
+
     // User-filled cell styles
     !isInitial &&
       hasValue &&
@@ -67,27 +67,23 @@ export function getCellClassName(state: CellState): string {
       !isIncorrect &&
       "bg-blue-50/80 dark:bg-blue-900/40 text-black dark:text-white",
     !isInitial && hasValue && !isIncorrect && "text-black dark:text-white",
-    
+
     // Selected state
     isSelected && "!bg-orange-300 dark:!bg-orange-600",
-    
+
     // Empty cell hover
     !isInitial &&
       !hasValue &&
       !isSelected &&
       "hover:bg-gray-100 dark:hover:bg-gray-800",
-    !isInitial &&
-      !hasValue &&
-      !isHighlighted &&
-      "text-black dark:text-white",
-    
+    !isInitial && !hasValue && !isHighlighted && "text-black dark:text-white",
+
     // Incorrect state
     isIncorrect && "!bg-red-50 dark:!bg-red-900",
-    
+
     // Same value highlighting
     isSameValue &&
       !isIncorrect &&
       "!bg-amber-100 dark:!bg-amber-900/70 text-black dark:text-white"
   );
 }
-

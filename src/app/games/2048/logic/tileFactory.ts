@@ -3,6 +3,7 @@
 import { nanoid } from "nanoid";
 import { Tile, CellPosition } from "../types";
 import { GRID_SIZE } from "../constants";
+import { getPositionKey, getRandomItem } from "@/lib/shared/utils/arrayUtils";
 
 /**
  * Generates a unique ID for a tile using nanoid
@@ -34,7 +35,7 @@ export function createTile(
 export function getOccupiedPositions(tiles: Tile[]): Set<string> {
   const occupied = new Set<string>();
   tiles.forEach((tile) => {
-    occupied.add(`${tile.position.row},${tile.position.col}`);
+    occupied.add(getPositionKey(tile.position.row, tile.position.col));
   });
   return occupied;
 }
@@ -48,7 +49,7 @@ export function getRandomEmptyPosition(tiles: Tile[]): CellPosition {
 
   for (let row = 0; row < GRID_SIZE; row++) {
     for (let col = 0; col < GRID_SIZE; col++) {
-      if (!occupied.has(`${row},${col}`)) {
+      if (!occupied.has(getPositionKey(row, col))) {
         empty.push({ row, col });
       }
     }
@@ -58,7 +59,11 @@ export function getRandomEmptyPosition(tiles: Tile[]): CellPosition {
     throw new Error("No empty positions available");
   }
 
-  return empty[Math.floor(Math.random() * empty.length)];
+  const randomPosition = getRandomItem(empty);
+  if (!randomPosition) {
+    throw new Error("No empty positions available");
+  }
+  return randomPosition;
 }
 
 /**

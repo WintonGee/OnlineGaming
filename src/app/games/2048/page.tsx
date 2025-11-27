@@ -39,8 +39,14 @@ export default function Game2048Page() {
         {/* Win Dialog - only show if won and not continuing */}
         <WinDialog
           open={won && !keepPlaying}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) {
+              continueAfterWin();
+            }
+          }}
           onContinue={continueAfterWin}
           onNewGame={startNewGame}
+          message="Congratulations! You reached the 2048 tile!"
         />
 
         {/* Game Over Dialog */}

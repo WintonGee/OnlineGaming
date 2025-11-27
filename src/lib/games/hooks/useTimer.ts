@@ -72,3 +72,4 @@ export function useTimer() {
 
   return { time, start, stop, reset, isRunning };
 }
+

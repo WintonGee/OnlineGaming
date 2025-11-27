@@ -3,8 +3,9 @@
 import { useRef, memo } from "react";
 import { Tile, Direction } from "../types";
 import { GRID_SIZE } from "../constants";
-import { cn } from "@/lib/utils";
-import { useSwipeInput } from "../hooks/useSwipeInput";
+import { cn } from "@/lib/shared/utils/cn";
+import { useSwipeInput } from "@/lib/games/hooks/useSwipeInput";
+import { SWIPE_THRESHOLD } from "../constants";
 import { useResponsiveSizes } from "../hooks/useResponsiveSizes";
 import {
   getTileTextColor,
@@ -26,7 +27,10 @@ interface TileComponentProps {
  * Individual tile component with GPU-accelerated animations
  * Memoized to prevent unnecessary re-renders
  */
-const TileComponent = memo(function TileComponent({ tile, gap }: TileComponentProps) {
+const TileComponent = memo(function TileComponent({
+  tile,
+  gap,
+}: TileComponentProps) {
   const isMerged = tile.mergedFrom && tile.mergedFrom.length > 0;
 
   // Calculate tile size and position
@@ -34,7 +38,7 @@ const TileComponent = memo(function TileComponent({ tile, gap }: TileComponentPr
   // Position = col/row * (tile width + gap)
   const gapTotal = gap * 3; // Total gap space between 4 tiles
   const tileSize = `calc((100% - ${gapTotal}px) / 4)`;
-  
+
   // Position calculation: index * (25% of remaining space + gap offset)
   // This correctly positions each tile accounting for gaps
   const getPosition = (index: number) => {
@@ -83,6 +87,7 @@ export default function TileGameBoard({ tiles, onMove }: TileGameBoardProps) {
     onMove,
     enabled: true,
     elementRef: boardRef,
+    threshold: SWIPE_THRESHOLD,
   });
 
   return (

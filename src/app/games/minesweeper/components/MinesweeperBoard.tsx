@@ -6,7 +6,8 @@ import {
   getFontSizeClass,
 } from "../utils/styleUtils";
 import { useResponsiveCellSize } from "../hooks/useResponsiveDimensions";
-import { useLongPress } from "../hooks/useLongPress";
+import { useLongPress } from "@/lib/games/hooks/useLongPress";
+import { getPositionKey } from "@/lib/shared/utils/arrayUtils";
 
 interface MinesweeperBoardProps {
   board: Board;
@@ -27,7 +28,8 @@ const MinesweeperBoard = memo(function MinesweeperBoard({
 
   // Create a set of incorrect flag positions for quick lookup
   const incorrectFlagSet = useMemo(
-    () => new Set(incorrectFlags.map((pos) => `${pos.row},${pos.col}`)),
+    () =>
+      new Set(incorrectFlags.map((pos) => getPositionKey(pos.row, pos.col))),
     [incorrectFlags]
   );
 
@@ -36,9 +38,17 @@ const MinesweeperBoard = memo(function MinesweeperBoard({
   const fontSizeClass = getFontSizeClass(cellSize);
 
   // Cell component with long press support
-  const Cell = ({ rowIndex, colIndex }: { rowIndex: number; colIndex: number }) => {
+  const Cell = ({
+    rowIndex,
+    colIndex,
+  }: {
+    rowIndex: number;
+    colIndex: number;
+  }) => {
     const cell = board[rowIndex][colIndex];
-    const isIncorrectFlag = incorrectFlagSet.has(`${rowIndex},${colIndex}`);
+    const isIncorrectFlag = incorrectFlagSet.has(
+      getPositionKey(rowIndex, colIndex)
+    );
 
     const longPressHandlers = useLongPress({
       onLongPress: () => onCellLongPress(rowIndex, colIndex),
@@ -83,7 +93,11 @@ const MinesweeperBoard = memo(function MinesweeperBoard({
         >
           {board.map((row, rowIndex) =>
             row.map((_, colIndex) => (
-              <Cell key={`${rowIndex}-${colIndex}`} rowIndex={rowIndex} colIndex={colIndex} />
+              <Cell
+                key={`${rowIndex}-${colIndex}`}
+                rowIndex={rowIndex}
+                colIndex={colIndex}
+              />
             ))
           )}
         </div>

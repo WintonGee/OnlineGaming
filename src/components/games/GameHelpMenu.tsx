@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { RotateCcw, Wand2, Info, ChevronDown } from "lucide-react";
+import {
+  RotateCcw,
+  Wand2,
+  Info,
+  ChevronDown,
+  Lightbulb,
+  Flag,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,17 +16,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils/cn";
 
 interface GameHelpMenuProps {
   onHowToPlay: () => void;
   onNewGame: () => void;
+  onRevealHint?: () => void;
+  onFlagHint?: () => void;
   variant?: "default" | "rounded";
 }
 
 export default function GameHelpMenu({
   onHowToPlay,
   onNewGame,
+  onRevealHint,
+  onFlagHint,
   variant = "default",
 }: GameHelpMenuProps) {
   const [open, setOpen] = useState(false);
@@ -43,7 +54,9 @@ export default function GameHelpMenu({
           className={buttonClassName}
           aria-label="Help menu"
         >
-          <Wand2 className={cn("h-4 w-4", variant === "default" && "flex-shrink-0")} />
+          <Wand2
+            className={cn("h-4 w-4", variant === "default" && "flex-shrink-0")}
+          />
           <span className={variant === "default" ? "whitespace-nowrap" : ""}>
             Help
           </span>
@@ -66,7 +79,35 @@ export default function GameHelpMenu({
           How to Play
         </DropdownMenuItem>
 
-        <DropdownMenuSeparator />
+        {(onRevealHint || onFlagHint) && <DropdownMenuSeparator />}
+
+        {onRevealHint && (
+          <DropdownMenuItem
+            onClick={() => {
+              onRevealHint();
+              setOpen(false);
+            }}
+            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium cursor-pointer"
+          >
+            <Lightbulb className="h-4 w-4" />
+            Reveal a Number
+          </DropdownMenuItem>
+        )}
+
+        {onFlagHint && (
+          <DropdownMenuItem
+            onClick={() => {
+              onFlagHint();
+              setOpen(false);
+            }}
+            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium cursor-pointer"
+          >
+            <Flag className="h-4 w-4" />
+            Flag a Mine
+          </DropdownMenuItem>
+        )}
+
+        {(onRevealHint || onFlagHint) && <DropdownMenuSeparator />}
 
         <DropdownMenuItem
           onClick={onNewGame}
@@ -79,4 +120,3 @@ export default function GameHelpMenu({
     </DropdownMenu>
   );
 }
-

@@ -1,5 +1,6 @@
 import { Grid, CellPosition } from "../types";
 import { BOX_SIZE } from "../constants";
+import { getPositionKey } from "@/lib/shared/utils/arrayUtils";
 
 /**
  * Box indices for a given cell position
@@ -54,13 +55,14 @@ export function isCellInitial(
 
 /**
  * Generate a unique key for a cell position (useful for React keys)
+ * Uses '-' separator for Sudoku-specific formatting
  * 
  * @param row - The row index (0-8)
  * @param col - The column index (0-8)
  * @returns A unique string key
  */
 export function getCellKey(row: number, col: number): string {
-  return `${row}-${col}`;
+  return getPositionKey(row, col, '-');
 }
 
 /**

@@ -1,14 +1,15 @@
-'use client';
+"use client";
 
-import './styles.css';
-import { useGameLogic } from './hooks/useGameLogic';
-import { useDialogState } from '@/hooks/useDialogState';
-import GameHeader from './components/GameHeader';
-import MinesweeperBoard from './components/MinesweeperBoard';
-import MinesweeperToolbar from './components/MinesweeperToolbar';
-import DifficultyDialog from './components/DifficultyDialog';
-import WinDialog from './components/WinDialog';
-import InstructionsDialog from './components/InstructionsDialog';
+import "./styles.css";
+import { useGameLogic } from "./hooks/useGameLogic";
+import { useDialogState } from "@/lib/shared/hooks/useDialogState";
+import GameHeader from "./components/GameHeader";
+import MinesweeperBoard from "./components/MinesweeperBoard";
+import MinesweeperToolbar from "./components/MinesweeperToolbar";
+import DifficultyDialog from "./components/DifficultyDialog";
+import WinDialog from "./components/WinDialog";
+import InstructionsDialog from "./components/InstructionsDialog";
+import { formatTime } from "@/lib/games/utils/formatTime";
 
 export default function MinesweeperPage() {
   const {
@@ -53,7 +54,7 @@ export default function MinesweeperPage() {
               <MinesweeperToolbar
                 selectedDifficulty={difficulty}
                 onDifficultyChange={(newDifficulty) => {
-                  if (newDifficulty !== 'Custom') {
+                  if (newDifficulty !== "Custom") {
                     handleNewGame(newDifficulty);
                   } else {
                     setShowDifficultyDialog(true);
@@ -104,6 +105,11 @@ export default function MinesweeperPage() {
 
         <WinDialog
           open={showWinDialog}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) {
+              setShowWinDialog(false);
+            }
+          }}
           time={time}
           difficulty={difficulty}
           bestTimes={bestTimes}
@@ -111,7 +117,7 @@ export default function MinesweeperPage() {
             handleNewGame();
             setShowWinDialog(false);
           }}
-          onClose={() => setShowWinDialog(false)}
+          formatTime={formatTime}
         />
 
         <InstructionsDialog

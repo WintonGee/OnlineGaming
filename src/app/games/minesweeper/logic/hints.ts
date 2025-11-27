@@ -1,6 +1,7 @@
 import { Board } from '../types';
 import { revealCell } from './cellReveal';
 import { toggleFlag } from './cellReveal';
+import { getRandomItem } from '@/lib/shared/utils/arrayUtils';
 
 /**
  * Reveals a random unrevealed safe cell (not a mine)
@@ -39,11 +40,16 @@ export function revealRandomNumber(board: Board): Board | null {
   // Prefer cells with numbers (70% chance if available)
   let selectedCell;
   if (cellsWithNumbers.length > 0 && (emptyCells.length === 0 || Math.random() < 0.7)) {
-    selectedCell = cellsWithNumbers[Math.floor(Math.random() * cellsWithNumbers.length)];
+    selectedCell = getRandomItem(cellsWithNumbers);
   } else if (emptyCells.length > 0) {
-    selectedCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    selectedCell = getRandomItem(emptyCells);
   } else {
-    selectedCell = cellsWithNumbers[Math.floor(Math.random() * cellsWithNumbers.length)];
+    selectedCell = getRandomItem(cellsWithNumbers);
+  }
+
+  // Handle null case (shouldn't happen due to earlier check, but TypeScript safety)
+  if (!selectedCell) {
+    return null;
   }
 
   // Reveal the selected cell
@@ -76,7 +82,12 @@ export function flagRandomMine(board: Board): Board | null {
   }
 
   // Randomly select one mine to flag
-  const selectedMine = unflaggedMines[Math.floor(Math.random() * unflaggedMines.length)];
+  const selectedMine = getRandomItem(unflaggedMines);
+
+  // Handle null case (shouldn't happen due to earlier check, but TypeScript safety)
+  if (!selectedMine) {
+    return null;
+  }
 
   // Flag the selected mine
   return toggleFlag(board, selectedMine.row, selectedMine.col);

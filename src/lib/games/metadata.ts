@@ -138,3 +138,4 @@ export function createGameMetadataAndStructuredData(
     structuredData: createGameStructuredData(options),
   };
 }
+

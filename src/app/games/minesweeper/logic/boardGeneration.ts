@@ -1,4 +1,5 @@
 import { Board, Cell } from '../types';
+import { shuffleArray } from '@/lib/shared/utils/arrayUtils';
 
 /**
  * Creates an empty cell
@@ -43,11 +44,8 @@ export function placeMines(board: Board, mineCount: number): Board {
     }
   }
 
-  // Fisher-Yates shuffle
-  for (let i = positions.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [positions[i], positions[j]] = [positions[j], positions[i]];
-  }
+  // Shuffle using shared utility
+  shuffleArray(positions);
 
   // Place mines at first N shuffled positions
   for (let i = 0; i < safeMineCount; i++) {

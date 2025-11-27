@@ -1,0 +1,1 @@
+I want you to do a deep search and analysis. look into the games and see which ones share the same logic or functionalities that can be put into a shared folder outside of app. Ensure that the games are using components from the shared folder if they exist instead of recreating. Use LLM model opus 4.5 . Make sure you look into every line of code and take longer.

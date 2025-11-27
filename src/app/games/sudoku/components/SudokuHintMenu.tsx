@@ -18,7 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils/cn";
 
 interface SudokuHintMenuProps {
   disabled?: boolean;
@@ -129,4 +129,3 @@ export default function SudokuHintMenu({
     </DropdownMenu>
   );
 }
-

@@ -1,7 +1,7 @@
 "use client";
 
 import { Grid, CellPosition, CandidatesGrid } from "../types";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils/cn";
 import {
   isCellInitial,
   getCellBorderClasses,

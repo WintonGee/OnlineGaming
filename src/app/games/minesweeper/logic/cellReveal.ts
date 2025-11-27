@@ -1,5 +1,6 @@
 import { Board } from '../types';
 import { getAdjacentPositions } from './boardGeneration';
+import { getPositionKey } from '@/lib/shared/utils/arrayUtils';
 
 /**
  * Reveals a cell and recursively reveals adjacent cells if it's empty (flood-fill)
@@ -31,14 +32,14 @@ export function revealCell(board: Board, row: number, col: number): Board {
   // Flood-fill: reveal all adjacent cells recursively
   const queue: { row: number; col: number }[] = [{ row, col }];
   const visited = new Set<string>();
-  visited.add(`${row},${col}`);
+  visited.add(getPositionKey(row, col));
 
   while (queue.length > 0) {
     const current = queue.shift()!;
     const adjacentPositions = getAdjacentPositions(current.row, current.col, height, width);
 
     for (const pos of adjacentPositions) {
-      const key = `${pos.row},${pos.col}`;
+      const key = getPositionKey(pos.row, pos.col);
       const cell = newBoard[pos.row][pos.col];
 
       // Skip if already visited, revealed, flagged, or is a mine

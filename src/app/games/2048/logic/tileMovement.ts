@@ -3,6 +3,7 @@
 import { Tile, Direction } from "../types";
 import { GRID_SIZE, WINNING_TILE_VALUE } from "../constants";
 import { generateTileId, addRandomTile } from "./tileFactory";
+import { getPositionKey } from "@/lib/shared/utils/arrayUtils";
 
 interface MoveResult {
   tiles: Tile[];
@@ -56,7 +57,7 @@ export function performTileMove(
   // Create a map of current tile positions
   const tileMap = new Map<string, Tile>();
   currentTiles.forEach((tile) => {
-    tileMap.set(`${tile.position.row},${tile.position.col}`, {
+    tileMap.set(getPositionKey(tile.position.row, tile.position.col), {
       ...tile,
       previousPosition: tile.position,
     });
@@ -65,7 +66,7 @@ export function performTileMove(
   // Process tiles in the correct order
   for (const row of rowOrder) {
     for (const col of colOrder) {
-      const key = `${row},${col}`;
+      const key = getPositionKey(row, col);
       const tile = tileMap.get(key);
 
       if (!tile) continue;
@@ -80,7 +81,7 @@ export function performTileMove(
         nextPos.col >= 0 &&
         nextPos.col < GRID_SIZE
       ) {
-        const nextKey = `${nextPos.row},${nextPos.col}`;
+        const nextKey = getPositionKey(nextPos.row, nextPos.col);
         const nextTile = newTiles.find(
           (t) => t.position.row === nextPos.row && t.position.col === nextPos.col
         );
@@ -122,7 +123,7 @@ export function performTileMove(
       }
 
       // Only add the tile if it didn't merge
-      if (!mergedPositions.has(`${farthestPos.row},${farthestPos.col}`)) {
+      if (!mergedPositions.has(getPositionKey(farthestPos.row, farthestPos.col))) {
         const movedTile: Tile = {
           id: tile.id,
           value: tile.value,

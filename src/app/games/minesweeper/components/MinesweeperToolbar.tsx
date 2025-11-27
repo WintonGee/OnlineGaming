@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils/cn";
 import { ChevronDown, Check } from "lucide-react";
 import { Difficulty } from "../types";
 import GameHelpMenu from "./GameHelpMenu";
@@ -20,7 +20,11 @@ interface MinesweeperToolbarProps {
   onFlagHint?: () => void;
 }
 
-const STANDARD_DIFFICULTIES: Difficulty[] = ["Beginner", "Intermediate", "Expert"];
+const STANDARD_DIFFICULTIES: Difficulty[] = [
+  "Beginner",
+  "Intermediate",
+  "Expert",
+];
 const ALL_DIFFICULTIES: Difficulty[] = [...STANDARD_DIFFICULTIES, "Custom"];
 
 export default function MinesweeperToolbar({
@@ -65,9 +69,7 @@ export default function MinesweeperToolbar({
                 className="flex items-center justify-between cursor-pointer"
               >
                 {level}
-                {level === selectedDifficulty && (
-                  <Check className="h-4 w-4" />
-                )}
+                {level === selectedDifficulty && <Check className="h-4 w-4" />}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
@@ -95,4 +97,3 @@ export default function MinesweeperToolbar({
     </div>
   );
 }
-
