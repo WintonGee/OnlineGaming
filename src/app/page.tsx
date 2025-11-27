@@ -82,10 +82,10 @@ export default function Home() {
           {/* Hero Section */}
           <div className="text-center mb-16">
             <h1 className="text-6xl md:text-7xl font-serif font-bold text-black dark:text-white mb-6">
-              Free Games
+              Online Games
             </h1>
             <p className="text-lg text-gray-700 dark:text-gray-300 max-w-xl mx-auto">
-              Play with no annoying ads or sign-ups.
+              Play for free with no annoying ads or sign-ups.
             </p>
           </div>
 
