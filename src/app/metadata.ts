@@ -69,6 +69,9 @@ export const metadata: Metadata = {
     shortcut: "/favicon.svg",
     apple: "/favicon.svg",
   },
+  alternates: {
+    canonical: "https://gamesadfree.com",
+  },
   verification: {
     // Add your verification codes here when you set them up
     // google: 'your-google-verification-code',
@@ -76,4 +79,3 @@ export const metadata: Metadata = {
     // bing: 'your-bing-verification-code',
   },
 };
-

@@ -1,33 +1,5 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { Grid3x3, Grid2x2, Bomb } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "Free Online Games - Play Sudoku, 2048, Minesweeper Without Ads",
-  description:
-    "Play the best free online games without ads! Enjoy classic Sudoku puzzles, addictive 2048 tile game, and challenging Minesweeper. No downloads, no registration required. Start playing instantly in your browser.",
-  keywords: [
-    "free games online",
-    "no ads games",
-    "sudoku free",
-    "2048 game",
-    "minesweeper online",
-    "play games online",
-    "browser games free",
-    "puzzle games",
-    "logic games",
-  ],
-  openGraph: {
-    title: "Free Online Games - Play Sudoku, 2048, Minesweeper Without Ads",
-    description:
-      "Play the best free online games without ads! Enjoy Sudoku, 2048, and Minesweeper instantly in your browser.",
-    url: "https://gamesadfree.com",
-    type: "website",
-  },
-  alternates: {
-    canonical: "https://gamesadfree.com",
-  },
-};
 
 export default function Home() {
   const structuredData = {
