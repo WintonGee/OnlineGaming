@@ -37,6 +37,7 @@ export interface BestTimes {
   Intermediate?: number;
   Expert?: number;
   Custom?: number;
+  [key: string]: number | undefined;
 }
 
 export type InputMode = 'reveal' | 'flag';
