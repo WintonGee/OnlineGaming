@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
 export interface GameMetadataOptions {
   title: string;
@@ -18,39 +18,44 @@ export interface GameMetadataOptions {
 }
 
 export function createGameMetadata(options: GameMetadataOptions): Metadata {
-  const { title, description, keywords, gamePath, ogImage, structuredData } = options;
+  const { title, description, keywords, gamePath, ogImage, structuredData } =
+    options;
   const fullUrl = `https://gamesadfree.com${gamePath}`;
-  const ogImageUrl = ogImage.startsWith('http') ? ogImage : `https://gamesadfree.com${ogImage}`;
+  const ogImageUrl = ogImage.startsWith("http")
+    ? ogImage
+    : `https://gamesadfree.com${ogImage}`;
 
   return {
     title,
     description,
     keywords,
-    authors: [{ name: 'GamesAdFree' }],
-    creator: 'GamesAdFree',
-    publisher: 'GamesAdFree',
+    authors: [{ name: "GamesAdFree" }],
+    creator: "GamesAdFree",
+    publisher: "GamesAdFree",
     openGraph: {
       title,
       description,
       url: fullUrl,
-      siteName: 'GamesAdFree',
-      type: 'website',
-      locale: 'en_US',
+      siteName: "GamesAdFree",
+      type: "website",
+      locale: "en_US",
       images: [
         {
           url: ogImageUrl,
           width: 1200,
           height: 630,
-          alt: `Free Online ${title.replace('Play ', '').split(' - ')[0]} Game - No Ads`,
+          alt: `Free Online ${
+            title.replace("Play ", "").split(" - ")[0]
+          } Game - No Ads`,
         },
       ],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title,
-      description: description.split('.')[0] + '.',
+      description: description.split(".")[0] + ".",
       images: [ogImageUrl],
-      creator: '@gamesadfree',
+      creator: "@gamesadfree",
     },
     alternates: {
       canonical: fullUrl,
@@ -61,9 +66,9 @@ export function createGameMetadata(options: GameMetadataOptions): Metadata {
       googleBot: {
         index: true,
         follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
       },
     },
   };
@@ -76,48 +81,60 @@ export function createGameStructuredData(
   const fullUrl = `https://gamesadfree.com${gamePath}`;
 
   const result: Record<string, unknown> = {
-    '@context': 'https://schema.org',
-    '@type': 'Game',
+    "@context": "https://schema.org",
+    "@type": "Game",
     name: structuredData.name,
     alternateName: structuredData.alternateName,
     url: fullUrl,
     description: structuredData.description,
     genre: structuredData.genre,
-    gamePlatform: ['Web browser', 'Desktop', 'Mobile', 'Tablet'],
-    applicationCategory: 'Game',
-    operatingSystem: 'Any',
-    browserRequirements: 'Requires JavaScript. Modern web browser recommended.',
+    gamePlatform: ["Web browser", "Desktop", "Mobile", "Tablet"],
+    applicationCategory: "Game",
+    operatingSystem: "Any",
+    browserRequirements: "Requires JavaScript. Modern web browser recommended.",
     numberOfPlayers: {
-      '@type': 'QuantitativeValue',
+      "@type": "QuantitativeValue",
       value: 1,
     },
     offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'USD',
-      availability: 'https://schema.org/InStock',
-      category: 'Free',
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      category: "Free",
     },
     featureList: structuredData.featureList,
-    inLanguage: 'en',
+    inLanguage: "en",
     isAccessibleForFree: true,
     publisher: {
-      '@type': 'Organization',
-      name: 'GamesAdFree',
-      url: 'https://gamesadfree.com',
+      "@type": "Organization",
+      name: "GamesAdFree",
+      url: "https://gamesadfree.com",
     },
   };
 
   if (structuredData.ratingValue && structuredData.ratingCount) {
     result.aggregateRating = {
-      '@type': 'AggregateRating',
+      "@type": "AggregateRating",
       ratingValue: structuredData.ratingValue,
       ratingCount: structuredData.ratingCount,
-      bestRating: '5',
-      worstRating: '1',
+      bestRating: "5",
+      worstRating: "1",
     };
   }
 
   return result;
 }
 
+/**
+ * Creates both Next.js metadata and JSON-LD structured data from a single options object.
+ * This eliminates duplication when both are needed in the same layout file.
+ */
+export function createGameMetadataAndStructuredData(
+  options: GameMetadataOptions
+) {
+  return {
+    metadata: createGameMetadata(options),
+    structuredData: createGameStructuredData(options),
+  };
+}
