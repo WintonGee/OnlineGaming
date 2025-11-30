@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Grid3x3, Grid2x2, Bomb } from "lucide-react";
+import { Grid3x3, Grid2x2, Bomb, Type } from "lucide-react";
 
 export default function Home() {
   const structuredData = {
@@ -8,7 +8,7 @@ export default function Home() {
     name: "GamesAdFree",
     url: "https://gamesadfree.com",
     description:
-      "Free online games without ads - Play Sudoku, 2048, and Minesweeper",
+      "Free online games without ads - Play Sudoku, 2048, Minesweeper, and Wordle",
     publisher: {
       "@type": "Organization",
       name: "GamesAdFree",
@@ -61,6 +61,18 @@ export default function Home() {
           url: "https://gamesadfree.com/games/minesweeper",
           description: "Classic Minesweeper game with customizable difficulty",
           genre: "Puzzle",
+          gamePlatform: "Web browser",
+        },
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        item: {
+          "@type": "Game",
+          name: "Wordle",
+          url: "https://gamesadfree.com/games/wordle",
+          description: "Guess the 5-letter word in 6 tries with color-coded feedback",
+          genre: "Word Game",
           gamePlatform: "Web browser",
         },
       },
@@ -138,6 +150,23 @@ export default function Home() {
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
                   Clear the board without hitting mines
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href="/games/wordle"
+              className="group border border-gray-300 dark:border-gray-700 rounded-lg p-6 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 flex items-center justify-center mb-4">
+                  <Type className="h-10 w-10 text-black dark:text-white group-hover:scale-110 transition-transform" />
+                </div>
+                <h2 className="text-2xl font-serif font-bold text-black dark:text-white mb-2">
+                  Wordle
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  Guess the 5-letter word in 6 tries
                 </p>
               </div>
             </Link>

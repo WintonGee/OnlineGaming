@@ -10,7 +10,10 @@
       "Bash(npm install:*)",
       "Bash(npx tsc:*)",
       "WebFetch(domain:minesweeper.online)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "WebFetch(domain:www.nytimes.com)",
+      "Bash(mkdir:*)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []
