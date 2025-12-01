@@ -39,6 +39,7 @@ export function useSudokuDialogs() {
   // Close the helper toast
   const handleToastClose = useCallback(() => {
     setHelperToastOpen(false);
+    setHelperResult(null);
   }, []);
 
   // Show confirmation dialog
@@ -74,4 +75,3 @@ export function useSudokuDialogs() {
     setShowInstructions: instructionsDialog.setIsOpen,
   };
 }
-

@@ -87,18 +87,13 @@ export default function WordlePage() {
           open={justCompleted}
           onOpenChange={(open) => {
             if (!open) {
-              if (isDailyAndCompleted) {
-                // Just close the dialog, don't start new game for daily
-                dismissResult();
-              } else {
-                newGame();
-              }
+              dismissResult();
             }
           }}
           title={gameState.won ? "You Win!" : "Game Over"}
           message={
             gameState.won
-              ? `You guessed the word in ${gameState.guesses.length} ${
+              ? `You guessed "${gameState.solution}" in ${gameState.guesses.length} ${
                   gameState.guesses.length === 1 ? "try" : "tries"
                 }!`
               : `The word was: ${gameState.solution}`
