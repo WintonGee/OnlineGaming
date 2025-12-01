@@ -7,7 +7,7 @@ import { CUSTOM_CONSTRAINTS } from '../constants';
  */
 export function checkWinCondition(board: Board, totalMines: number): boolean {
   const height = board.length;
-  const width = board[0].length;
+  const width = board[0]?.length || 0;
   const totalCells = height * width;
   const safeCells = totalCells - totalMines;
 
@@ -31,7 +31,7 @@ export function checkWinCondition(board: Board, totalMines: number): boolean {
  */
 export function checkLoseCondition(board: Board): boolean {
   for (let row = 0; row < board.length; row++) {
-    for (let col = 0; col < board[0].length; col++) {
+    for (let col = 0; col < (board[0]?.length || 0); col++) {
       const cell = board[row][col];
       if (cell.isMine && cell.isRevealed) {
         return true;
@@ -91,7 +91,7 @@ export function getIncorrectFlags(board: Board): { row: number; col: number }[] 
   const incorrectFlags: { row: number; col: number }[] = [];
 
   for (let row = 0; row < board.length; row++) {
-    for (let col = 0; col < board[0].length; col++) {
+    for (let col = 0; col < (board[0]?.length || 0); col++) {
       const cell = board[row][col];
       if (cell.isFlagged && !cell.isMine) {
         incorrectFlags.push({ row, col });

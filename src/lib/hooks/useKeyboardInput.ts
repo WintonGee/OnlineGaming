@@ -30,17 +30,17 @@ const DEFAULT_ARROW_KEYS: ArrowKeyConfig = {
 /**
  * Custom hook for handling keyboard arrow key input
  * Prevents default scrolling behavior for arrow keys
- * 
+ *
  * @param onMove - Callback function called when a direction key is pressed
  * @param enabled - Whether keyboard input is enabled (default: true)
  * @param arrowKeys - Custom arrow key mapping (optional)
- * 
+ *
  * @example
  * ```tsx
  * const handleMove = (direction: Direction) => {
  *   // Handle move logic
  * };
- * 
+ *
  * useKeyboardInput({ onMove: handleMove, enabled: !gameOver });
  * ```
  */
@@ -77,4 +77,3 @@ export function useKeyboardInput({
     };
   }, [onMove, enabled, arrowKeys]);
 }
-

@@ -23,7 +23,9 @@
       "Bash(find:*)",
       "Bash(while IFS= read -r -d '' file)",
       "Bash(do sed -i '' 's|from \"\"\"\"\\./lib/hooks/|from \"\"\"\"@/lib/hooks/|g' \"$file\" sed -i '' 's|from \"\"\"\"\\./lib/utils/|from \"\"\"\"@/lib/utils/|g' \"$file\" sed -i '' 's|from \"\"\"\"\\.\\./lib/hooks/|from \"\"\"\"@/lib/hooks/|g' \"$file\" sed -i '' 's|from \"\"\"\"\\.\\./lib/utils/|from \"\"\"\"@/lib/utils/|g' \"$file\" sed -i '' \"s|from ''''\\./lib/hooks/|from ''''@/lib/hooks/|g\" \"$file\" sed -i '' \"s|from ''''\\./lib/utils/|from ''''@/lib/utils/|g\" \"$file\" sed -i '' \"s|from ''''\\.\\./lib/hooks/|from ''''@/lib/hooks/|g\" \"$file\" sed -i '' \"s|from ''''\\.\\./lib/utils/|from ''''@/lib/utils/|g\" \"$file\" done)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(cat:*)",
+      "Bash(npm uninstall:*)"
     ],
     "deny": [],
     "ask": []

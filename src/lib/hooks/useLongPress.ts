@@ -10,12 +10,12 @@ export interface LongPressOptions {
    * Callback function called when long press is detected
    */
   onLongPress: (event: React.TouchEvent | React.MouseEvent) => void;
-  
+
   /**
    * Optional callback function called for regular click (if not a long press)
    */
   onClick?: (event: React.TouchEvent | React.MouseEvent) => void;
-  
+
   /**
    * Delay in milliseconds before long press is triggered (default: 500ms)
    */
@@ -38,10 +38,10 @@ export interface LongPressHandlers {
  * Custom hook for detecting long press gestures
  * Supports both touch and mouse events
  * Provides haptic feedback on mobile devices when long press is detected
- * 
+ *
  * @param options - Configuration options for long press detection
  * @returns Event handlers to attach to elements
- * 
+ *
  * @example
  * ```tsx
  * const longPress = useLongPress({
@@ -55,7 +55,7 @@ export interface LongPressHandlers {
  *   },
  *   delay: 500
  * });
- * 
+ *
  * return (
  *   <div
  *     {...longPress}
@@ -166,4 +166,3 @@ export function useLongPress({
     onMouseLeave: handleMouseLeave,
   };
 }
-

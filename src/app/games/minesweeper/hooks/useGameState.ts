@@ -4,7 +4,7 @@ import { generateBoard } from '../logic/boardGeneration';
 import { revealCell, toggleFlag, countFlaggedCells, revealAllMines, flagAllMines } from '../logic/cellReveal';
 import { checkWinCondition, checkLoseCondition, getIncorrectFlags } from '../logic/gameValidation';
 import { DIFFICULTY_CONFIG, DEFAULT_DIFFICULTY, BEST_TIMES_KEY } from '../constants';
-import { useTimer } from '../hooks/useTimer';
+import { useTimer } from '@/lib/hooks/useTimer';
 import { useIsMobile, getExpertDimensions } from './useResponsiveDimensions';
 import { revealRandomNumber, flagRandomMine } from '../logic/hints';
 import { createStorage } from '../utils/storage';

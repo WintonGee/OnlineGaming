@@ -8,8 +8,6 @@ export const SPAWN_VALUE_2_PROBABILITY = 0.9;
 
 // Animation durations in milliseconds
 export const TILE_MOVE_DURATION = 300;
-export const TILE_MERGE_DURATION = 300;
-export const NEW_TILE_DELAY = TILE_MOVE_DURATION + 50;
 
 // Local storage keys
 export const BEST_SCORE_KEY = "2048-best-score";

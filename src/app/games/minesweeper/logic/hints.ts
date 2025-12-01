@@ -10,7 +10,7 @@ import { getRandomItem } from '../utils/arrayUtils';
  */
 export function revealRandomNumber(board: Board): Board | null {
   const height = board.length;
-  const width = board[0].length;
+  const width = board[0]?.length || 0;
 
   // Find all unrevealed, unflagged, non-mine cells
   const safeCells: { row: number; col: number; hasNumber: boolean }[] = [];
@@ -62,7 +62,7 @@ export function revealRandomNumber(board: Board): Board | null {
  */
 export function flagRandomMine(board: Board): Board | null {
   const height = board.length;
-  const width = board[0].length;
+  const width = board[0]?.length || 0;
 
   // Find all unflagged, unrevealed mines
   const unflaggedMines: { row: number; col: number }[] = [];

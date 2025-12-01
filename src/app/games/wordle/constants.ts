@@ -5,10 +5,6 @@ export const MAX_GUESSES = 6;
 // Storage keys
 export const GAME_STATE_KEY = "wordle-game-state";
 
-// Animation durations (ms)
-export const FLIP_ANIMATION_DURATION = 250;
-export const BOUNCE_ANIMATION_DURATION = 100;
-
 // Keyboard layout
 export const KEYBOARD_ROWS = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],

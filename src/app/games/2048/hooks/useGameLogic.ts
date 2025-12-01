@@ -1,7 +1,7 @@
 "use client";
 
 import { useTileGameState } from "./useTileGameState";
-import { useKeyboardInput } from "../hooks/useKeyboardInput";
+import { useKeyboardInput } from "@/lib/hooks/useKeyboardInput";
 import { useDialogState } from "@/hooks/useDialogState";
 
 /**

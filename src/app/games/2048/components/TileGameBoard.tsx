@@ -4,7 +4,7 @@ import { useRef, memo } from "react";
 import { Tile, Direction } from "../types";
 import { GRID_SIZE } from "../constants";
 import { cn } from "@/lib/utils/cn";
-import { useSwipeInput } from "../hooks/useSwipeInput";
+import { useSwipeInput } from "@/lib/hooks/useSwipeInput";
 import { SWIPE_THRESHOLD } from "../constants";
 import { useResponsiveSizes } from "../hooks/useResponsiveSizes";
 import {

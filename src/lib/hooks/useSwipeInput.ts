@@ -91,6 +91,7 @@ export function useSwipeInput({
       if (!element) return;
 
       const touch = event.touches[0];
+      if (!touch) return;
 
       // Use cached rect, refresh if null
       let rect = cachedRectRef.current;
@@ -123,6 +124,7 @@ export function useSwipeInput({
       if (!state || !state.touchStartedInElement) return;
 
       const touch = event.touches[0];
+      if (!touch) return;
       const deltaX = Math.abs(touch.clientX - state.startX);
       const deltaY = Math.abs(touch.clientY - state.startY);
 
@@ -142,6 +144,10 @@ export function useSwipeInput({
       }
 
       const touch = event.changedTouches[0];
+      if (!touch) {
+        swipeStateRef.current = null;
+        return;
+      }
       const deltaX = touch.clientX - state.startX;
       const deltaY = touch.clientY - state.startY;
       const absDeltaX = Math.abs(deltaX);

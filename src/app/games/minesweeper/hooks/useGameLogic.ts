@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { useDialogState } from "../hooks/useDialogState";
+import { useDialogState } from "@/hooks/useDialogState";
 import { useGameState } from "./useGameState";
 import { useInputMode } from "./useInputMode";
 import { Difficulty, CustomSettings } from "../types";
