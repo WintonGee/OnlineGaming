@@ -7,7 +7,7 @@ import {
   MAX_GUESSES,
   GAME_STATE_KEY,
 } from "../constants";
-import { createStorage } from "@/lib/shared/utils/storage";
+import { createStorage } from "../utils/storage";
 import { getRandomSolution } from "../logic/wordList";
 import {
   checkGuess,

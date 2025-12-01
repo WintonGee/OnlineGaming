@@ -5,13 +5,13 @@ import SudokuControls from "./components/SudokuControls";
 import InstructionsDialog from "./components/InstructionsDialog";
 import ConfirmationDialog from "./components/ConfirmationDialog";
 import SudokuHelperToast from "./components/SudokuHelperToast";
-import WinDialog from "./components/WinDialog";
+import WinDialog from "@/components/games/WinDialog";
 import SudokuHeader from "./components/SudokuHeader";
 import SudokuToolbar from "./components/SudokuToolbar";
 import SudokuActionBar from "./components/SudokuActionBar";
 import { useSudokuGame } from "./hooks/useSudokuGame";
 import { useKeyboardNavigation } from "./hooks/useKeyboardNavigation";
-import { useDialogState } from "./hooks/useDialogState";
+import { useSudokuDialogs } from "./hooks/useSudokuDialogs";
 
 export default function SudokuPage() {
   const {
@@ -55,7 +55,7 @@ export default function SudokuPage() {
     showInstructions,
     showInstructionsDialog,
     setShowInstructions,
-  } = useDialogState();
+  } = useSudokuDialogs();
 
   // Use the keyboard navigation hook
   useKeyboardNavigation({

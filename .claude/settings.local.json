@@ -13,7 +13,17 @@
       "Bash(curl:*)",
       "WebFetch(domain:www.nytimes.com)",
       "Bash(mkdir:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(cp:*)",
+      "Bash(while read file)",
+      "Bash(do sed -i '' 's|@/lib/games/hooks|../lib/hooks|g; s|@/lib/games/utils|../lib/utils|g; s|@/lib/games/metadata|./lib/metadata|g; s|@/lib/shared/hooks|../lib/hooks|g; s|@/lib/shared/utils|../lib/utils|g' \"$file\")",
+      "Bash(done)",
+      "Bash(do perl -pi -e 's|from [''''\"\"\"\"]@/lib/games/hooks|from \"\"\"\"../lib/hooks|g' \"$file\" perl -pi -e 's|from [''''\"\"\"\"]@/lib/games/utils|from \"\"\"\"../lib/utils|g' \"$file\" perl -pi -e 's|from [''''\"\"\"\"]@/lib/games/metadata|from \"\"\"\"./lib/metadata|g' \"$file\" perl -pi -e 's|from [''''\"\"\"\"]@/lib/shared/hooks|from \"\"\"\"../lib/hooks|g' \"$file\" perl -pi -e 's|from [''''\"\"\"\"]@/lib/shared/utils|from \"\"\"\"../lib/utils|g' \"$file\" done)",
+      "Bash(do sed -i '' 's|@/lib/shared/utils/cn|@/lib/utils/cn|g' \"$file\" done)",
+      "Bash(find:*)",
+      "Bash(while IFS= read -r -d '' file)",
+      "Bash(do sed -i '' 's|from \"\"\"\"\\./lib/hooks/|from \"\"\"\"@/lib/hooks/|g' \"$file\" sed -i '' 's|from \"\"\"\"\\./lib/utils/|from \"\"\"\"@/lib/utils/|g' \"$file\" sed -i '' 's|from \"\"\"\"\\.\\./lib/hooks/|from \"\"\"\"@/lib/hooks/|g' \"$file\" sed -i '' 's|from \"\"\"\"\\.\\./lib/utils/|from \"\"\"\"@/lib/utils/|g' \"$file\" sed -i '' \"s|from ''''\\./lib/hooks/|from ''''@/lib/hooks/|g\" \"$file\" sed -i '' \"s|from ''''\\./lib/utils/|from ''''@/lib/utils/|g\" \"$file\" sed -i '' \"s|from ''''\\.\\./lib/hooks/|from ''''@/lib/hooks/|g\" \"$file\" sed -i '' \"s|from ''''\\.\\./lib/utils/|from ''''@/lib/utils/|g\" \"$file\" done)",
+      "Bash(git stash:*)"
     ],
     "deny": [],
     "ask": []

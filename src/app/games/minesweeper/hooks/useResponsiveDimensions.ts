@@ -1,5 +1,5 @@
-import { useIsMobile as useIsMobileShared } from "@/lib/shared/hooks/useResponsive";
-import { useResponsiveCellSize as useResponsiveCellSizeShared } from "@/lib/games/hooks/useResponsive";
+import { useIsMobile as useIsMobileShared } from "../hooks/useResponsive";
+import { useResponsiveCellSize as useResponsiveCellSizeShared } from "../hooks/useResponsive";
 
 /**
  * Hook to detect if we're on a mobile device

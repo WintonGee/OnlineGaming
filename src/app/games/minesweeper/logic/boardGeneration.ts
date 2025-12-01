@@ -1,5 +1,5 @@
 import { Board, Cell } from '../types';
-import { shuffleArray } from '@/lib/shared/utils/arrayUtils';
+import { shuffleArray } from '../utils/arrayUtils';
 
 /**
  * Creates an empty cell

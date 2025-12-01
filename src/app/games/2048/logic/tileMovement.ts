@@ -3,7 +3,7 @@
 import { Tile, Direction } from "../types";
 import { GRID_SIZE, WINNING_TILE_VALUE } from "../constants";
 import { generateTileId, addRandomTile } from "./tileFactory";
-import { getPositionKey } from "@/lib/shared/utils/arrayUtils";
+import { getPositionKey } from "../utils/arrayUtils";
 
 interface MoveResult {
   tiles: Tile[];

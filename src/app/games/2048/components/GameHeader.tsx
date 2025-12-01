@@ -1,6 +1,6 @@
 "use client";
 
-import GameHelpMenu from "./GameHelpMenu";
+import GameHelpMenu from "@/components/games/GameHelpMenu";
 
 interface GameHeaderProps {
   score: number;

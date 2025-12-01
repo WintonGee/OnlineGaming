@@ -5,10 +5,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/shared/utils/cn";
+import { cn } from "@/lib/utils/cn";
 import { ChevronDown, Check } from "lucide-react";
 import { Difficulty } from "../types";
-import GameHelpMenu from "./GameHelpMenu";
+import GameHelpMenu from "@/components/games/GameHelpMenu";
 
 interface MinesweeperToolbarProps {
   selectedDifficulty: Difficulty;

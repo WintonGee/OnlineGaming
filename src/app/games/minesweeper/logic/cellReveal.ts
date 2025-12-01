@@ -1,6 +1,6 @@
 import { Board } from '../types';
 import { getAdjacentPositions } from './boardGeneration';
-import { getPositionKey } from '@/lib/shared/utils/arrayUtils';
+import { getPositionKey } from '../utils/arrayUtils';
 
 /**
  * Reveals a cell and recursively reveals adjacent cells if it's empty (flood-fill)

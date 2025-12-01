@@ -2,7 +2,7 @@
 
 import { Guess } from "../types";
 import { WORD_LENGTH, MAX_GUESSES } from "../constants";
-import { cn } from "@/lib/shared/utils/cn";
+import { cn } from "@/lib/utils/cn";
 
 interface WordleBoardProps {
   guesses: Guess[];

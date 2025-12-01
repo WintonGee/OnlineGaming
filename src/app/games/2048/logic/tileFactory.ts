@@ -3,7 +3,7 @@
 import { nanoid } from "nanoid";
 import { Tile, CellPosition } from "../types";
 import { GRID_SIZE } from "../constants";
-import { getPositionKey, getRandomItem } from "@/lib/shared/utils/arrayUtils";
+import { getPositionKey, getRandomItem } from "../utils/arrayUtils";
 
 /**
  * Generates a unique ID for a tile using nanoid

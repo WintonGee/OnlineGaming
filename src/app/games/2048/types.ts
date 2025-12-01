@@ -14,5 +14,5 @@ export interface Tile {
   isNew?: boolean;
 }
 
-// Re-export Direction type from shared utilities
-export type { Direction } from "@/lib/games/hooks/useKeyboardInput";
+// Re-export Direction type from local utilities
+export type { Direction } from "./hooks/useKeyboardInput";

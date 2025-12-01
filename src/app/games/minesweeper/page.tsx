@@ -2,14 +2,14 @@
 
 import "./styles.css";
 import { useGameLogic } from "./hooks/useGameLogic";
-import { useDialogState } from "@/lib/shared/hooks/useDialogState";
+import { useDialogState } from "@/hooks/useDialogState";
 import GameHeader from "./components/GameHeader";
 import MinesweeperBoard from "./components/MinesweeperBoard";
 import MinesweeperToolbar from "./components/MinesweeperToolbar";
 import DifficultyDialog from "./components/DifficultyDialog";
-import WinDialog from "./components/WinDialog";
+import WinDialog from "@/components/games/WinDialog";
 import InstructionsDialog from "./components/InstructionsDialog";
-import { formatTime } from "@/lib/games/utils/formatTime";
+import { formatTime } from "./utils/formatTime";
 
 export default function MinesweeperPage() {
   const {

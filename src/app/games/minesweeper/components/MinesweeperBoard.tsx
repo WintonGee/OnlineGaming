@@ -6,8 +6,8 @@ import {
   getFontSizeClass,
 } from "../utils/styleUtils";
 import { useResponsiveCellSize } from "../hooks/useResponsiveDimensions";
-import { useLongPress } from "@/lib/games/hooks/useLongPress";
-import { getPositionKey } from "@/lib/shared/utils/arrayUtils";
+import { useLongPress } from "../hooks/useLongPress";
+import { getPositionKey } from "../utils/arrayUtils";
 
 interface MinesweeperBoardProps {
   board: Board;

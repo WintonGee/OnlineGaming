@@ -1,4 +1,4 @@
-import { createGameMetadataAndStructuredData } from "@/lib/games/metadata";
+import { createGameMetadataAndStructuredData } from "@/lib/metadata";
 
 export const gameOptions = {
   title: "Play Wordle Game Free Online - No Ads | Word Puzzle Challenge",

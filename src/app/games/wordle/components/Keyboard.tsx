@@ -3,7 +3,7 @@
 import { LetterStatus } from "../types";
 import { KEYBOARD_ROWS } from "../constants";
 import { Delete } from "lucide-react";
-import { cn } from "@/lib/shared/utils/cn";
+import { cn } from "@/lib/utils/cn";
 
 interface KeyboardProps {
   onKeyPress: (key: string) => void;

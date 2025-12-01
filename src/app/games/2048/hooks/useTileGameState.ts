@@ -8,7 +8,7 @@ import {
   canMoveTiles,
 } from "../logic/tileGameLogic";
 import { BEST_SCORE_KEY, GAME_STATE_KEY } from "../constants";
-import { createStorage, storage } from "@/lib/shared/utils/storage";
+import { createStorage, storage } from "../utils/storage";
 
 interface SavedGameState {
   tiles: Tile[];

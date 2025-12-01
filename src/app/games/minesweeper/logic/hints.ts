@@ -1,7 +1,7 @@
 import { Board } from '../types';
 import { revealCell } from './cellReveal';
 import { toggleFlag } from './cellReveal';
-import { getRandomItem } from '@/lib/shared/utils/arrayUtils';
+import { getRandomItem } from '../utils/arrayUtils';
 
 /**
  * Reveals a random unrevealed safe cell (not a mine)

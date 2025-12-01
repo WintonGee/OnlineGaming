@@ -16,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/shared/utils/cn";
+import { cn } from "@/lib/utils/cn";
 
 interface GameHelpMenuProps {
   onHowToPlay: () => void;
