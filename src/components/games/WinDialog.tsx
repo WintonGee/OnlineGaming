@@ -13,21 +13,21 @@ import { Trophy } from "lucide-react";
 
 /**
  * Shared WinDialog component with flexible props for different game needs
- * 
+ *
  * @example
  * // Simple win dialog (Sudoku style)
  * <WinDialog open={won} onOpenChange={setWon} />
- * 
+ *
  * @example
  * // Win dialog with continue option (2048 style)
- * <WinDialog 
- *   open={won && !keepPlaying} 
+ * <WinDialog
+ *   open={won && !keepPlaying}
  *   onOpenChange={handleClose}
  *   onContinue={continueAfterWin}
  *   onNewGame={startNewGame}
  *   message="Congratulations! You reached the 2048 tile!"
  * />
- * 
+ *
  * @example
  * // Win dialog with time stats (Minesweeper style)
  * <WinDialog
@@ -62,16 +62,24 @@ interface WinDialogWithTime extends BaseWinDialogProps {
 
 interface WinDialogSimple extends BaseWinDialogProps {
   message?: string;
+  solution?: string;
 }
 
-type WinDialogProps = WinDialogWithContinue | WinDialogWithTime | WinDialogSimple;
+type WinDialogProps =
+  | WinDialogWithContinue
+  | WinDialogWithTime
+  | WinDialogSimple;
 
-function isWinDialogWithContinue(props: WinDialogProps): props is WinDialogWithContinue {
-  return 'onContinue' in props && 'onNewGame' in props;
+function isWinDialogWithContinue(
+  props: WinDialogProps
+): props is WinDialogWithContinue {
+  return "onContinue" in props && "onNewGame" in props;
 }
 
-function isWinDialogWithTime(props: WinDialogProps): props is WinDialogWithTime {
-  return 'time' in props && 'difficulty' in props;
+function isWinDialogWithTime(
+  props: WinDialogProps
+): props is WinDialogWithTime {
+  return "time" in props && "difficulty" in props;
 }
 
 export default function WinDialog(props: WinDialogProps) {
@@ -103,7 +111,11 @@ export default function WinDialog(props: WinDialogProps) {
           </DialogHeader>
 
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button onClick={props.onContinue} variant="outline" className="w-full">
+            <Button
+              onClick={props.onContinue}
+              variant="outline"
+              className="w-full"
+            >
               Keep Playing
             </Button>
             <Button onClick={props.onNewGame} className="w-full">
@@ -120,7 +132,8 @@ export default function WinDialog(props: WinDialogProps) {
     const { time, difficulty, bestTimes, formatTime } = props;
     const currentBest = bestTimes[difficulty];
     const isNewRecord = !currentBest || time < currentBest;
-    const formatTimeFn = formatTime || ((seconds: number) => seconds.toString().padStart(3, '0'));
+    const formatTimeFn =
+      formatTime || ((seconds: number) => seconds.toString().padStart(3, "0"));
 
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -131,14 +144,17 @@ export default function WinDialog(props: WinDialogProps) {
             </div>
             <DialogTitle className="text-center text-2xl">{title}</DialogTitle>
             <DialogDescription className="text-center">
-              {message || `Congratulations! You completed ${difficulty} difficulty.`}
+              {message ||
+                `Congratulations! You completed ${difficulty} difficulty.`}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="text-center">
               <div className="text-sm text-muted-foreground">Your Time</div>
-              <div className="text-3xl font-bold font-mono">{formatTimeFn(time)}</div>
+              <div className="text-3xl font-bold font-mono">
+                {formatTimeFn(time)}
+              </div>
             </div>
 
             {isNewRecord && currentBest && (
@@ -150,7 +166,9 @@ export default function WinDialog(props: WinDialogProps) {
             {!isNewRecord && currentBest && (
               <div className="text-center">
                 <div className="text-sm text-muted-foreground">Best Time</div>
-                <div className="text-xl font-bold font-mono">{formatTimeFn(currentBest)}</div>
+                <div className="text-xl font-bold font-mono">
+                  {formatTimeFn(currentBest)}
+                </div>
               </div>
             )}
 
@@ -172,6 +190,7 @@ export default function WinDialog(props: WinDialogProps) {
   }
 
   // Handle simple win dialog (Sudoku style)
+  const simpleProps = props as WinDialogSimple;
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-white dark:bg-black border-gray-300 dark:border-gray-700">
@@ -186,13 +205,23 @@ export default function WinDialog(props: WinDialogProps) {
           </DialogTitle>
           <DialogDescription className="text-center text-base text-gray-700 dark:text-gray-300">
             {message || "You solved the puzzle correctly!"}
-            <br />
-            <br />
-            Click &quot;New Game&quot; to try another puzzle.
           </DialogDescription>
         </DialogHeader>
+
+        {simpleProps.solution && (
+          <div className="py-4 text-center">
+            <p className="text-sm text-muted-foreground mb-2">The word was:</p>
+            <p className="text-3xl font-bold font-mono text-black dark:text-white">
+              {simpleProps.solution}
+            </p>
+          </div>
+        )}
+
+        <DialogDescription className="text-center text-base text-gray-700 dark:text-gray-300">
+          <br />
+          Click &quot;New Game&quot; to try another puzzle.
+        </DialogDescription>
       </DialogContent>
     </Dialog>
   );
 }
-

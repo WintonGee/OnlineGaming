@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Grid3x3, Grid2x2, Bomb, Type } from "lucide-react";
+import { Grid3x3, Grid2x2, Bomb, Type, HelpCircle } from "lucide-react";
 
 export default function Home() {
   const structuredData = {
@@ -8,7 +8,7 @@ export default function Home() {
     name: "GamesAdFree",
     url: "https://gamesadfree.com",
     description:
-      "Free online games without ads - Play Sudoku, 2048, Minesweeper, and Wordle",
+      "Free online games without ads - Play Sudoku, 2048, Minesweeper, Wordle, and Hangman",
     publisher: {
       "@type": "Organization",
       name: "GamesAdFree",
@@ -71,7 +71,20 @@ export default function Home() {
           "@type": "Game",
           name: "Wordle",
           url: "https://gamesadfree.com/games/wordle",
-          description: "Guess the 5-letter word in 6 tries with color-coded feedback",
+          description:
+            "Guess the 5-letter word in 6 tries with color-coded feedback",
+          genre: "Word Game",
+          gamePlatform: "Web browser",
+        },
+      },
+      {
+        "@type": "ListItem",
+        position: 5,
+        item: {
+          "@type": "Game",
+          name: "Hangman",
+          url: "https://gamesadfree.com/games/hangman",
+          description: "Classic word guessing game with multiple categories",
           genre: "Word Game",
           gamePlatform: "Web browser",
         },
@@ -167,6 +180,23 @@ export default function Home() {
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
                   Guess the 5-letter word in 6 tries
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href="/games/hangman"
+              className="group border border-gray-300 dark:border-gray-700 rounded-lg p-6 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 flex items-center justify-center mb-4">
+                  <HelpCircle className="h-10 w-10 text-black dark:text-white group-hover:scale-110 transition-transform" />
+                </div>
+                <h2 className="text-2xl font-serif font-bold text-black dark:text-white mb-2">
+                  Hangman
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  Guess letters to reveal the hidden word
                 </p>
               </div>
             </Link>
