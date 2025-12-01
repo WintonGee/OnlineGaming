@@ -8,6 +8,7 @@ import {
   ChevronDown,
   Lightbulb,
   Flag,
+  Eye,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -16,13 +17,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/shared/utils/cn";
+import { cn } from "@/lib/utils/cn";
 
 interface GameHelpMenuProps {
   onHowToPlay: () => void;
   onNewGame: () => void;
   onRevealHint?: () => void;
   onFlagHint?: () => void;
+  onRevealWord?: () => void;
   variant?: "default" | "rounded";
 }
 
@@ -31,6 +33,7 @@ export default function GameHelpMenu({
   onNewGame,
   onRevealHint,
   onFlagHint,
+  onRevealWord,
   variant = "default",
 }: GameHelpMenuProps) {
   const [open, setOpen] = useState(false);
@@ -79,7 +82,7 @@ export default function GameHelpMenu({
           How to Play
         </DropdownMenuItem>
 
-        {(onRevealHint || onFlagHint) && <DropdownMenuSeparator />}
+        {(onRevealHint || onFlagHint || onRevealWord) && <DropdownMenuSeparator />}
 
         {onRevealHint && (
           <DropdownMenuItem
@@ -107,7 +110,20 @@ export default function GameHelpMenu({
           </DropdownMenuItem>
         )}
 
-        {(onRevealHint || onFlagHint) && <DropdownMenuSeparator />}
+        {onRevealWord && (
+          <DropdownMenuItem
+            onClick={() => {
+              onRevealWord();
+              setOpen(false);
+            }}
+            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium cursor-pointer"
+          >
+            <Eye className="h-4 w-4" />
+            Reveal Word
+          </DropdownMenuItem>
+        )}
+
+        {(onRevealHint || onFlagHint || onRevealWord) && <DropdownMenuSeparator />}
 
         <DropdownMenuItem
           onClick={onNewGame}

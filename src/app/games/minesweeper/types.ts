@@ -1,4 +1,4 @@
-export type Difficulty = 'Beginner' | 'Intermediate' | 'Expert' | 'Custom';
+export type Difficulty = "Beginner" | "Intermediate" | "Expert" | "Custom";
 
 export interface Cell {
   isMine: boolean;
@@ -40,4 +40,4 @@ export interface BestTimes {
   [key: string]: number | undefined;
 }
 
-export type InputMode = 'reveal' | 'flag';
+export type InputMode = "reveal" | "flag";

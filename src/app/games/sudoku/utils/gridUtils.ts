@@ -1,6 +1,6 @@
 import { Grid, CellPosition } from "../types";
 import { BOX_SIZE } from "../constants";
-import { getPositionKey } from "@/lib/shared/utils/arrayUtils";
+import { getPositionKey } from "../utils/arrayUtils";
 
 /**
  * Box indices for a given cell position

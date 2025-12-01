@@ -1,13 +1,13 @@
 import { Board } from '../types';
 import { getAdjacentPositions } from './boardGeneration';
-import { getPositionKey } from '@/lib/shared/utils/arrayUtils';
+import { getPositionKey } from '../utils/arrayUtils';
 
 /**
  * Reveals a cell and recursively reveals adjacent cells if it's empty (flood-fill)
  */
 export function revealCell(board: Board, row: number, col: number): Board {
   const height = board.length;
-  const width = board[0].length;
+  const width = board[0]?.length || 0;
   const newBoard = board.map(r => r.map(cell => ({ ...cell })));
 
   // If cell is already revealed or flagged, do nothing

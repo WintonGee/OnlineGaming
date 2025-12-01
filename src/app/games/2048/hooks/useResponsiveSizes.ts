@@ -1,5 +1,5 @@
 // Re-export shared responsive sizes hook
-import { useResponsiveSizes as useResponsiveSizesShared } from "@/lib/games/hooks/useResponsive";
+import { useResponsiveSizes as useResponsiveSizesShared } from "@/lib/hooks/useResponsive";
 
 /**
  * Hook to get responsive gap and padding values for 2048 game

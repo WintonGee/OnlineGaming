@@ -1,4 +1,4 @@
-import { cn } from "@/lib/shared/utils/cn";
+import { cn } from "@/lib/utils/cn";
 
 /**
  * Cell state for className generation

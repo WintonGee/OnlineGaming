@@ -4,7 +4,7 @@ import { CellPosition, Grid, InputMode } from "../types";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
-import { cn } from "@/lib/shared/utils/cn";
+import { cn } from "@/lib/utils/cn";
 import { isCellInitial } from "../utils/gridUtils";
 import { GRID_SIZE } from "../constants";
 

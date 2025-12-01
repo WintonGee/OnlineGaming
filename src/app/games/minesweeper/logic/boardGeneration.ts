@@ -1,5 +1,5 @@
 import { Board, Cell } from '../types';
-import { shuffleArray } from '@/lib/shared/utils/arrayUtils';
+import { shuffleArray } from '../utils/arrayUtils';
 
 /**
  * Creates an empty cell
@@ -27,7 +27,7 @@ export function createEmptyBoard(width: number, height: number): Board {
  */
 export function placeMines(board: Board, mineCount: number): Board {
   const height = board.length;
-  const width = board[0].length;
+  const width = board[0]?.length || 0;
   const totalCells = width * height;
 
   // Create a copy of the board
@@ -61,7 +61,7 @@ export function placeMines(board: Board, mineCount: number): Board {
  */
 export function calculateAdjacentMines(board: Board): Board {
   const height = board.length;
-  const width = board[0].length;
+  const width = board[0]?.length || 0;
   const newBoard = board.map(row => row.map(cell => ({ ...cell })));
 
   for (let row = 0; row < height; row++) {
@@ -80,7 +80,7 @@ export function calculateAdjacentMines(board: Board): Board {
  */
 export function countAdjacentMines(board: Board, row: number, col: number): number {
   const height = board.length;
-  const width = board[0].length;
+  const width = board[0]?.length || 0;
   let count = 0;
 
   // Check all 8 adjacent cells

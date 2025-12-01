@@ -1,6 +1,6 @@
 import { Cell } from "../types";
 import { NUMBER_COLORS } from "../constants";
-import { cn } from "@/lib/shared/utils/cn";
+import { cn } from "@/lib/utils/cn";
 
 /**
  * Gets the appropriate font size class based on cell size
@@ -78,4 +78,4 @@ export function getCellContent(cell: Cell): string {
 }
 
 // Re-export formatTime from shared utilities
-export { formatTime } from "@/lib/games/utils/formatTime";
+export { formatTime } from "../utils/formatTime";

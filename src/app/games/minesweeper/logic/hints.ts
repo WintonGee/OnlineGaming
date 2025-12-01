@@ -1,7 +1,7 @@
 import { Board } from '../types';
 import { revealCell } from './cellReveal';
 import { toggleFlag } from './cellReveal';
-import { getRandomItem } from '@/lib/shared/utils/arrayUtils';
+import { getRandomItem } from '../utils/arrayUtils';
 
 /**
  * Reveals a random unrevealed safe cell (not a mine)
@@ -10,7 +10,7 @@ import { getRandomItem } from '@/lib/shared/utils/arrayUtils';
  */
 export function revealRandomNumber(board: Board): Board | null {
   const height = board.length;
-  const width = board[0].length;
+  const width = board[0]?.length || 0;
 
   // Find all unrevealed, unflagged, non-mine cells
   const safeCells: { row: number; col: number; hasNumber: boolean }[] = [];
@@ -62,7 +62,7 @@ export function revealRandomNumber(board: Board): Board | null {
  */
 export function flagRandomMine(board: Board): Board | null {
   const height = board.length;
-  const width = board[0].length;
+  const width = board[0]?.length || 0;
 
   // Find all unflagged, unrevealed mines
   const unflaggedMines: { row: number; col: number }[] = [];

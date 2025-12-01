@@ -3,8 +3,8 @@
 import { useRef, memo } from "react";
 import { Tile, Direction } from "../types";
 import { GRID_SIZE } from "../constants";
-import { cn } from "@/lib/shared/utils/cn";
-import { useSwipeInput } from "@/lib/games/hooks/useSwipeInput";
+import { cn } from "@/lib/utils/cn";
+import { useSwipeInput } from "@/lib/hooks/useSwipeInput";
 import { SWIPE_THRESHOLD } from "../constants";
 import { useResponsiveSizes } from "../hooks/useResponsiveSizes";
 import {

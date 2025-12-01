@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Flag, MousePointer2 } from "lucide-react";
 import { InputMode } from "../types";
-import { cn } from "@/lib/shared/utils/cn";
+import { cn } from "@/lib/utils/cn";
 
 interface InputModeToggleProps {
   mode: InputMode;

@@ -3,7 +3,7 @@
 import { Tile, Direction } from "../types";
 import { GRID_SIZE, WINNING_TILE_VALUE } from "../constants";
 import { generateTileId, addRandomTile } from "./tileFactory";
-import { getPositionKey } from "@/lib/shared/utils/arrayUtils";
+import { getPositionKey } from "../utils/arrayUtils";
 
 interface MoveResult {
   tiles: Tile[];
@@ -100,7 +100,9 @@ export function performTileMove(
 
             // Remove the tile we're merging into
             const index = newTiles.indexOf(nextTile);
-            newTiles.splice(index, 1);
+            if (index > -1) {
+              newTiles.splice(index, 1);
+            }
 
             // Create merged tile
             const mergedTile: Tile = {

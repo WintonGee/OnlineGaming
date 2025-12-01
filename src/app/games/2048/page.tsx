@@ -3,7 +3,7 @@
 import { useGameLogic } from "./hooks/useGameLogic";
 import TileGameBoard from "./components/TileGameBoard";
 import GameHeader from "./components/GameHeader";
-import WinDialog from "./components/WinDialog";
+import WinDialog from "@/components/games/WinDialog";
 import GameOverDialog from "./components/GameOverDialog";
 import InstructionsDialog from "./components/InstructionsDialog";
 import "./styles.css";

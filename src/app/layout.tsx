@@ -1,6 +1,6 @@
 import "./globals.css";
-import Header from "@/components/Header";
-import { ThemeProvider } from "@/components/theme-provider";
+import Header from "@/components/app/Header";
+import { ThemeProvider } from "@/components/app/theme-provider";
 import { metadata } from "./metadata";
 
 export { metadata };
