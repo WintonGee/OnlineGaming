@@ -27,7 +27,6 @@ export default function WordlePage() {
         <GameHeader
           onShowInstructions={instructionsDialog.open}
           onNewGame={newGame}
-          attempt={gameState.attempt}
         />
 
         {/* Error Message */}
@@ -45,17 +44,6 @@ export default function WordlePage() {
           currentGuess={gameState.currentGuess}
           shake={shake}
         />
-
-        {/* Keyboard */}
-        <div className="mt-6">
-          <Keyboard
-            onKeyPress={addLetter}
-            onEnter={submitGuess}
-            onBackspace={removeLetter}
-            keyStatuses={keyboardStatuses}
-            disabled={gameState.gameOver}
-          />
-        </div>
 
         {/* Dialogs */}
         <InstructionsDialog
@@ -84,6 +72,17 @@ export default function WordlePage() {
                 }!`
               : `The word was: ${gameState.solution}`
           }
+        />
+      </div>
+
+      {/* Keyboard - outside container for full-width control */}
+      <div className="mt-6 px-10 py-4 sm:px-4 sm:py-0">
+        <Keyboard
+          onKeyPress={addLetter}
+          onEnter={submitGuess}
+          onBackspace={removeLetter}
+          keyStatuses={keyboardStatuses}
+          disabled={gameState.gameOver}
         />
       </div>
     </div>

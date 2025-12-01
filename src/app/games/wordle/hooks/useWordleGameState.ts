@@ -18,14 +18,8 @@ import {
 const gameStateStorage = createStorage<SavedGameState>(GAME_STATE_KEY);
 
 export function useWordleGameState() {
+  const [mounted, setMounted] = useState(false);
   const [gameState, setGameState] = useState<GameState>(() => {
-    const saved = gameStateStorage.load();
-    if (saved) {
-      // Remove wordLength and hardMode from saved state for backward compatibility
-      const { wordLength, hardMode, startTime, endTime, ...rest } = saved;
-      return { ...rest };
-    }
-
     return {
       currentGuess: "",
       guesses: [],
@@ -39,8 +33,20 @@ export function useWordleGameState() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [shake, setShake] = useState(false);
 
+  // Load saved state on client-side mount
+  useEffect(() => {
+    const saved = gameStateStorage.load();
+    if (saved) {
+      // Remove wordLength and hardMode from saved state for backward compatibility
+      const { wordLength, hardMode, startTime, endTime, ...rest } = saved;
+      setGameState({ ...rest });
+    }
+    setMounted(true);
+  }, []);
+
   // Save game state to localStorage
   useEffect(() => {
+    if (!mounted) return; // Don't save until we've loaded the saved state
     const { currentGuess, guesses, solution, gameOver, won, attempt } = gameState;
     gameStateStorage.save({
       currentGuess,
@@ -50,7 +56,7 @@ export function useWordleGameState() {
       won,
       attempt,
     });
-  }, [gameState]);
+  }, [gameState, mounted]);
 
   // Clear error message after 2 seconds
   useEffect(() => {

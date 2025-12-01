@@ -23,7 +23,7 @@ export default function Keyboard({
   const getKeyClassName = (key: string): string => {
     if (key === "ENTER" || key === "BACKSPACE") {
       return cn(
-        "px-2 sm:px-3 py-4 rounded font-semibold text-xs sm:text-sm",
+        "flex-[1.5] min-w-0 max-w-[66px] py-4 rounded font-semibold text-xs sm:text-sm flex items-center justify-center",
         "bg-gray-300 dark:bg-gray-600",
         "hover:bg-gray-400 dark:hover:bg-gray-500",
         "transition-colors duration-150",
@@ -33,7 +33,7 @@ export default function Keyboard({
 
     const status = keyStatuses.get(key) || "unused";
 
-    const baseClasses = "px-3 sm:px-4 py-4 rounded font-bold text-sm sm:text-base transition-all duration-300";
+    const baseClasses = "flex-1 min-w-0 max-w-[44px] py-4 rounded font-bold text-sm sm:text-base transition-all duration-300 flex items-center justify-center";
 
     const statusClasses = {
       correct: "bg-green-500 dark:bg-green-600 text-white",
@@ -62,7 +62,7 @@ export default function Keyboard({
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto px-2">
+    <div className="w-full max-w-lg mx-auto">
       <div className="space-y-2">
         {KEYBOARD_ROWS.map((row, rowIndex) => (
           <div key={rowIndex} className="flex justify-center gap-1 sm:gap-1.5">
