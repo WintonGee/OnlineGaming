@@ -104,7 +104,7 @@ export default function WordleBoard({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center py-4 sm:py-6">
+    <div className="flex flex-col items-center justify-center pt-4 sm:pt-6 pb-2 sm:pb-2">
       <div className="space-y-2">
         {Array.from({ length: MAX_GUESSES }).map((_, rowIndex) => (
           <div

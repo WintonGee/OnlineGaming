@@ -44,6 +44,8 @@ export function useGameLogic() {
     gameState: gameState.gameState,
     errorMessage: gameState.errorMessage,
     shake: gameState.shake,
+    dailyCompleted: gameState.dailyCompleted,
+    justCompleted: gameState.justCompleted,
     keyboardStatuses,
 
     // Actions
@@ -51,6 +53,9 @@ export function useGameLogic() {
     removeLetter: gameState.removeLetter,
     submitGuess: gameState.submitGuess,
     newGame: gameState.newGame,
+    setMode: gameState.setMode,
+    dismissResult: gameState.dismissResult,
+    revealWord: gameState.revealWord,
 
     // Dialogs
     instructionsDialog,
