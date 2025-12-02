@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { GameState, SavedGameState } from "../types";
-import { MAX_INCORRECT_GUESSES, GAME_STATE_KEY } from "../constants";
-import { createStorage } from "../utils/storage";
+import { MAX_INCORRECT_GUESSES, GAME_STATE_KEY, CATEGORY_CACHE_KEY } from "../constants";
+import { createStorage, createSessionStorage } from "../utils/storage";
 import {
   getRandomWord,
   getRandomCategory,
@@ -11,6 +11,7 @@ import {
 } from "../data/categories";
 
 const gameStateStorage = createStorage<SavedGameState>(GAME_STATE_KEY);
+const categoryCache = createSessionStorage<string[]>(CATEGORY_CACHE_KEY);
 
 /**
  * Initialize a new game with a random word from a random category
@@ -107,10 +108,27 @@ export function useHangmanGameState() {
   );
 
   /**
-   * Start a new game with a random word from a random category
+   * Start a new game with a random word from cached categories or random category
    */
   const newGame = useCallback(() => {
-    setGameState(initializeNewGame());
+    const cachedCategories = categoryCache.load();
+
+    if (cachedCategories) {
+      // Use cached categories (empty array means all categories)
+      const { word, category } = getRandomWordFromCategories(cachedCategories);
+
+      setGameState({
+        solution: word,
+        category: category,
+        guessedLetters: [],
+        incorrectGuesses: [],
+        gameOver: false,
+        won: false,
+      });
+    } else {
+      // Fall back to random category
+      setGameState(initializeNewGame());
+    }
   }, []);
 
   /**
@@ -122,14 +140,11 @@ export function useHangmanGameState() {
       const categories = Array.isArray(categoryNames)
         ? categoryNames
         : [categoryNames];
-      const word = getRandomWordFromCategories(categories);
-
-      // Store category names as comma-separated string for display
-      const categoryDisplay = categories.join(", ");
+      const { word, category } = getRandomWordFromCategories(categories);
 
       setGameState({
         solution: word,
-        category: categoryDisplay,
+        category: category,
         guessedLetters: [],
         incorrectGuesses: [],
         gameOver: false,

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Grid3x3 } from "lucide-react";
+import Image from "next/image";
 import { ThemeToggle } from "./theme-toggle";
 import { useState, useEffect } from "react";
 
@@ -47,7 +47,13 @@ export default function Header() {
             href="/"
             className="flex items-center space-x-3 hover:opacity-70 transition-opacity"
           >
-            <Grid3x3 className="h-6 w-6 text-black dark:text-white" />
+            <Image
+              src="/favicon.svg"
+              alt="Logo"
+              width={24}
+              height={24}
+              className="h-6 w-6"
+            />
             <span className="text-xl font-serif font-bold text-black dark:text-white tracking-tight">
               Home
             </span>
@@ -77,4 +83,3 @@ export default function Header() {
     </header>
   );
 }
-

@@ -1,7 +1,7 @@
 "use client";
 
 import { useGameLogic } from "./hooks/useGameLogic";
-import GameHeader from "./components/GameHeader";
+import GameHeader from "@/components/games/GameHeader";
 import HangmanToolbar from "./components/HangmanToolbar";
 import HangmanDrawing from "./components/HangmanDrawing";
 import WordDisplay from "./components/WordDisplay";
@@ -31,13 +31,7 @@ export default function HangmanPage() {
     return (
       <div className="min-h-screen bg-white dark:bg-black">
         <div className="container mx-auto px-4 py-3 sm:py-6 max-w-4xl">
-          <div className="mb-6 mx-auto max-w-md w-full px-4 sm:px-0">
-            <div className="text-center mb-1 sm:mb-3">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold text-black dark:text-white">
-                Hangman
-              </h1>
-            </div>
-          </div>
+          <GameHeader title="Hangman" />
         </div>
       </div>
     );
@@ -50,7 +44,7 @@ export default function HangmanPage() {
       <div className="container mx-auto px-4 py-3 sm:py-6 max-w-4xl">
         {/* Header */}
         <div className="mb-3 sm:mb-8 lg:mb-12 flex flex-col gap-2 sm:gap-4 lg:gap-6">
-          <GameHeader />
+          <GameHeader title="Hangman" />
 
           {/* Category Toolbar */}
           <div className="flex flex-col gap-2 sm:gap-4">

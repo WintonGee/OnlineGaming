@@ -11,6 +11,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { WORD_CATEGORIES } from "../data/categories";
+import { createSessionStorage } from "../utils/storage";
+import { CATEGORY_CACHE_KEY } from "../constants";
+
+const categoryCache = createSessionStorage<string[]>(CATEGORY_CACHE_KEY);
 
 interface CategoryDialogProps {
   open: boolean;
@@ -27,10 +31,15 @@ export default function CategoryDialog({
     new Set()
   );
 
-  // Reset selection when dialog opens
+  // Load cached categories when dialog opens
   useEffect(() => {
     if (open) {
-      setSelectedCategories(new Set());
+      const cached = categoryCache.load();
+      if (cached && cached.length > 0) {
+        setSelectedCategories(new Set(cached));
+      } else {
+        setSelectedCategories(new Set());
+      }
     }
   }, [open]);
 
@@ -57,10 +66,10 @@ export default function CategoryDialog({
   };
 
   const handleStartGame = () => {
-    if (selectedCategories.size > 0) {
-      onSelectCategories(Array.from(selectedCategories));
-      onOpenChange(false);
-    }
+    const categoriesArray = Array.from(selectedCategories);
+    categoryCache.save(categoriesArray);
+    onSelectCategories(categoriesArray);
+    onOpenChange(false);
   };
 
   const allSelected = selectedCategories.size === WORD_CATEGORIES.length;
@@ -72,7 +81,7 @@ export default function CategoryDialog({
           <DialogTitle className="text-2xl">Choose Categories</DialogTitle>
           <DialogDescription>
             Select one or more categories to start a new game. Words will be
-            randomly selected from your chosen categories.
+            randomly selected from your chosen categories. Leave all unchecked to use all categories.
           </DialogDescription>
         </DialogHeader>
 
@@ -134,7 +143,6 @@ export default function CategoryDialog({
           <div className="flex justify-end pt-4 border-t">
             <Button
               onClick={handleStartGame}
-              disabled={selectedCategories.size === 0}
               className="min-w-[120px]"
             >
               Start Game

@@ -3,7 +3,8 @@
 import "./styles.css";
 import { useGameLogic } from "./hooks/useGameLogic";
 import { useDialogState } from "@/hooks/useDialogState";
-import GameHeader from "./components/GameHeader";
+import GameHeader from "@/components/games/GameHeader";
+import MinesweeperGameHeader from "./components/GameHeader";
 import MinesweeperBoard from "./components/MinesweeperBoard";
 import MinesweeperToolbar from "./components/MinesweeperToolbar";
 import DifficultyDialog from "./components/DifficultyDialog";
@@ -42,11 +43,7 @@ export default function MinesweeperPage() {
         {/* Header */}
         <div className="mb-3 sm:mb-8 lg:mb-12 flex flex-col gap-2 sm:gap-4 lg:gap-6">
           {/* Title */}
-          <div className="text-center">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold text-black dark:text-white mb-1 sm:mb-3">
-              Minesweeper
-            </h1>
-          </div>
+          <GameHeader title="Minesweeper" />
 
           {/* Difficulty Toolbar */}
           <div className="flex flex-col gap-2 sm:gap-4">
@@ -74,7 +71,7 @@ export default function MinesweeperPage() {
         <div className="flex flex-col items-center justify-center">
           {/* Classic Windows-style game container */}
           <div className="ms-container">
-            <GameHeader
+            <MinesweeperGameHeader
               remainingMines={remainingMines}
               time={time}
               gameOver={gameOver}

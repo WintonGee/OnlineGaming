@@ -27,27 +27,31 @@ export function getRandomWord(categoryName: string): string {
 /**
  * Get a random word from multiple categories
  * Combines all words from the selected categories and picks one randomly
+ * Returns both the word and the category it belongs to
  */
-export function getRandomWordFromCategories(categoryNames: string[]): string {
-  if (categoryNames.length === 0) {
-    throw new Error("At least one category must be selected");
-  }
+export function getRandomWordFromCategories(categoryNames: string[]): { word: string; category: string } {
+  // If no categories specified, use all categories
+  const selectedCategories = categoryNames.length === 0
+    ? WORD_CATEGORIES.map(cat => cat.name)
+    : categoryNames;
 
-  // Collect all words from selected categories
-  const allWords: string[] = [];
-  for (const categoryName of categoryNames) {
+  // Collect all words from selected categories with their category names
+  const allWordsWithCategories: { word: string; category: string }[] = [];
+  for (const categoryName of selectedCategories) {
     const category = WORD_CATEGORIES.find((cat) => cat.name === categoryName);
     if (category && category.words.length > 0) {
-      allWords.push(...category.words);
+      for (const word of category.words) {
+        allWordsWithCategories.push({ word, category: category.name });
+      }
     }
   }
 
-  if (allWords.length === 0) {
+  if (allWordsWithCategories.length === 0) {
     throw new Error("No words found in selected categories");
   }
 
-  const randomIndex = Math.floor(Math.random() * allWords.length);
-  return allWords[randomIndex];
+  const randomIndex = Math.floor(Math.random() * allWordsWithCategories.length);
+  return allWordsWithCategories[randomIndex];
 }
 
 /**
