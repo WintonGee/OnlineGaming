@@ -6,7 +6,7 @@ import InstructionsDialog from "./components/InstructionsDialog";
 import ConfirmationDialog from "./components/ConfirmationDialog";
 import SudokuHelperToast from "./components/SudokuHelperToast";
 import WinDialog from "@/components/games/WinDialog";
-import SudokuHeader from "./components/SudokuHeader";
+import GameHeader from "@/components/games/GameHeader";
 import SudokuToolbar from "./components/SudokuToolbar";
 import SudokuActionBar from "./components/SudokuActionBar";
 import { useSudokuGame } from "./hooks/useSudokuGame";
@@ -100,7 +100,7 @@ export default function SudokuPage() {
       >
         {/* Header */}
         <div className="mb-3 sm:mb-8 lg:mb-12 flex flex-col gap-2 sm:gap-4 lg:gap-6">
-          <SudokuHeader />
+          <GameHeader title="Sudoku" />
 
           {/* Difficulty Toolbar */}
           <div className="flex flex-col gap-2 sm:gap-4">
