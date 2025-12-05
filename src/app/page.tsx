@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Grid3x3, Grid2x2, Bomb, Type, HelpCircle } from "lucide-react";
+import { Grid3x3, Grid2x2, Bomb, Type, HelpCircle, X } from "lucide-react";
 
 export default function Home() {
   const structuredData = {
@@ -8,7 +8,7 @@ export default function Home() {
     name: "GamesAdFree",
     url: "https://gamesadfree.com",
     description:
-      "Free online games without ads - Play Sudoku, 2048, Minesweeper, Wordle, and Hangman",
+      "Free online games without ads - Play Sudoku, 2048, Minesweeper, Wordle, Hangman, and Tic Tac Toe",
     publisher: {
       "@type": "Organization",
       name: "GamesAdFree",
@@ -86,6 +86,18 @@ export default function Home() {
           url: "https://gamesadfree.com/games/hangman",
           description: "Classic word guessing game with multiple categories",
           genre: "Word Game",
+          gamePlatform: "Web browser",
+        },
+      },
+      {
+        "@type": "ListItem",
+        position: 6,
+        item: {
+          "@type": "Game",
+          name: "Tic Tac Toe",
+          url: "https://gamesadfree.com/games/tic-tac-toe",
+          description: "Classic Tic Tac Toe with AI opponents and two-player mode",
+          genre: "Strategy",
           gamePlatform: "Web browser",
         },
       },
@@ -197,6 +209,23 @@ export default function Home() {
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
                   Guess letters to reveal the hidden word
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href="/games/tic-tac-toe"
+              className="group border border-gray-300 dark:border-gray-700 rounded-lg p-6 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 flex items-center justify-center mb-4">
+                  <X className="h-10 w-10 text-black dark:text-white group-hover:scale-110 transition-transform" />
+                </div>
+                <h2 className="text-2xl font-serif font-bold text-black dark:text-white mb-2">
+                  Tic Tac Toe
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  Classic strategy game vs AI or a friend
                 </p>
               </div>
             </Link>
