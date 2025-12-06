@@ -143,8 +143,9 @@ export function useResponsiveCellSize(
     [cols, horizontalPadding, minSize, maxSize]
   );
 
+  // Use maxSize as initial SSR value to prevent board appearing too small on page load
   const [cellSize, setCellSize] = useState<number>(() => {
-    if (typeof window === "undefined") return minSize;
+    if (typeof window === "undefined") return maxSize;
     return calculateCellSize(window.innerWidth);
   });
 
