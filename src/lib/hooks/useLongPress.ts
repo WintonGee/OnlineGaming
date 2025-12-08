@@ -28,7 +28,8 @@ export interface LongPressOptions {
 export interface LongPressHandlers {
   onTouchStart: (event: React.TouchEvent) => void;
   onTouchEnd: (event: React.TouchEvent) => void;
-  onTouchMove: () => void;
+  onTouchMove: (event: React.TouchEvent) => void;
+  onTouchCancel: (event: React.TouchEvent) => void;
   onMouseDown: (event: React.MouseEvent) => void;
   onMouseUp: (event: React.MouseEvent) => void;
   onMouseLeave: () => void;
@@ -38,6 +39,11 @@ export interface LongPressHandlers {
  * Custom hook for detecting long press gestures
  * Supports both touch and mouse events
  * Provides haptic feedback on mobile devices when long press is detected
+ *
+ * IMPORTANT: This hook properly handles the touch/mouse event conflict on mobile devices.
+ * On touch devices, browsers often fire synthetic mouse events after touch events.
+ * We track whether touch events were used and ignore subsequent mouse events to prevent
+ * double-triggering of actions.
  *
  * @param options - Configuration options for long press detection
  * @returns Event handlers to attach to elements
@@ -72,16 +78,32 @@ export function useLongPress({
 }: LongPressOptions): LongPressHandlers {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const isLongPressRef = useRef(false);
-  const preventClickRef = useRef(false);
+  // Track if we're currently processing a touch interaction to prevent mouse event conflicts
+  const isTouchActiveRef = useRef(false);
+  // Track the last touch end time to ignore synthetic mouse events
+  const lastTouchEndRef = useRef(0);
 
-  const start = useCallback(
-    (event: React.TouchEvent | React.MouseEvent) => {
+  const clearTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  const handleTouchStart = useCallback(
+    (event: React.TouchEvent) => {
+      // Only handle single-finger touch
+      if (event.touches.length !== 1) {
+        return;
+      }
+
+      // Mark that we're in a touch interaction
+      isTouchActiveRef.current = true;
       isLongPressRef.current = false;
-      preventClickRef.current = false;
+      clearTimer();
 
       timerRef.current = setTimeout(() => {
         isLongPressRef.current = true;
-        preventClickRef.current = true;
         // Provide haptic feedback on mobile devices
         if ('vibrate' in navigator) {
           navigator.vibrate(50);
@@ -89,78 +111,94 @@ export function useLongPress({
         onLongPress(event);
       }, delay);
     },
-    [onLongPress, delay]
-  );
-
-  const clear = useCallback(
-    (event: React.TouchEvent | React.MouseEvent, shouldTriggerClick = true) => {
-      const wasLongPress = isLongPressRef.current;
-
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
-
-      // Only trigger onClick if it wasn't a long press and click handler exists
-      if (shouldTriggerClick && !preventClickRef.current && !wasLongPress && onClick) {
-        onClick(event);
-      }
-
-      // Reset the flag after a short delay to allow for the next interaction
-      setTimeout(() => {
-        isLongPressRef.current = false;
-        preventClickRef.current = false;
-      }, 50);
-    },
-    [onClick]
-  );
-
-  const handleTouchStart = useCallback(
-    (event: React.TouchEvent) => {
-      start(event);
-    },
-    [start]
+    [onLongPress, delay, clearTimer]
   );
 
   const handleTouchEnd = useCallback(
     (event: React.TouchEvent) => {
-      clear(event);
+      const wasLongPress = isLongPressRef.current;
+      clearTimer();
+
+      // Record when touch ended to ignore synthetic mouse events
+      lastTouchEndRef.current = Date.now();
+
+      // Trigger onClick only if it wasn't a long press
+      if (!wasLongPress && onClick) {
+        onClick(event);
+      }
+
+      // Reset states
+      isLongPressRef.current = false;
+      // Keep isTouchActiveRef true briefly to block synthetic mouse events
+      setTimeout(() => {
+        isTouchActiveRef.current = false;
+      }, 300);
     },
-    [clear]
+    [onClick, clearTimer]
   );
 
-  const handleTouchMove = useCallback(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-  }, []);
+  const handleTouchMove = useCallback(
+    (event: React.TouchEvent) => {
+      // Cancel long press if finger moves (user is scrolling, not pressing)
+      clearTimer();
+      isLongPressRef.current = false;
+    },
+    [clearTimer]
+  );
+
+  const handleTouchCancel = useCallback(
+    (event: React.TouchEvent) => {
+      clearTimer();
+      isLongPressRef.current = false;
+      isTouchActiveRef.current = false;
+    },
+    [clearTimer]
+  );
 
   const handleMouseDown = useCallback(
     (event: React.MouseEvent) => {
-      start(event);
+      // Ignore mouse events that come right after touch events (synthetic events)
+      // These are generated by browsers for compatibility but cause double-triggers
+      if (isTouchActiveRef.current || Date.now() - lastTouchEndRef.current < 300) {
+        return;
+      }
+
+      // For mouse, we don't use long press - desktop users have right-click for flagging
+      // Just track that we're in a mouse interaction for the click handler
+      isLongPressRef.current = false;
+      clearTimer();
     },
-    [start]
+    [clearTimer]
   );
 
   const handleMouseUp = useCallback(
     (event: React.MouseEvent) => {
-      clear(event);
+      // Ignore mouse events that come right after touch events
+      if (isTouchActiveRef.current || Date.now() - lastTouchEndRef.current < 300) {
+        return;
+      }
+
+      clearTimer();
+
+      // For mouse, always trigger onClick (no long press on desktop)
+      if (onClick) {
+        onClick(event);
+      }
+
+      isLongPressRef.current = false;
     },
-    [clear]
+    [onClick, clearTimer]
   );
 
   const handleMouseLeave = useCallback(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-  }, []);
+    clearTimer();
+  }, [clearTimer]);
 
   return {
     onTouchStart: handleTouchStart,
     onTouchEnd: handleTouchEnd,
     onTouchMove: handleTouchMove,
+    onTouchCancel: handleTouchCancel,
     onMouseDown: handleMouseDown,
     onMouseUp: handleMouseUp,
     onMouseLeave: handleMouseLeave,

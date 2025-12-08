@@ -84,6 +84,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Prevent touch interaction issues on mobile */
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  /* Prevent text selection highlight */
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Unrevealed cell (raised button look) */

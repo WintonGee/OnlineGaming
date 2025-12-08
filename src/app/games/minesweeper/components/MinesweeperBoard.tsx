@@ -63,7 +63,13 @@ const MinesweeperBoard = memo(function MinesweeperBoard({
           cell,
           isIncorrectFlag
         )}`}
-        {...longPressHandlers}
+        onTouchStart={longPressHandlers.onTouchStart}
+        onTouchEnd={longPressHandlers.onTouchEnd}
+        onTouchMove={longPressHandlers.onTouchMove}
+        onTouchCancel={longPressHandlers.onTouchCancel}
+        onMouseDown={longPressHandlers.onMouseDown}
+        onMouseUp={longPressHandlers.onMouseUp}
+        onMouseLeave={longPressHandlers.onMouseLeave}
         onContextMenu={(e) => {
           e.preventDefault();
           onCellRightClick(rowIndex, colIndex);
