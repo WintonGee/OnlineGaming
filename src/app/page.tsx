@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Grid3x3, Grid2x2, Bomb, Type, HelpCircle, X, BoxSelect, Brain, Gamepad2 } from "lucide-react";
+import { Grid3x3, Grid2x2, Bomb, Type, HelpCircle, X, BoxSelect, Brain, Gamepad2, Search } from "lucide-react";
 
 export default function Home() {
   const structuredData = {
@@ -8,7 +8,7 @@ export default function Home() {
     name: "GamesAdFree",
     url: "https://gamesadfree.com",
     description:
-      "Free online games without ads - Play Sudoku, 2048, Minesweeper, Wordle, Hangman, Tic Tac Toe, Snake, and Memory",
+      "Free online games without ads - Play Sudoku, 2048, Minesweeper, Wordle, Hangman, Tic Tac Toe, Snake, Memory, and Word Search",
     publisher: {
       "@type": "Organization",
       name: "GamesAdFree",
@@ -134,6 +134,18 @@ export default function Home() {
           url: "https://gamesadfree.com/games/snake",
           description: "Classic Snake arcade game - eat food and grow longer",
           genre: "Arcade",
+          gamePlatform: "Web browser",
+        },
+      },
+      {
+        "@type": "ListItem",
+        position: 10,
+        item: {
+          "@type": "Game",
+          name: "Word Search",
+          url: "https://gamesadfree.com/games/word-search",
+          description: "Find hidden words in a grid of letters with multiple categories",
+          genre: "Word Game",
           gamePlatform: "Web browser",
         },
       },
@@ -313,6 +325,23 @@ export default function Home() {
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
                   Eat food and grow your snake
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href="/games/word-search"
+              className="group border border-gray-300 dark:border-gray-700 rounded-lg p-6 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 flex items-center justify-center mb-4">
+                  <Search className="h-10 w-10 text-black dark:text-white group-hover:scale-110 transition-transform" />
+                </div>
+                <h2 className="text-2xl font-serif font-bold text-black dark:text-white mb-2">
+                  Word Search
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  Find hidden words in a letter grid
                 </p>
               </div>
             </Link>
