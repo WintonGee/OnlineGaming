@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Grid3x3, Grid2x2, Bomb, Type, HelpCircle, X, BoxSelect, Gamepad2 } from "lucide-react";
+import { Grid3x3, Grid2x2, Bomb, Type, HelpCircle, X, BoxSelect, Brain, Gamepad2 } from "lucide-react";
 
 export default function Home() {
   const structuredData = {
@@ -8,7 +8,7 @@ export default function Home() {
     name: "GamesAdFree",
     url: "https://gamesadfree.com",
     description:
-      "Free online games without ads - Play Sudoku, 2048, Minesweeper, Wordle, Hangman, Tic Tac Toe, and Snake",
+      "Free online games without ads - Play Sudoku, 2048, Minesweeper, Wordle, Hangman, Tic Tac Toe, Snake, and Memory",
     publisher: {
       "@type": "Organization",
       name: "GamesAdFree",
@@ -116,6 +116,18 @@ export default function Home() {
       {
         "@type": "ListItem",
         position: 8,
+        item: {
+          "@type": "Game",
+          name: "Memory",
+          url: "https://gamesadfree.com/games/memory",
+          description: "Classic Memory card matching game with multiple difficulty levels",
+          genre: "Puzzle",
+          gamePlatform: "Web browser",
+        },
+      },
+      {
+        "@type": "ListItem",
+        position: 9,
         item: {
           "@type": "Game",
           name: "Snake",
@@ -267,6 +279,23 @@ export default function Home() {
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
                   Connect dots and claim boxes
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href="/games/memory"
+              className="group border border-gray-300 dark:border-gray-700 rounded-lg p-6 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 flex items-center justify-center mb-4">
+                  <Brain className="h-10 w-10 text-black dark:text-white group-hover:scale-110 transition-transform" />
+                </div>
+                <h2 className="text-2xl font-serif font-bold text-black dark:text-white mb-2">
+                  Memory
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  Match pairs of cards by memory
                 </p>
               </div>
             </Link>
