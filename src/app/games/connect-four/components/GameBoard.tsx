@@ -9,6 +9,7 @@ interface GameBoardProps {
   board: Board;
   currentPlayer: Player;
   winningLine: [number, number][] | null;
+  lastMove: [number, number] | null;
   disabled: boolean;
   onColumnClick: (col: number) => void;
 }
@@ -17,6 +18,7 @@ export default function GameBoard({
   board,
   currentPlayer,
   winningLine,
+  lastMove,
   disabled,
   onColumnClick,
 }: GameBoardProps) {
@@ -28,6 +30,14 @@ export default function GameBoard({
       return winningLine.some(([r, c]) => r === row && c === col);
     },
     [winningLine]
+  );
+
+  const isLastMoveCell = useCallback(
+    (row: number, col: number): boolean => {
+      if (!lastMove) return false;
+      return lastMove[0] === row && lastMove[1] === col;
+    },
+    [lastMove]
   );
 
   const getPreviewRow = useCallback(
@@ -65,7 +75,8 @@ export default function GameBoard({
   const getDiscStyles = (
     value: Player | null,
     isWinning: boolean,
-    isPreview: boolean
+    isPreview: boolean,
+    isLastMove: boolean
   ): string => {
     if (isPreview) {
       return currentPlayer === 1
@@ -73,13 +84,19 @@ export default function GameBoard({
         : "bg-yellow-400/60 dark:bg-yellow-500/40";
     }
     if (value === 1) {
-      return isWinning
-        ? "bg-red-500 ring-4 ring-green-400 dark:ring-green-500 shadow-lg"
+      if (isWinning) {
+        return "bg-red-500 ring-4 ring-green-400 dark:ring-green-500 shadow-lg";
+      }
+      return isLastMove
+        ? "bg-red-500 dark:bg-red-600 ring-2 ring-white dark:ring-white/80 shadow-lg"
         : "bg-red-500 dark:bg-red-600 shadow-md";
     }
     if (value === 2) {
-      return isWinning
-        ? "bg-yellow-400 ring-4 ring-green-400 dark:ring-green-500 shadow-lg"
+      if (isWinning) {
+        return "bg-yellow-400 ring-4 ring-green-400 dark:ring-green-500 shadow-lg";
+      }
+      return isLastMove
+        ? "bg-yellow-400 dark:bg-yellow-500 ring-2 ring-white dark:ring-white/80 shadow-lg"
         : "bg-yellow-400 dark:bg-yellow-500 shadow-md";
     }
     return "bg-gray-100 dark:bg-gray-800 shadow-inner";
@@ -123,6 +140,7 @@ export default function GameBoard({
                   const value = board[row][col];
                   const isWinning = isWinningCell(row, col);
                   const isPreview = previewRow === row;
+                  const isLastMove = isLastMoveCell(row, col);
 
                   return (
                     <div
@@ -132,7 +150,7 @@ export default function GameBoard({
                       <div
                         className={`
                           w-full h-full rounded-full
-                          ${getDiscStyles(value, isWinning, isPreview)}
+                          ${getDiscStyles(value, isWinning, isPreview, isLastMove)}
                           transition-all duration-150
                         `}
                       />

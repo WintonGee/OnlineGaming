@@ -21,6 +21,7 @@ export function useGameState() {
       status: "playing",
       winner: null,
       winningLine: null,
+      lastMove: null,
     }));
   }, []);
 

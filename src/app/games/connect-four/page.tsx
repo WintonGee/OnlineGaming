@@ -138,6 +138,7 @@ export default function ConnectFourPage() {
           board={gameState.board}
           currentPlayer={gameState.currentPlayer}
           winningLine={gameState.winningLine}
+          lastMove={gameState.lastMove}
           disabled={isGameOver || isAIThinking}
           onColumnClick={handleColumnClick}
         />

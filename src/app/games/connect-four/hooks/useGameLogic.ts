@@ -10,6 +10,7 @@ import {
   isDraw,
   getNextPlayer,
   canDropPiece,
+  getDropRow,
 } from "../logic/gameLogic";
 import { getAIMove } from "../logic/ai";
 import { useDialogState } from "@/hooks/useDialogState";
@@ -65,8 +66,9 @@ export function useGameLogic() {
 
     // Add a delay so the AI move feels more natural
     aiTimeoutRef.current = setTimeout(() => {
+      const dropRow = getDropRow(gameState.board, moveCol);
       const newBoard = dropPiece(gameState.board, moveCol, aiPlayer);
-      if (!newBoard) {
+      if (!newBoard || dropRow === -1) {
         setIsAIThinking(false);
         return;
       }
@@ -74,6 +76,7 @@ export function useGameLogic() {
       const winner = checkWinner(newBoard);
       const winningLine = getWinningLine(newBoard);
       const draw = isDraw(newBoard);
+      const lastMove: [number, number] = [dropRow, moveCol];
 
       if (winner) {
         updateState({
@@ -81,17 +84,20 @@ export function useGameLogic() {
           status: "won",
           winner,
           winningLine: winningLine?.cells || null,
+          lastMove,
         });
       } else if (draw) {
         updateState({
           board: newBoard,
           status: "draw",
           currentPlayer: getNextPlayer(aiPlayer),
+          lastMove,
         });
       } else {
         updateState({
           board: newBoard,
           currentPlayer: getNextPlayer(aiPlayer),
+          lastMove,
         });
       }
 
@@ -126,13 +132,15 @@ export function useGameLogic() {
       }
 
       const currentPlayer = gameState.currentPlayer;
+      const dropRow = getDropRow(gameState.board, col);
       const newBoard = dropPiece(gameState.board, col, currentPlayer);
 
-      if (!newBoard) return;
+      if (!newBoard || dropRow === -1) return;
 
       const winner = checkWinner(newBoard);
       const winningLine = getWinningLine(newBoard);
       const draw = isDraw(newBoard);
+      const lastMove: [number, number] = [dropRow, col];
 
       if (winner) {
         updateState({
@@ -140,17 +148,20 @@ export function useGameLogic() {
           status: "won",
           winner,
           winningLine: winningLine?.cells || null,
+          lastMove,
         });
       } else if (draw) {
         updateState({
           board: newBoard,
           status: "draw",
           currentPlayer: getNextPlayer(currentPlayer),
+          lastMove,
         });
       } else {
         updateState({
           board: newBoard,
           currentPlayer: getNextPlayer(currentPlayer),
+          lastMove,
         });
       }
     },

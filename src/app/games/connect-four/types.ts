@@ -21,6 +21,7 @@ export interface GameState {
   status: GameStatus;
   winner: Player | null;
   winningLine: [number, number][] | null;
+  lastMove: [number, number] | null;
   difficulty: Difficulty;
   mode: GameMode;
   playerNumber: Player;

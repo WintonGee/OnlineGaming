@@ -33,6 +33,7 @@ export function createInitialState(
     status: "playing",
     winner: null,
     winningLine: null,
+    lastMove: null,
     difficulty,
     mode,
     playerNumber,
