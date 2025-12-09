@@ -1,0 +1,64 @@
+/* Animations for Sliding Puzzle tiles */
+/* Optimized for smooth movement with GPU-accelerated properties */
+
+/* Optimized position transitions */
+.tile-position {
+  /* Smooth transition for tile movement */
+  transition: left 150ms ease-out, top 150ms ease-out;
+  /* Force GPU compositing for smoother animations */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  /* Prevent subpixel rendering issues */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tile click feedback animation */
+@keyframes tilePress {
+  0% {
+    scale: 1;
+  }
+  50% {
+    scale: 0.95;
+  }
+  100% {
+    scale: 1;
+  }
+}
+
+.tile-press {
+  animation: tilePress 100ms ease-out;
+}
+
+/* Win celebration animation */
+@keyframes celebrate {
+  0% {
+    scale: 1;
+  }
+  25% {
+    scale: 1.05;
+  }
+  50% {
+    scale: 1;
+  }
+  75% {
+    scale: 1.02;
+  }
+  100% {
+    scale: 1;
+  }
+}
+
+.tile-celebrate {
+  animation: celebrate 500ms ease-out;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .tile-position {
+    transition: none;
+  }
+  .tile-press,
+  .tile-celebrate {
+    animation: none;
+  }
+}

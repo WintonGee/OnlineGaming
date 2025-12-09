@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Grid3x3, Grid2x2, Bomb, Type, HelpCircle, X, BoxSelect } from "lucide-react";
+import { Grid3x3, Grid2x2, Bomb, Type, HelpCircle, X, BoxSelect, LayoutGrid } from "lucide-react";
 
 export default function Home() {
   const structuredData = {
@@ -110,6 +110,18 @@ export default function Home() {
           url: "https://gamesadfree.com/games/dots-and-boxes",
           description: "Classic Dots and Boxes with AI opponents and two-player mode",
           genre: "Strategy",
+          gamePlatform: "Web browser",
+        },
+      },
+      {
+        "@type": "ListItem",
+        position: 8,
+        item: {
+          "@type": "Game",
+          name: "Sliding Puzzle",
+          url: "https://gamesadfree.com/games/sliding-puzzle",
+          description: "Classic 15 puzzle - arrange numbered tiles in order",
+          genre: "Puzzle",
           gamePlatform: "Web browser",
         },
       },
@@ -255,6 +267,23 @@ export default function Home() {
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
                   Connect dots and claim boxes
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href="/games/sliding-puzzle"
+              className="group border border-gray-300 dark:border-gray-700 rounded-lg p-6 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 flex items-center justify-center mb-4">
+                  <LayoutGrid className="h-10 w-10 text-black dark:text-white group-hover:scale-110 transition-transform" />
+                </div>
+                <h2 className="text-2xl font-serif font-bold text-black dark:text-white mb-2">
+                  Sliding Puzzle
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  Arrange numbered tiles in order
                 </p>
               </div>
             </Link>
