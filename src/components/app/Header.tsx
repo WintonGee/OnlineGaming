@@ -48,7 +48,7 @@ export default function Header() {
             className="flex items-center space-x-3 hover:opacity-70 transition-opacity"
           >
             <Image
-              src="/favicon.svg"
+              src="/favicon/favicon.svg"
               alt="Logo"
               width={24}
               height={24}
