@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useSnakeGameState } from "./useSnakeGameState";
 import { useKeyboardInput, Direction } from "@/lib/hooks/useKeyboardInput";
-import { useDialogState } from "@/hooks/useDialogState";
+import { useDialogState } from "@/lib/hooks/useDialogState";
 
 /**
  * Main orchestrator hook that composes all game logic hooks

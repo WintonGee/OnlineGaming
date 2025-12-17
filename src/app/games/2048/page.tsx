@@ -5,7 +5,7 @@ import TileGameBoard from "./components/TileGameBoard";
 import GameHeader from "@/components/games/GameHeader";
 import GameHelpMenu from "@/components/games/GameHelpMenu";
 import WinDialog from "@/components/games/WinDialog";
-import GameOverDialog from "./components/GameOverDialog";
+import GameOverDialog from "@/components/games/GameOverDialog";
 import InstructionsDialog from "./components/InstructionsDialog";
 import "./styles.css";
 
@@ -14,15 +14,16 @@ export default function Game2048Page() {
     tiles,
     score,
     bestScore,
-    gameOver,
-    won,
-    keepPlaying,
     startNewGame,
     handleMove,
     continueAfterWin,
     showInstructions,
     openInstructions,
     closeInstructions,
+    showWinDialog,
+    setShowWinDialog,
+    showGameOverDialog,
+    setShowGameOverDialog,
   } = useGameLogic();
 
   return (
@@ -65,14 +66,10 @@ export default function Game2048Page() {
 
         <TileGameBoard tiles={tiles} onMove={handleMove} />
 
-        {/* Win Dialog - only show if won and not continuing */}
+        {/* Win Dialog */}
         <WinDialog
-          open={won && !keepPlaying}
-          onOpenChange={(isOpen) => {
-            if (!isOpen) {
-              continueAfterWin();
-            }
-          }}
+          open={showWinDialog}
+          onOpenChange={setShowWinDialog}
           onContinue={continueAfterWin}
           onNewGame={startNewGame}
           message="Congratulations! You reached the 2048 tile!"
@@ -80,9 +77,12 @@ export default function Game2048Page() {
 
         {/* Game Over Dialog */}
         <GameOverDialog
-          open={gameOver}
+          open={showGameOverDialog}
+          onOpenChange={setShowGameOverDialog}
+          message="No more moves available."
           score={score}
           onNewGame={startNewGame}
+          buttonText="Try Again"
         />
 
         {/* Instructions Dialog */}

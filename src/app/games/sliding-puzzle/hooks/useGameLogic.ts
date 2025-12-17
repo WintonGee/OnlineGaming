@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
-import { useDialogState } from "@/hooks/useDialogState";
+import { useDialogState } from "@/lib/hooks/useDialogState";
 import { useKeyboardInput } from "@/lib/hooks/useKeyboardInput";
 import { useSlidingPuzzleState } from "./useSlidingPuzzleState";
 import { Difficulty } from "../types";

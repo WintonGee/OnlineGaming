@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { WORD_CATEGORIES } from "../data/categories";
-import { createSessionStorage } from "../utils/storage";
+import { createSessionStorage } from "@/lib/utils/storage";
 import { CATEGORY_CACHE_KEY } from "../constants";
 
 const categoryCache = createSessionStorage<string[]>(CATEGORY_CACHE_KEY);

@@ -3,8 +3,9 @@
 import { useGameLogic } from "./hooks/useGameLogic";
 import SnakeGameBoard from "./components/SnakeGameBoard";
 import DifficultySelector from "./components/DifficultySelector";
-import InstructionsDialog from "./components/InstructionsDialog";
-import GameOverDialog from "./components/GameOverDialog";
+import InstructionsDialog from "@/components/games/InstructionsDialog";
+import InstructionsContent from "./components/InstructionsContent";
+import GameOverDialog from "@/components/games/GameOverDialog";
 import GameHeader from "@/components/games/GameHeader";
 import GameHelpMenu from "@/components/games/GameHelpMenu";
 import WinDialog from "@/components/games/WinDialog";
@@ -114,6 +115,8 @@ export default function SnakePage() {
         <GameOverDialog
           open={showGameOverDialog}
           onOpenChange={setShowGameOverDialog}
+          icon="skull"
+          message="The snake crashed!"
           score={score}
           highScore={highScore}
           onNewGame={startNewGame}
@@ -123,7 +126,12 @@ export default function SnakePage() {
         <InstructionsDialog
           open={showInstructions}
           onOpenChange={closeInstructions}
-        />
+          title="How to Play Snake"
+          description="sr-only"
+          maxWidth="md"
+        >
+          <InstructionsContent />
+        </InstructionsDialog>
       </div>
     </div>
   );

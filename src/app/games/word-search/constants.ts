@@ -1,4 +1,5 @@
 import { Direction, Difficulty, DifficultyConfig, GameState } from "./types";
+import { DIFFICULTY_LABELS } from "@/lib/constants/difficulty";
 
 // Storage key for saved games
 export const GAME_STATE_KEY = "word-search-game-state";
@@ -50,12 +51,8 @@ export const DIFFICULTY_CONFIG: Record<Difficulty, DifficultyConfig> = {
   },
 };
 
-// Difficulty labels for display
-export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
-  easy: "Easy",
-  medium: "Medium",
-  hard: "Hard",
-};
+// Re-export shared difficulty labels
+export { DIFFICULTY_LABELS };
 
 // Get directions based on difficulty
 export function getDirectionsForDifficulty(difficulty: Difficulty): Direction[] {

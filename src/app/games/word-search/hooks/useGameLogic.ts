@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { useWordSearchState } from "./useWordSearchState";
-import { useDialogState } from "@/hooks/useDialogState";
+import { useDialogState } from "@/lib/hooks/useDialogState";
 import { useSelectionState } from "./useSelectionState";
 import { checkWordMatch } from "../logic/gridGenerator";
 

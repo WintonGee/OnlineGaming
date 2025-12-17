@@ -1,4 +1,5 @@
 import { BoardState, Difficulty, GameMode, GameState, GridSize } from "./types";
+import { DIFFICULTY_LABELS } from "@/lib/constants/difficulty";
 
 // Grid size options
 export const GRID_SIZES: GridSize[] = [3, 4, 5, 6];
@@ -11,11 +12,7 @@ export const GRID_SIZE_LABELS: Record<GridSize, string> = {
 };
 
 // Difficulty labels for display
-export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
-  easy: "Easy",
-  medium: "Medium",
-  hard: "Hard",
-};
+export { DIFFICULTY_LABELS };
 
 // Player colors
 export const PLAYER_COLORS = {

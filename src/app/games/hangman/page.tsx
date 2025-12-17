@@ -9,7 +9,7 @@ import Keyboard from "./components/Keyboard";
 import InstructionsDialog from "@/components/games/InstructionsDialog";
 import InstructionsContent from "./components/InstructionsContent";
 import WinDialog from "@/components/games/WinDialog";
-import GameOverDialog from "./components/GameOverDialog";
+import GameOverDialog from "@/components/games/GameOverDialog";
 import CategoryDialog from "./components/CategoryDialog";
 import { MAX_INCORRECT_GUESSES } from "./constants";
 
@@ -23,6 +23,7 @@ export default function HangmanPage() {
     instructionsDialog,
     categoryDialog,
     winDialog,
+    gameOverDialog,
     mounted,
   } = useGameLogic();
 
@@ -106,8 +107,10 @@ export default function HangmanPage() {
 
         {/* Game Over Dialog */}
         <GameOverDialog
-          open={gameState.gameOver && !gameState.won}
-          onOpenChange={() => {}}
+          open={gameOverDialog.isOpen}
+          onOpenChange={gameOverDialog.setIsOpen}
+          icon="frown"
+          message="You ran out of guesses!"
           solution={gameState.solution}
           onNewGame={newGame}
         />

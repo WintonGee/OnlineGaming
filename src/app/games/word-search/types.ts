@@ -1,3 +1,5 @@
+import { Difficulty as SharedDifficulty } from "@/lib/types/shared";
+
 // Direction vectors for word placement
 export type Direction = {
   dx: number;
@@ -50,7 +52,7 @@ export interface GameState {
 }
 
 // Difficulty levels affect grid size and word directions
-export type Difficulty = "easy" | "medium" | "hard";
+export type Difficulty = SharedDifficulty;
 
 // Difficulty configuration
 export interface DifficultyConfig {

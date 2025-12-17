@@ -1,4 +1,5 @@
 import { Board, Difficulty, GameMode, GameState, Player } from "./types";
+import { DIFFICULTY_LABELS } from "@/lib/constants/difficulty";
 
 // Board dimensions (standard Connect Four is 7 columns x 6 rows)
 export const COLS = 7;
@@ -7,12 +8,8 @@ export const ROWS = 6;
 // Number in a row needed to win
 export const WIN_LENGTH = 4;
 
-// Difficulty labels for display
-export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
-  easy: "Easy",
-  medium: "Medium",
-  hard: "Hard",
-};
+// Re-export shared constants
+export { DIFFICULTY_LABELS };
 
 // Create empty board
 export function createEmptyBoard(): Board {

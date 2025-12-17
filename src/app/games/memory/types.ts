@@ -1,4 +1,6 @@
-export type Difficulty = "easy" | "medium" | "hard";
+import { Difficulty as SharedDifficulty } from "@/lib/types/shared";
+
+export type Difficulty = SharedDifficulty;
 
 export type CardStatus = "hidden" | "flipped" | "matched";
 

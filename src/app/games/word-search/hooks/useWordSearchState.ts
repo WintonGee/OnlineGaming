@@ -5,7 +5,7 @@ import { GameState, Difficulty, SavedGameState } from "../types";
 import { createInitialGameState, GAME_STATE_KEY, DIFFICULTY_CONFIG } from "../constants";
 import { generateWordSearchGrid } from "../logic/gridGenerator";
 import { getRandomWordsFromCategory } from "../data/categories";
-import { createStorage } from "../utils/storage";
+import { createStorage } from "@/lib/utils/storage";
 
 const gameStorage = createStorage<SavedGameState>(GAME_STATE_KEY);
 

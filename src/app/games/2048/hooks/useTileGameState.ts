@@ -8,7 +8,7 @@ import {
   canMoveTiles,
 } from "../logic/tileGameLogic";
 import { BEST_SCORE_KEY, GAME_STATE_KEY } from "../constants";
-import { createStorage, storage } from "../utils/storage";
+import { createStorage, storage } from "@/lib/utils/storage";
 
 interface SavedGameState {
   tiles: Tile[];
@@ -107,10 +107,10 @@ export function useTileGameState() {
         return;
       }
 
-      // If won and not continuing, don't allow moves
-      if (won && !keepPlaying) {
-        return;
-      }
+      // Note: We allow moves even after winning, regardless of keepPlaying state.
+      // The win dialog uses independent state and closing it with X should not block gameplay.
+      // The keepPlaying flag is primarily used to track if user explicitly chose to continue
+      // (for saved state purposes).
 
       const result = performTileMove(tiles, direction);
 
@@ -131,7 +131,7 @@ export function useTileGameState() {
         }, 0);
       }
     },
-    [tiles, gameOver, won, keepPlaying]
+    [tiles, gameOver, won]
   );
 
   const continueAfterWin = useCallback(() => {

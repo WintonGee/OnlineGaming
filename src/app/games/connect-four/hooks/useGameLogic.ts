@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useGameState } from "./useGameState";
 import { Player } from "../types";
 import {
@@ -13,7 +13,7 @@ import {
   getDropRow,
 } from "../logic/gameLogic";
 import { getAIMove } from "../logic/ai";
-import { useDialogState } from "@/hooks/useDialogState";
+import { useAIGameCore } from "@/lib/hooks/useAIGameCore";
 
 const AI_DELAY = 500; // ms delay before AI moves
 
@@ -27,9 +27,13 @@ export function useGameLogic() {
     setPlayerNumber,
   } = useGameState();
 
-  const instructionsDialog = useDialogState();
-  const [isAIThinking, setIsAIThinking] = useState(false);
-  const aiTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const {
+    isAIThinking,
+    setIsAIThinking,
+    aiTimeoutRef,
+    clearAITimeout,
+    instructionsDialog,
+  } = useAIGameCore();
 
   // Determine if it's the AI's turn
   const isAITurn =
@@ -40,10 +44,7 @@ export function useGameLogic() {
   // Handle AI moves
   useEffect(() => {
     // Clear any existing timeout
-    if (aiTimeoutRef.current) {
-      clearTimeout(aiTimeoutRef.current);
-      aiTimeoutRef.current = null;
-    }
+    clearAITimeout();
 
     if (!isAITurn) {
       setIsAIThinking(false);
@@ -105,10 +106,7 @@ export function useGameLogic() {
     }, AI_DELAY);
 
     return () => {
-      if (aiTimeoutRef.current) {
-        clearTimeout(aiTimeoutRef.current);
-        aiTimeoutRef.current = null;
-      }
+      clearAITimeout();
     };
   }, [
     isAITurn,
@@ -116,6 +114,8 @@ export function useGameLogic() {
     gameState.difficulty,
     gameState.playerNumber,
     updateState,
+    clearAITimeout,
+    setIsAIThinking,
   ]);
 
   const handleColumnClick = useCallback(
@@ -177,48 +177,32 @@ export function useGameLogic() {
   );
 
   const handleNewGame = useCallback(() => {
-    if (aiTimeoutRef.current) {
-      clearTimeout(aiTimeoutRef.current);
-      aiTimeoutRef.current = null;
-    }
+    clearAITimeout();
     resetBoard();
-    setIsAIThinking(false);
-  }, [resetBoard]);
+  }, [resetBoard, clearAITimeout]);
 
   const handleDifficultyChange = useCallback(
     (difficulty: "easy" | "medium" | "hard") => {
-      if (aiTimeoutRef.current) {
-        clearTimeout(aiTimeoutRef.current);
-        aiTimeoutRef.current = null;
-      }
+      clearAITimeout();
       setDifficulty(difficulty);
-      setIsAIThinking(false);
     },
-    [setDifficulty]
+    [setDifficulty, clearAITimeout]
   );
 
   const handleModeChange = useCallback(
     (mode: "singleplayer" | "multiplayer") => {
-      if (aiTimeoutRef.current) {
-        clearTimeout(aiTimeoutRef.current);
-        aiTimeoutRef.current = null;
-      }
+      clearAITimeout();
       setMode(mode);
-      setIsAIThinking(false);
     },
-    [setMode]
+    [setMode, clearAITimeout]
   );
 
   const handlePlayerNumberChange = useCallback(
     (playerNumber: Player) => {
-      if (aiTimeoutRef.current) {
-        clearTimeout(aiTimeoutRef.current);
-        aiTimeoutRef.current = null;
-      }
+      clearAITimeout();
       setPlayerNumber(playerNumber);
-      setIsAIThinking(false);
     },
-    [setPlayerNumber]
+    [setPlayerNumber, clearAITimeout]
   );
 
   // Get status message

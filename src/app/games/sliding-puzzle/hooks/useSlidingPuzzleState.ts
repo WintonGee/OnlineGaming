@@ -8,7 +8,7 @@ import {
   DIFFICULTY_GRID_SIZE,
   createInitialGameState,
 } from "../constants";
-import { createStorage } from "../utils/storage";
+import { createStorage } from "@/lib/utils/storage";
 import {
   moveTile,
   moveByDirection,

@@ -78,4 +78,4 @@ export function getCellContent(cell: Cell): string {
 }
 
 // Re-export formatTime from shared utilities
-export { formatTime } from "../utils/formatTime";
+export { formatTimeClassic as formatTime } from "@/lib/utils/formatTime";

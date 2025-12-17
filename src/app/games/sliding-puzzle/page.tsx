@@ -9,7 +9,7 @@ import StatsDisplay from "./components/StatsDisplay";
 import InstructionsDialog from "@/components/games/InstructionsDialog";
 import InstructionsContent from "./components/InstructionsContent";
 import WinDialog from "@/components/games/WinDialog";
-import { formatTime } from "./utils/formatTime";
+import { formatTimeMMSS as formatTime } from "@/lib/utils/formatTime";
 
 export default function SlidingPuzzlePage() {
   const {

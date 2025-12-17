@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useWordleGameState } from "./useWordleGameState";
-import { useDialogState } from "@/hooks/useDialogState";
+import { useDialogState } from "@/lib/hooks/useDialogState";
 import { getKeyboardStatuses } from "../logic/validation";
 
 export function useGameLogic() {

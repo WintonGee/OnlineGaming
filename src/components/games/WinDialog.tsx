@@ -87,16 +87,11 @@ export default function WinDialog(props: WinDialogProps) {
 
   // Handle 2048-style dialog with continue option
   if (isWinDialogWithContinue(props)) {
-    const handleOpenChange = (isOpen: boolean) => {
-      if (!isOpen) {
-        // When closing, default to continuing the game
-        props.onContinue();
-      }
-      onOpenChange(isOpen);
-    };
-
+    // Note: We intentionally do NOT call onContinue when X is clicked.
+    // The X button should just close the dialog without side effects.
+    // The page is responsible for deciding what happens on close via onOpenChange.
     return (
-      <Dialog open={open} onOpenChange={handleOpenChange}>
+      <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <div className="flex justify-center mb-4">

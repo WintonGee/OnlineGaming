@@ -1,8 +1,10 @@
+import { Difficulty as SharedDifficulty, GameMode as SharedGameMode } from "@/lib/types/shared";
+
 export type Player = 1 | 2;
 
-export type Difficulty = "easy" | "medium" | "hard";
+export type Difficulty = SharedDifficulty;
 
-export type GameMode = "singleplayer" | "multiplayer";
+export type GameMode = SharedGameMode;
 
 export type GameStatus = "playing" | "finished";
 

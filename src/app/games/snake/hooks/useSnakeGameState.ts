@@ -12,7 +12,7 @@ import {
   DEFAULT_DIFFICULTY,
   HIGH_SCORES_KEY,
 } from "../constants";
-import { createStorage } from "../utils/storage";
+import { createStorage } from "@/lib/utils/storage";
 
 const highScoresStorage = createStorage<HighScores>(HIGH_SCORES_KEY);
 

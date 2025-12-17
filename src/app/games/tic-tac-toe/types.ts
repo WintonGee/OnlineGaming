@@ -1,14 +1,16 @@
+import { Difficulty as SharedDifficulty, GameMode as SharedGameMode, GameStatus as SharedGameStatus } from "@/lib/types/shared";
+
 export type Player = "X" | "O";
 
 export type Cell = Player | null;
 
 export type Board = Cell[];
 
-export type Difficulty = "easy" | "medium" | "hard";
+export type Difficulty = SharedDifficulty;
 
-export type GameMode = "singleplayer" | "multiplayer";
+export type GameMode = SharedGameMode;
 
-export type GameStatus = "playing" | "won" | "draw";
+export type GameStatus = SharedGameStatus;
 
 export interface WinningLine {
   indices: number[];

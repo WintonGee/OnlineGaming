@@ -1,4 +1,5 @@
 import { Board, Difficulty, GameMode, GameState, Player } from "./types";
+import { DIFFICULTY_LABELS } from "@/lib/constants/difficulty";
 
 // Game constants
 export const BOARD_SIZE = 9;
@@ -19,12 +20,8 @@ export const WINNING_LINES = [
 // Initial empty board
 export const EMPTY_BOARD: Board = Array(BOARD_SIZE).fill(null);
 
-// Difficulty labels for display
-export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
-  easy: "Easy",
-  medium: "Medium",
-  hard: "Hard",
-};
+// Re-export shared difficulty labels
+export { DIFFICULTY_LABELS };
 
 // Initial game state factory
 export function createInitialState(

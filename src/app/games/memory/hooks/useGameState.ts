@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { GameState, Difficulty, BestScores } from "../types";
 import { createNewGame } from "../logic/game";
-import { createStorage } from "../utils/storage";
+import { createStorage } from "@/lib/utils/storage";
 import { BEST_SCORES_KEY, DEFAULT_DIFFICULTY } from "../constants";
 
 const bestScoresStorage = createStorage<BestScores>(BEST_SCORES_KEY);

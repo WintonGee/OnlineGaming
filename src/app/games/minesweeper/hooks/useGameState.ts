@@ -7,7 +7,7 @@ import { DIFFICULTY_CONFIG, DEFAULT_DIFFICULTY, BEST_TIMES_KEY } from '../consta
 import { useTimer } from '@/lib/hooks/useTimer';
 import { useIsMobile, getExpertDimensions } from './useResponsiveDimensions';
 import { revealRandomNumber, flagRandomMine } from '../logic/hints';
-import { createStorage } from '../utils/storage';
+import { createStorage } from "@/lib/utils/storage";
 
 interface UseGameStateProps {
   initialDifficulty?: Difficulty;

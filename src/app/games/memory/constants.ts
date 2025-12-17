@@ -1,4 +1,5 @@
 import { Difficulty, DifficultyConfig } from './types';
+import { DIFFICULTY_LABELS } from "@/lib/constants/difficulty";
 
 export const DIFFICULTY_CONFIG: Record<Difficulty, DifficultyConfig> = {
   easy: { rows: 3, cols: 4, pairs: 6 },      // 12 cards, 6 pairs
@@ -6,11 +7,7 @@ export const DIFFICULTY_CONFIG: Record<Difficulty, DifficultyConfig> = {
   hard: { rows: 4, cols: 5, pairs: 10 },     // 20 cards, 10 pairs
 } as const;
 
-export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
-  easy: "Easy",
-  medium: "Medium",
-  hard: "Hard",
-} as const;
+export { DIFFICULTY_LABELS };
 
 // Card symbols - using emoji for visual appeal
 export const CARD_SYMBOLS = [

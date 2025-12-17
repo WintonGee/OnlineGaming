@@ -2,7 +2,7 @@
 
 import { Timer, Move, Trophy } from "lucide-react";
 import { BestRecords, Difficulty } from "../types";
-import { formatTime } from "../utils/formatTime";
+import { formatTimeMMSS as formatTime } from "@/lib/utils/formatTime";
 
 interface StatsDisplayProps {
   moves: number;

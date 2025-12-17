@@ -14,7 +14,7 @@ import {
   GAME_STATE_KEY,
   DAILY_STATE_KEY,
 } from "../constants";
-import { createStorage } from "../utils/storage";
+import { createStorage } from "@/lib/utils/storage";
 import { getRandomSolution } from "../logic/wordList";
 import { checkGuess, validateGuess, isWinningGuess } from "../logic/validation";
 

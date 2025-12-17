@@ -2,7 +2,7 @@
 
 import { useEffect, useCallback, useRef } from "react";
 import { useHangmanGameState } from "./useHangmanGameState";
-import { useDialogState } from "@/hooks/useDialogState";
+import { useDialogState } from "@/lib/hooks/useDialogState";
 
 /**
  * Main game logic hook that coordinates state and handles keyboard input
@@ -20,21 +20,25 @@ export function useGameLogic() {
   const instructionsDialog = useDialogState();
   const categoryDialog = useDialogState();
   const winDialog = useDialogState();
+  const gameOverDialog = useDialogState();
   const previousWonRef = useRef(false);
+  const previousGameOverRef = useRef(false);
 
-  // Wrap newGame to close win dialog
+  // Wrap newGame to close dialogs
   const newGame = useCallback(() => {
     winDialog.close();
+    gameOverDialog.close();
     originalNewGame();
-  }, [originalNewGame, winDialog]);
+  }, [originalNewGame, winDialog, gameOverDialog]);
 
-  // Wrap newGameWithCategory to close win dialog
+  // Wrap newGameWithCategory to close dialogs
   const newGameWithCategory = useCallback(
     (categoryNames: string | string[]) => {
       winDialog.close();
+      gameOverDialog.close();
       originalNewGameWithCategory(categoryNames);
     },
-    [originalNewGameWithCategory, winDialog]
+    [originalNewGameWithCategory, winDialog, gameOverDialog]
   );
 
   // Show win dialog when game is won (only when won transitions from false to true)
@@ -45,6 +49,18 @@ export function useGameLogic() {
     previousWonRef.current = gameState.won;
   }, [gameState.won, winDialog]);
 
+  // Show game over dialog when game is lost (only when gameOver transitions and not won)
+  useEffect(() => {
+    if (gameState.gameOver && !gameState.won && !previousGameOverRef.current) {
+      gameOverDialog.open();
+    }
+    if (!gameState.gameOver) {
+      previousGameOverRef.current = false;
+    } else {
+      previousGameOverRef.current = true;
+    }
+  }, [gameState.gameOver, gameState.won, gameOverDialog]);
+
   // Handle keyboard input
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -53,7 +69,8 @@ export function useGameLogic() {
         gameState.gameOver ||
         instructionsDialog.isOpen ||
         categoryDialog.isOpen ||
-        winDialog.isOpen
+        winDialog.isOpen ||
+        gameOverDialog.isOpen
       ) {
         return;
       }
@@ -75,6 +92,7 @@ export function useGameLogic() {
     instructionsDialog.isOpen,
     categoryDialog.isOpen,
     winDialog.isOpen,
+    gameOverDialog.isOpen,
   ]);
 
   return {
@@ -86,6 +104,7 @@ export function useGameLogic() {
     instructionsDialog,
     categoryDialog,
     winDialog,
+    gameOverDialog,
     mounted,
   };
 }

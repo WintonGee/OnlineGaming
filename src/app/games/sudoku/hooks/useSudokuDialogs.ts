@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useDialogState } from "@/hooks/useDialogState";
+import { useDialogState } from "@/lib/hooks/useDialogState";
 import { HelperActionResult } from "../types";
 import { ConfirmationType } from "../components/ConfirmationDialog";
 

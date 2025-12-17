@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { GameState, SavedGameState } from "../types";
 import { MAX_INCORRECT_GUESSES, GAME_STATE_KEY, CATEGORY_CACHE_KEY } from "../constants";
-import { createStorage, createSessionStorage } from "../utils/storage";
+import { createStorage, createSessionStorage } from "@/lib/utils/storage";
 import {
   getRandomWord,
   getRandomCategory,

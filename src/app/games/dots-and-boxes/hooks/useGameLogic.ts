@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useGameState } from "./useGameState";
 import { LineType, Player } from "../types";
 import {
@@ -12,7 +12,7 @@ import {
   isValidMove,
 } from "../logic/game";
 import { getAIMove } from "../logic/ai";
-import { useDialogState } from "@/hooks/useDialogState";
+import { useAIGameCore } from "@/lib/hooks/useAIGameCore";
 
 const AI_DELAY = 400; // ms delay before AI moves
 
@@ -26,9 +26,13 @@ export function useGameLogic() {
     setGridSize,
   } = useGameState();
 
-  const instructionsDialog = useDialogState();
-  const [isAIThinking, setIsAIThinking] = useState(false);
-  const aiTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const {
+    isAIThinking,
+    setIsAIThinking,
+    aiTimeoutRef,
+    clearAITimeout,
+    instructionsDialog,
+  } = useAIGameCore();
 
   // Determine if it's the AI's turn (AI is always player 2)
   const isAITurn =
@@ -164,48 +168,32 @@ export function useGameLogic() {
   );
 
   const handleNewGame = useCallback(() => {
-    if (aiTimeoutRef.current) {
-      clearTimeout(aiTimeoutRef.current);
-      aiTimeoutRef.current = null;
-    }
+    clearAITimeout();
     resetBoard();
-    setIsAIThinking(false);
-  }, [resetBoard]);
+  }, [clearAITimeout, resetBoard]);
 
   const handleDifficultyChange = useCallback(
     (difficulty: "easy" | "medium" | "hard") => {
-      if (aiTimeoutRef.current) {
-        clearTimeout(aiTimeoutRef.current);
-        aiTimeoutRef.current = null;
-      }
+      clearAITimeout();
       setDifficulty(difficulty);
-      setIsAIThinking(false);
     },
-    [setDifficulty]
+    [clearAITimeout, setDifficulty]
   );
 
   const handleModeChange = useCallback(
     (mode: "singleplayer" | "multiplayer") => {
-      if (aiTimeoutRef.current) {
-        clearTimeout(aiTimeoutRef.current);
-        aiTimeoutRef.current = null;
-      }
+      clearAITimeout();
       setMode(mode);
-      setIsAIThinking(false);
     },
-    [setMode]
+    [clearAITimeout, setMode]
   );
 
   const handleGridSizeChange = useCallback(
     (size: 3 | 4 | 5 | 6) => {
-      if (aiTimeoutRef.current) {
-        clearTimeout(aiTimeoutRef.current);
-        aiTimeoutRef.current = null;
-      }
+      clearAITimeout();
       setGridSize(size);
-      setIsAIThinking(false);
     },
-    [setGridSize]
+    [clearAITimeout, setGridSize]
   );
 
   // Get status message

@@ -11,7 +11,7 @@ import {
   resetFlippedCards,
   isGameWon,
 } from "../logic/game";
-import { useDialogState } from "@/hooks/useDialogState";
+import { useDialogState } from "@/lib/hooks/useDialogState";
 import { useTimer } from "@/lib/hooks/useTimer";
 import { MATCH_CHECK_DELAY, MATCH_ANIMATION_DELAY } from "../constants";
 

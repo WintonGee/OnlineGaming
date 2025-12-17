@@ -9,13 +9,8 @@ import InstructionsDialog from "@/components/games/InstructionsDialog";
 import InstructionsContent from "./components/InstructionsContent";
 import { DIFFICULTY_LABELS } from "./constants";
 import { Difficulty } from "./types";
+import { formatTimeMSS } from "@/lib/utils/formatTime";
 import "./styles.css";
-
-function formatTime(seconds: number): string {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
-}
 
 export default function MemoryPage() {
   const {
@@ -73,7 +68,7 @@ export default function MemoryPage() {
             <div className="text-center">
               <span className="text-gray-500 dark:text-gray-400">Time</span>
               <p className="font-mono text-lg font-semibold text-black dark:text-white">
-                {formatTime(timer.time)}
+                {formatTimeMSS(timer.time)}
               </p>
             </div>
             <div className="text-center">

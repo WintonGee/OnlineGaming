@@ -44,5 +44,3 @@ export function useDialogState(initialState = false) {
     setIsOpen,
   };
 }
-
-

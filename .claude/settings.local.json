@@ -26,7 +26,20 @@
       "Bash(git stash:*)",
       "Bash(cat:*)",
       "Bash(npm uninstall:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(wc:*)",
+      "Bash(grep:*)",
+      "Bash(/Users/wintongee/Desktop/Projects/OnlineGaming/src/app/games/minesweeper/utils/storage.ts )",
+      "Bash(/Users/wintongee/Desktop/Projects/OnlineGaming/src/app/games/sudoku/utils/storage.ts )",
+      "Bash(/Users/wintongee/Desktop/Projects/OnlineGaming/src/app/games/wordle/utils/storage.ts )",
+      "Bash(/Users/wintongee/Desktop/Projects/OnlineGaming/src/app/games/hangman/utils/storage.ts )",
+      "Bash(/Users/wintongee/Desktop/Projects/OnlineGaming/src/app/games/dots-and-boxes/utils/storage.ts )",
+      "Bash(/Users/wintongee/Desktop/Projects/OnlineGaming/src/app/games/tic-tac-toe/utils/storage.ts )",
+      "Bash(/Users/wintongee/Desktop/Projects/OnlineGaming/src/app/games/memory/utils/storage.ts )",
+      "Bash(/Users/wintongee/Desktop/Projects/OnlineGaming/src/app/games/sliding-puzzle/utils/storage.ts )",
+      "Bash(/Users/wintongee/Desktop/Projects/OnlineGaming/src/app/games/snake/utils/storage.ts )",
+      "Bash(/Users/wintongee/Desktop/Projects/OnlineGaming/src/app/games/word-search/utils/storage.ts)",
+      "Bash(xargs sed:*)"
     ],
     "deny": [],
     "ask": []
