@@ -188,7 +188,7 @@ export default function WordSearchGrid({
             <div
               key={`${rowIndex}-${colIndex}`}
               className={`
-                flex items-center justify-center font-bold text-sm sm:text-base md:text-lg
+                flex items-center justify-center font-semibold
                 transition-colors duration-150
                 ${
                   isFound
@@ -201,7 +201,8 @@ export default function WordSearchGrid({
               `}
               style={{
                 aspectRatio: "1",
-                fontSize: `clamp(0.75rem, ${2.5 / gridSize}vw + 0.5rem, 1.25rem)`,
+                fontSize: `min(${75 / gridSize}vw, ${Math.round(380 / gridSize)}px)`,
+                lineHeight: 1,
               }}
             >
               {cell.letter}
