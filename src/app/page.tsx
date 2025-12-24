@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Grid3x3, Grid2x2, Bomb, Type, HelpCircle, X, BoxSelect, Brain, Gamepad2, Search, LayoutGrid, Circle, Spade } from "lucide-react";
+import { Grid3x3, Grid2x2, Bomb, Type, HelpCircle, X, BoxSelect, Brain, Gamepad2, Search, LayoutGrid, Circle, Spade, Palette } from "lucide-react";
 
 export default function Home() {
   const structuredData = {
@@ -182,6 +182,18 @@ export default function Home() {
           url: "https://gamesadfree.com/games/blackjack",
           description: "Classic Blackjack card game - beat the dealer without going over 21",
           genre: "Card Game",
+          gamePlatform: "Web browser",
+        },
+      },
+      {
+        "@type": "ListItem",
+        position: 14,
+        item: {
+          "@type": "Game",
+          name: "Mastermind",
+          url: "https://gamesadfree.com/games/mastermind",
+          description: "Classic code-breaking game - guess the secret color code",
+          genre: "Puzzle",
           gamePlatform: "Web browser",
         },
       },
@@ -433,6 +445,22 @@ export default function Home() {
               </div>
             </Link>
 
+            <Link
+              href="/games/mastermind"
+              className="group border border-gray-300 dark:border-gray-700 rounded-lg p-6 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 flex items-center justify-center mb-4">
+                  <Palette className="h-10 w-10 text-black dark:text-white group-hover:scale-110 transition-transform" />
+                </div>
+                <h2 className="text-2xl font-serif font-bold text-black dark:text-white mb-2">
+                  Mastermind
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  Crack the secret color code
+                </p>
+              </div>
+            </Link>
 
           </div>
         </div>

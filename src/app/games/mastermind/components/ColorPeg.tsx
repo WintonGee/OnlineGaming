@@ -1,7 +1,7 @@
 "use client";
 
 import { PegColor } from "../types";
-import { COLOR_CLASSES, COLOR_HOVER_CLASSES } from "../constants";
+import { COLOR_CLASSES } from "../constants";
 import { cn } from "@/lib/utils/cn";
 
 interface ColorPegProps {
@@ -13,9 +13,9 @@ interface ColorPegProps {
 }
 
 const SIZE_CLASSES = {
-  sm: "w-6 h-6 sm:w-7 sm:h-7",
-  md: "w-8 h-8 sm:w-10 sm:h-10",
-  lg: "w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14",
+  sm: "w-6 h-6",
+  md: "w-9 h-9",
+  lg: "w-11 h-11",
 };
 
 export default function ColorPeg({
@@ -26,21 +26,19 @@ export default function ColorPeg({
   isClickable = false,
 }: ColorPegProps) {
   const baseClasses = cn(
-    "rounded-full transition-all duration-200",
+    "rounded-full transition-all duration-150",
     SIZE_CLASSES[size],
     // Empty peg styling
-    !color && "border-2 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800",
+    !color && "border-2 border-dashed border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900",
     // Colored peg styling
     color && COLOR_CLASSES[color],
+    color && "shadow-sm",
     // Clickable state
     isClickable && "cursor-pointer",
-    isClickable && !isSelected && "hover:scale-110",
-    isClickable && color && COLOR_HOVER_CLASSES[color],
+    isClickable && !isSelected && "hover:scale-105 active:scale-95",
     !isClickable && "cursor-default",
-    // Selected state - ring highlight
-    isSelected && "ring-4 ring-blue-400 dark:ring-blue-500 ring-offset-2 dark:ring-offset-gray-900 scale-105",
-    // Shadow
-    color && "shadow-md",
+    // Selected state
+    isSelected && "ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-gray-900 scale-105",
     // Focus states for accessibility
     isClickable && "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
   );
