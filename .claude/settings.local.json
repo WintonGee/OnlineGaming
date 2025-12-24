@@ -39,7 +39,9 @@
       "Bash(/Users/wintongee/Desktop/Projects/OnlineGaming/src/app/games/sliding-puzzle/utils/storage.ts )",
       "Bash(/Users/wintongee/Desktop/Projects/OnlineGaming/src/app/games/snake/utils/storage.ts )",
       "Bash(/Users/wintongee/Desktop/Projects/OnlineGaming/src/app/games/word-search/utils/storage.ts)",
-      "Bash(xargs sed:*)"
+      "Bash(xargs sed:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(bd:*)"
     ],
     "deny": [],
     "ask": []

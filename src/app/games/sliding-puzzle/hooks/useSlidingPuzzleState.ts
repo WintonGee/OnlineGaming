@@ -41,6 +41,19 @@ export function useSlidingPuzzleState() {
         won: savedState.won,
         difficulty: savedState.difficulty,
       });
+    } else {
+      // No saved state or saved game was won - start fresh with shuffled tiles
+      const difficulty = savedState?.difficulty || "medium";
+      const gridSize = DIFFICULTY_GRID_SIZE[difficulty];
+      setGameState({
+        tiles: shuffleTiles(gridSize),
+        gridSize,
+        moves: 0,
+        time: 0,
+        gameStarted: false,
+        won: false,
+        difficulty,
+      });
     }
 
     const savedBestRecords = bestRecordsStorage.load();
