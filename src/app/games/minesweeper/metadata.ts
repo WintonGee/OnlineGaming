@@ -1,30 +1,16 @@
 import { createGameMetadataAndStructuredData } from "@/lib/metadata";
+import { minesweeperConfig } from "./config";
 
 export const gameOptions = {
-  title: "Play Minesweeper Free Online - No Ads | Classic Game",
-  description:
-    "Play classic Minesweeper game free online without ads! Choose from Easy, Medium, Hard difficulty or create custom boards. Track your best times. No downloads required.",
-  keywords: [
-    "minesweeper online",
-    "play minesweeper",
-    "free minesweeper",
-    "minesweeper game",
-    "minesweeper no ads",
-    "classic minesweeper",
-    "minesweeper browser",
-    "windows minesweeper",
-    "minesweeper puzzle",
-    "minesweeper online free",
-    "mine sweeper",
-    "minesweeper classic game",
-  ],
-  gamePath: "/games/minesweeper",
-  ogImage: "/og-minesweeper.png",
+  title: `Play ${minesweeperConfig.name} Free Online - No Ads | Classic Game`,
+  description: `${minesweeperConfig.longDescription}. Choose from Easy, Medium, Hard difficulty or create custom boards. Track your best times. No downloads required.`,
+  keywords: minesweeperConfig.seoKeywords,
+  gamePath: minesweeperConfig.href,
+  ogImage: minesweeperConfig.ogImage,
   structuredData: {
-    name: "Minesweeper - Free Online Classic Game",
+    name: `${minesweeperConfig.name} - Free Online Classic Game`,
     alternateName: "Mine Sweeper",
-    description:
-      "Classic Minesweeper game with customizable difficulty levels - Easy, Medium, Hard, and Custom. Clear the board without hitting mines and track your best times.",
+    description: `${minesweeperConfig.longDescription}. Choose from Easy, Medium, Hard difficulty or create custom boards. Track your best times.`,
     genre: ["Puzzle", "Logic", "Strategy"],
     featureList: [
       "Classic Windows-style Minesweeper",

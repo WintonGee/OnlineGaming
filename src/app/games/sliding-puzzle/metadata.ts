@@ -1,30 +1,16 @@
 import { createGameMetadataAndStructuredData } from "@/lib/metadata";
+import { slidingPuzzleConfig } from "./config";
 
 export const gameOptions = {
-  title: "Play Sliding Puzzle Free Online - No Ads | 15 Puzzle Game",
-  description:
-    "Play the classic Sliding Puzzle (15 Puzzle) free online without ads! Choose from 3x3, 4x4, or 5x5 grids. Track your best times and moves. No downloads required.",
-  keywords: [
-    "sliding puzzle online",
-    "15 puzzle game",
-    "play sliding puzzle",
-    "free puzzle game",
-    "sliding puzzle no ads",
-    "number puzzle game",
-    "tile sliding puzzle",
-    "gem puzzle online",
-    "15 puzzle solver",
-    "sliding tile puzzle",
-    "puzzle game free",
-    "brain teaser game",
-  ],
-  gamePath: "/games/sliding-puzzle",
-  ogImage: "/og-sliding-puzzle.png",
+  title: `Play ${slidingPuzzleConfig.name} Free Online - No Ads | 15 ${slidingPuzzleConfig.genre} Game`,
+  description: `${slidingPuzzleConfig.longDescription}. Choose from 3x3, 4x4, or 5x5 grids. Track your best times and moves. No downloads required.`,
+  keywords: slidingPuzzleConfig.seoKeywords,
+  gamePath: slidingPuzzleConfig.href,
+  ogImage: slidingPuzzleConfig.ogImage,
   structuredData: {
-    name: "Sliding Puzzle - Free Online 15 Puzzle Game",
+    name: `${slidingPuzzleConfig.name} - Free Online 15 ${slidingPuzzleConfig.genre} Game`,
     alternateName: "15 Puzzle",
-    description:
-      "Classic Sliding Puzzle game with multiple grid sizes - 3x3 Easy, 4x4 Medium (classic 15-puzzle), and 5x5 Hard. Arrange numbered tiles in order by sliding them into the empty space.",
+    description: `${slidingPuzzleConfig.longDescription}. Multiple grid sizes - 3x3 Easy, 4x4 Medium (classic 15-puzzle), and 5x5 Hard. Slide tiles into the empty space.`,
     genre: ["Puzzle", "Logic", "Brain Teaser"],
     featureList: [
       "Classic 15-puzzle gameplay",

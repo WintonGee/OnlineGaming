@@ -1,30 +1,16 @@
 import { createGameMetadataAndStructuredData } from "@/lib/metadata";
+import { memoryConfig } from "./config";
 
 export const gameOptions = {
-  title: "Play Memory Game Free Online - No Ads | Card Matching Puzzle",
-  description:
-    "Play Memory (Concentration) game free online without ads! Match pairs of cards by remembering their positions. Multiple difficulty levels. No downloads required.",
-  keywords: [
-    "memory game online",
-    "concentration game",
-    "matching game",
-    "card matching",
-    "free memory game",
-    "memory game no ads",
-    "pairs game",
-    "brain training game",
-    "memory puzzle",
-    "concentration card game",
-    "matching pairs",
-    "memory matching game",
-  ],
-  gamePath: "/games/memory",
-  ogImage: "/og-memory.png",
+  title: `Play ${memoryConfig.name} Game Free Online - No Ads | Card Matching ${memoryConfig.genre}`,
+  description: `${memoryConfig.longDescription}. Match pairs of cards by remembering their positions. No downloads required.`,
+  keywords: memoryConfig.seoKeywords,
+  gamePath: memoryConfig.href,
+  ogImage: memoryConfig.ogImage,
   structuredData: {
-    name: "Memory - Free Online Card Matching Game",
+    name: `${memoryConfig.name} - Free Online Card Matching Game`,
     alternateName: "Concentration Game",
-    description:
-      "Classic Memory matching game where you flip cards to find matching pairs. Features multiple difficulty levels and score tracking. Test and improve your memory!",
+    description: `${memoryConfig.longDescription}. Flip cards to find matching pairs. Features score tracking. Test and improve your memory!`,
     genre: ["Puzzle", "Memory", "Educational", "Card Game"],
     featureList: [
       "Classic Memory/Concentration gameplay",

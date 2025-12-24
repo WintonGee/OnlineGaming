@@ -9,4 +9,17 @@ export const hangmanConfig: GameConfig = {
   longDescription: "Classic word guessing game with multiple categories",
   genre: "Word Game",
   icon: HelpCircle,
+  ogImage: "/og-hangman.png",
+  seoKeywords: [
+    "hangman",
+    "hangman game",
+    "word game",
+    "guessing game",
+    "free hangman",
+    "online hangman",
+    "word puzzle",
+    "letter game",
+    "vocabulary game",
+    "educational game",
+  ],
 };

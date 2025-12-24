@@ -9,4 +9,17 @@ export const wordSearchConfig: GameConfig = {
   longDescription: "Find hidden words in a grid of letters with multiple categories",
   genre: "Word Game",
   icon: Search,
+  ogImage: "/og-word-search.png",
+  seoKeywords: [
+    "word search",
+    "word search game",
+    "word puzzle",
+    "find words",
+    "free word search",
+    "online word search",
+    "puzzle game",
+    "word game",
+    "brain game",
+    "vocabulary game",
+  ],
 };

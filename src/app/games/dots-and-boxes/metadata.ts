@@ -1,32 +1,16 @@
 import { createGameMetadataAndStructuredData } from "@/lib/metadata";
+import { dotsAndBoxesConfig } from "./config";
 
 export const gameOptions = {
-  title: "Play Dots and Boxes Free Online - No Ads | Classic Strategy Game",
-  description:
-    "Play Dots and Boxes free online without ads! Challenge the computer with Easy, Medium, and Hard AI modes, or play with a friend. Multiple grid sizes from 3x3 to 6x6. No downloads required.",
-  keywords: [
-    "dots and boxes",
-    "dots and boxes game",
-    "play dots and boxes",
-    "dots and boxes online",
-    "free dots and boxes",
-    "dots and boxes no ads",
-    "dots boxes game",
-    "connect the dots game",
-    "boxes game",
-    "dots and boxes strategy",
-    "two player game",
-    "classic game",
-    "pencil paper game",
-    "dots and boxes multiplayer",
-  ],
-  gamePath: "/games/dots-and-boxes",
-  ogImage: "/og-dots-and-boxes.png",
+  title: `Play ${dotsAndBoxesConfig.name} Free Online - No Ads | Classic ${dotsAndBoxesConfig.genre} Game`,
+  description: `${dotsAndBoxesConfig.longDescription}. Challenge the computer with Easy, Medium, and Hard AI modes, or play with a friend. Multiple grid sizes from 3x3 to 6x6. No downloads required.`,
+  keywords: dotsAndBoxesConfig.seoKeywords,
+  gamePath: dotsAndBoxesConfig.href,
+  ogImage: dotsAndBoxesConfig.ogImage,
   structuredData: {
-    name: "Dots and Boxes - Free Online Strategy Game",
+    name: `${dotsAndBoxesConfig.name} - Free Online ${dotsAndBoxesConfig.genre} Game`,
     alternateName: "La Pipopipette",
-    description:
-      "Classic Dots and Boxes game - play against AI with three difficulty levels or challenge a friend in two-player mode. Multiple grid sizes and responsive design.",
+    description: `${dotsAndBoxesConfig.longDescription}. Play against AI with three difficulty levels or challenge a friend in two-player mode. Multiple grid sizes and responsive design.`,
     genre: ["Strategy", "Board Game", "Puzzle"],
     featureList: [
       "Single player vs AI",

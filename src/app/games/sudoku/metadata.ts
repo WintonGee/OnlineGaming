@@ -1,32 +1,16 @@
 import { createGameMetadataAndStructuredData } from "@/lib/metadata";
+import { sudokuConfig } from "./config";
 
 export const gameOptions = {
-  title: "Play Sudoku Free Online - No Ads | Multiple Difficulty Levels",
-  description:
-    "Play free Sudoku online without ads! Choose from Easy, Medium, Hard, and Expert levels. Features auto-candidates, hints, undo, and more. No registration or download required.",
-  keywords: [
-    "sudoku online",
-    "free sudoku",
-    "sudoku game",
-    "play sudoku",
-    "sudoku puzzle",
-    "sudoku no ads",
-    "online sudoku free",
-    "sudoku easy",
-    "sudoku hard",
-    "sudoku expert",
-    "daily sudoku",
-    "sudoku solver",
-    "sudoku hints",
-    "web sudoku",
-  ],
-  gamePath: "/games/sudoku",
-  ogImage: "/og-sudoku.png",
+  title: `Play ${sudokuConfig.name} Free Online - No Ads | Multiple Difficulty Levels`,
+  description: `${sudokuConfig.longDescription}. Features auto-candidates, hints, undo, and more. No registration or download required.`,
+  keywords: sudokuConfig.seoKeywords,
+  gamePath: sudokuConfig.href,
+  ogImage: sudokuConfig.ogImage,
   structuredData: {
-    name: "Sudoku - Free Online Puzzle Game",
-    alternateName: "Sudoku Puzzle",
-    description:
-      "Free online Sudoku puzzle game with multiple difficulty levels - Easy, Medium, Hard, and Expert. Features auto-candidates, hints, undo functionality, and more.",
+    name: `${sudokuConfig.name} - Free Online ${sudokuConfig.genre} Game`,
+    alternateName: `${sudokuConfig.name} Puzzle`,
+    description: `${sudokuConfig.longDescription}. Features auto-candidates, hints, undo functionality, and more.`,
     genre: ["Puzzle", "Logic", "Brain Teaser"],
     featureList: [
       "Multiple difficulty levels (Easy, Medium, Hard, Expert)",

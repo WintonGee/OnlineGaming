@@ -1,30 +1,37 @@
 import type { Metadata } from "next";
+import { allGames } from "./games";
+
+// Generate dynamic keywords from all games
+const baseKeywords = [
+  "free online games",
+  "games without ads",
+  "browser games",
+  "free puzzle games",
+  "word games",
+  "no ads games",
+];
+
+const dynamicGameKeywords = allGames.flatMap((game) => [
+  game.name.toLowerCase(),
+  `${game.name.toLowerCase()} online`,
+  `free ${game.name.toLowerCase()}`,
+  `play ${game.name.toLowerCase()}`,
+]);
+
+// Generate dynamic title using first few game names
+const featuredGames = allGames.slice(0, 3).map((g) => g.name).join(", ");
+
+// Generate dynamic description
+const gameList = allGames.slice(0, 4).map((g) => g.name).join(", ");
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://gamesadfree.com"),
   title: {
-    default:
-      "Free Online Games | Sudoku, 2048, Minesweeper | No Ads",
+    default: `Free Online Games | ${featuredGames} | No Ads`,
     template: "%s | GamesAdFree - Play Free Online Games",
   },
-  description:
-    "Play classic free online games without ads! Enjoy Sudoku puzzles, 2048 tile game, Minesweeper, and Wordle. No registration, no downloads, completely free browser games.",
-  keywords: [
-    "free online games",
-    "games without ads",
-    "sudoku online",
-    "play 2048",
-    "minesweeper game",
-    "wordle online",
-    "browser games",
-    "free puzzle games",
-    "word games",
-    "no ads games",
-    "online sudoku free",
-    "free 2048 game",
-    "minesweeper online free",
-    "wordle free",
-  ],
+  description: `Play classic free online games without ads! Enjoy ${gameList}, and more. No registration, no downloads, completely free browser games.`,
+  keywords: [...baseKeywords, ...dynamicGameKeywords],
   authors: [{ name: "GamesAdFree" }],
   creator: "GamesAdFree",
   publisher: "GamesAdFree",
@@ -38,10 +45,8 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://gamesadfree.com",
     siteName: "GamesAdFree",
-    title:
-      "Free Online Games | Sudoku, 2048, Minesweeper | No Ads",
-    description:
-      "Play classic free online games without ads! Enjoy Sudoku puzzles, 2048 tile game, Minesweeper, and Wordle.",
+    title: `Free Online Games | ${featuredGames} | No Ads`,
+    description: `Play classic free online games without ads! Enjoy ${gameList}, and more.`,
     images: [
       {
         url: "/og-image.png",
@@ -53,10 +58,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title:
-      "Free Online Games | Sudoku, 2048, Minesweeper | No Ads",
-    description:
-      "Play classic free online games without ads! Enjoy Sudoku puzzles, 2048 tile game, Minesweeper, and Wordle.",
+    title: `Free Online Games | ${featuredGames} | No Ads`,
+    description: `Play classic free online games without ads! Enjoy ${gameList}, and more.`,
     images: ["/og-image.png"],
   },
   robots: {

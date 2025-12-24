@@ -1,28 +1,16 @@
 import { createGameMetadataAndStructuredData } from "@/lib/metadata";
+import { hangmanConfig } from "./config";
 
 export const gameOptions = {
-  title: "Play Hangman Game Free Online - No Ads | Classic Word Guessing",
-  description:
-    "Free online Hangman word guessing game with 8 categories. Guess letters to reveal hidden words before the hangman is complete. No ads, no downloads required.",
-  keywords: [
-    "hangman",
-    "hangman game",
-    "word game",
-    "guessing game",
-    "free hangman",
-    "online hangman",
-    "word puzzle",
-    "letter game",
-    "vocabulary game",
-    "educational game",
-  ],
-  gamePath: "/games/hangman",
-  ogImage: "/og-hangman.png",
+  title: `Play ${hangmanConfig.name} Game Free Online - No Ads | Classic Word Guessing`,
+  description: `${hangmanConfig.longDescription}. Guess letters to reveal hidden words before the hangman is complete. No ads, no downloads required.`,
+  keywords: hangmanConfig.seoKeywords,
+  gamePath: hangmanConfig.href,
+  ogImage: hangmanConfig.ogImage,
   structuredData: {
-    name: "Hangman - Free Online Word Guessing Game",
-    alternateName: "Hangman Game",
-    description:
-      "Play the classic Hangman word guessing game online for free. Choose from 8 different categories and guess letters to reveal the hidden word before the hangman is complete.",
+    name: `${hangmanConfig.name} - Free Online ${hangmanConfig.genre} Game`,
+    alternateName: `${hangmanConfig.name} Game`,
+    description: `${hangmanConfig.longDescription}. Choose from 8 different categories and guess letters to reveal the hidden word before the hangman is complete.`,
     genre: ["Word Game", "Puzzle", "Educational"],
     featureList: [
       "Classic hangman gameplay",

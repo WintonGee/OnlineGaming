@@ -8,4 +8,6 @@ export interface GameConfig {
   longDescription: string;
   genre: string;
   icon: LucideIcon;
+  ogImage: string;
+  seoKeywords: string[];
 }

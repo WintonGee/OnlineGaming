@@ -1,25 +1,16 @@
 import { createGameMetadataAndStructuredData } from "@/lib/metadata";
+import { blackjackConfig } from "./config";
 
 export const gameOptions = {
-  title: "Play Blackjack Free Online - No Ads | Beat the Dealer",
-  description: "Play Blackjack free online without ads! Try to beat the dealer by getting as close to 21 as possible without going over. Simple Hit or Stand gameplay.",
-  keywords: [
-    "blackjack",
-    "blackjack game",
-    "21 card game",
-    "play blackjack",
-    "blackjack online",
-    "free blackjack",
-    "blackjack no ads",
-    "card games",
-    "beat the dealer",
-  ],
-  gamePath: "/games/blackjack",
-  ogImage: "/og-blackjack.png",
+  title: `Play ${blackjackConfig.name} Free Online - No Ads | Beat the Dealer`,
+  description: `${blackjackConfig.longDescription}. Try to beat the dealer by getting as close to 21 as possible without going over. Simple Hit or Stand gameplay.`,
+  keywords: blackjackConfig.seoKeywords,
+  gamePath: blackjackConfig.href,
+  ogImage: blackjackConfig.ogImage,
   structuredData: {
-    name: "Blackjack - Free Online Card Game",
+    name: `${blackjackConfig.name} - Free Online ${blackjackConfig.genre}`,
     alternateName: "21",
-    description: "Classic Blackjack card game - beat the dealer without going over 21. Simple Hit or Stand gameplay.",
+    description: `${blackjackConfig.longDescription}. Simple Hit or Stand gameplay.`,
     genre: ["Card Game", "Strategy"],
     featureList: [
       "Single player vs dealer",

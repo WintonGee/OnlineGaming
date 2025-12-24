@@ -1,28 +1,16 @@
 import { createGameMetadataAndStructuredData } from "@/lib/metadata";
+import { wordSearchConfig } from "./config";
 
 export const gameOptions = {
-  title: "Play Word Search Game Free Online - No Ads | Puzzle Game",
-  description:
-    "Free online Word Search puzzle game with 12 categories and 3 difficulty levels. Find hidden words in the grid. No ads, no downloads required.",
-  keywords: [
-    "word search",
-    "word search game",
-    "word puzzle",
-    "find words",
-    "free word search",
-    "online word search",
-    "puzzle game",
-    "word game",
-    "brain game",
-    "vocabulary game",
-  ],
-  gamePath: "/games/word-search",
-  ogImage: "/og-word-search.png",
+  title: `Play ${wordSearchConfig.name} Game Free Online - No Ads | ${wordSearchConfig.genre}`,
+  description: `${wordSearchConfig.longDescription}. 12 categories and 3 difficulty levels. No ads, no downloads required.`,
+  keywords: wordSearchConfig.seoKeywords,
+  gamePath: wordSearchConfig.href,
+  ogImage: wordSearchConfig.ogImage,
   structuredData: {
-    name: "Word Search - Free Online Word Puzzle Game",
-    alternateName: "Word Search Puzzle",
-    description:
-      "Play the classic Word Search puzzle game online for free. Find hidden words in a grid of letters. Choose from 12 categories and 3 difficulty levels.",
+    name: `${wordSearchConfig.name} - Free Online ${wordSearchConfig.genre} Game`,
+    alternateName: `${wordSearchConfig.name} Puzzle`,
+    description: `${wordSearchConfig.longDescription}. Choose from 12 categories and 3 difficulty levels.`,
     genre: ["Word Game", "Puzzle", "Educational"],
     featureList: [
       "Classic word search gameplay",

@@ -1,33 +1,16 @@
 import { createGameMetadataAndStructuredData } from "@/lib/metadata";
+import { wordleConfig } from "./config";
 
 export const gameOptions = {
-  title: "Play Wordle Game Free Online - No Ads | Word Puzzle Challenge",
-  description:
-    "Play Wordle free online without ads! Guess the 5-letter word in 6 tries. Features hard mode, statistics tracking, and unlimited plays. No downloads required.",
-  keywords: [
-    "wordle game",
-    "play wordle",
-    "wordle online",
-    "free wordle",
-    "wordle puzzle",
-    "wordle no ads",
-    "word game",
-    "5 letter word game",
-    "wordle browser game",
-    "wordle unlimited",
-    "wordle online free",
-    "word puzzle",
-    "vocabulary game",
-    "daily word game",
-    "guess the word",
-  ],
-  gamePath: "/games/wordle",
-  ogImage: "/og-wordle.png",
+  title: `Play ${wordleConfig.name} Game Free Online - No Ads | Word Puzzle Challenge`,
+  description: `${wordleConfig.longDescription}. Features hard mode, statistics tracking, and unlimited plays. No downloads required.`,
+  keywords: wordleConfig.seoKeywords,
+  gamePath: wordleConfig.href,
+  ogImage: wordleConfig.ogImage,
   structuredData: {
-    name: "Wordle - Free Online Word Puzzle Game",
-    alternateName: "Wordle Game",
-    description:
-      "Classic Wordle word guessing game - guess the 5-letter word in 6 tries with color-coded feedback. Features unlimited plays, hard mode, statistics tracking, and share results.",
+    name: `${wordleConfig.name} - Free Online ${wordleConfig.genre} Game`,
+    alternateName: `${wordleConfig.name} Game`,
+    description: `${wordleConfig.longDescription}. Features unlimited plays, hard mode, statistics tracking, and share results.`,
     genre: ["Word Game", "Puzzle", "Educational"],
     featureList: [
       "Classic Wordle gameplay",

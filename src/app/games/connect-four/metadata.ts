@@ -1,33 +1,16 @@
 import { createGameMetadataAndStructuredData } from "@/lib/metadata";
+import { connectFourConfig } from "./config";
 
 export const gameOptions = {
-  title: "Play Connect Four Free Online - No Ads | Classic Strategy Game",
-  description:
-    "Play Connect Four free online without ads! Challenge the computer with Easy, Medium, and Hard AI modes, or play with a friend. Drop discs and get four in a row to win!",
-  keywords: [
-    "connect four",
-    "connect 4",
-    "connect four game",
-    "play connect four",
-    "connect four online",
-    "free connect four",
-    "connect four no ads",
-    "four in a row",
-    "connect four ai",
-    "connect four strategy",
-    "two player game",
-    "classic game",
-    "board game online",
-    "connect four multiplayer",
-    "drop four",
-  ],
-  gamePath: "/games/connect-four",
-  ogImage: "/og-connect-four.png",
+  title: `Play ${connectFourConfig.name} Free Online - No Ads | Classic ${connectFourConfig.genre} Game`,
+  description: `${connectFourConfig.longDescription}. Challenge the computer with Easy, Medium, and Hard AI modes, or play with a friend. Drop discs and get four in a row to win!`,
+  keywords: connectFourConfig.seoKeywords,
+  gamePath: connectFourConfig.href,
+  ogImage: connectFourConfig.ogImage,
   structuredData: {
-    name: "Connect Four - Free Online Strategy Game",
+    name: `${connectFourConfig.name} - Free Online ${connectFourConfig.genre} Game`,
     alternateName: "Four in a Row",
-    description:
-      "Classic Connect Four game - drop discs and connect four in a row to win! Play against AI with three difficulty levels or challenge a friend in two-player mode.",
+    description: `${connectFourConfig.longDescription}. Play against AI with three difficulty levels or challenge a friend in two-player mode.`,
     genre: ["Strategy", "Board Game", "Puzzle"],
     featureList: [
       "Single player vs AI",
