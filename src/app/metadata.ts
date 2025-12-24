@@ -4,7 +4,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://gamesadfree.com"),
   title: {
     default:
-      "Free Online Games - Play Sudoku, 2048, Minesweeper, Wordle | No Ads",
+      "Free Online Games | Sudoku, 2048, Minesweeper | No Ads",
     template: "%s | GamesAdFree - Play Free Online Games",
   },
   description:
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     url: "https://gamesadfree.com",
     siteName: "GamesAdFree",
     title:
-      "Free Online Games - Play Sudoku, 2048, Minesweeper, Wordle | No Ads",
+      "Free Online Games | Sudoku, 2048, Minesweeper | No Ads",
     description:
       "Play classic free online games without ads! Enjoy Sudoku puzzles, 2048 tile game, Minesweeper, and Wordle.",
     images: [
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "Free Online Games - Play Sudoku, 2048, Minesweeper, Wordle | No Ads",
+      "Free Online Games | Sudoku, 2048, Minesweeper | No Ads",
     description:
       "Play classic free online games without ads! Enjoy Sudoku puzzles, 2048 tile game, Minesweeper, and Wordle.",
     images: ["/og-image.png"],
