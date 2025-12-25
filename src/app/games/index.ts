@@ -14,6 +14,7 @@ import { wordSearchConfig } from "./word-search/config";
 import { blackjackConfig } from "./blackjack/config";
 import { mastermindConfig } from "./mastermind/config";
 import { bombDefusalConfig } from "./bomb-defusal/config";
+import { solitaireConfig } from "./solitaire/config";
 
 export const allGames: GameConfig[] = [
   sudokuConfig,
@@ -31,4 +32,5 @@ export const allGames: GameConfig[] = [
   blackjackConfig,
   mastermindConfig,
   bombDefusalConfig,
+  solitaireConfig,
 ];
