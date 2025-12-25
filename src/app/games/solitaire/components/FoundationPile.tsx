@@ -1,5 +1,6 @@
 "use client";
 
+import { DragEvent } from "react";
 import { Card as CardType, CardLocation, Suit } from "../types";
 import Card, { CardPlaceholder } from "./Card";
 
@@ -7,8 +8,12 @@ interface FoundationPileProps {
   cards: CardType[];
   pileIndex: number;
   selectedCardId?: string;
+  dragOverLocation?: CardLocation | null;
   onCardClick: (card: CardType, location: CardLocation) => void;
   onEmptyClick: (location: CardLocation) => void;
+  onDragOver: (location: CardLocation) => (e: DragEvent) => void;
+  onDragLeave: () => void;
+  onDrop: (location: CardLocation) => (e: DragEvent) => void;
 }
 
 const SUIT_SYMBOLS: Record<Suit, string> = {
@@ -31,17 +36,28 @@ export default function FoundationPile({
   cards,
   pileIndex,
   selectedCardId,
+  dragOverLocation,
   onCardClick,
   onEmptyClick,
+  onDragOver,
+  onDragLeave,
+  onDrop,
 }: FoundationPileProps) {
   const location: CardLocation = { pile: "foundation", index: pileIndex };
   const suit = FOUNDATION_SUITS[pileIndex];
+
+  const isDragOver =
+    dragOverLocation?.pile === "foundation" && dragOverLocation?.index === pileIndex;
 
   if (cards.length === 0) {
     return (
       <CardPlaceholder
         onClick={() => onEmptyClick(location)}
         className={`text-2xl ${SUIT_COLORS[suit]}`}
+        isDragOver={isDragOver}
+        onDragOver={onDragOver(location)}
+        onDragLeave={onDragLeave}
+        onDrop={onDrop(location)}
       >
         {SUIT_SYMBOLS[suit]}
       </CardPlaceholder>
@@ -56,7 +72,11 @@ export default function FoundationPile({
       card={topCard}
       isSelected={isSelected}
       isPlayable={true}
+      isDragOver={isDragOver}
       onClick={() => onCardClick(topCard, location)}
+      onDragOver={onDragOver(location)}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop(location)}
     />
   );
 }

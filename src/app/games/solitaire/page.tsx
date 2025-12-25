@@ -1,6 +1,8 @@
 "use client";
 
+import { useCallback } from "react";
 import { useGameLogic } from "./hooks/useGameLogic";
+import { useDragDrop } from "./hooks/useDragDrop";
 import GameHeader from "@/components/games/GameHeader";
 import GameHelpMenu from "@/components/games/GameHelpMenu";
 import WinDialog from "@/components/games/WinDialog";
@@ -9,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import GameBoard from "./components/GameBoard";
 import InstructionsContent from "./components/InstructionsContent";
 import { cn } from "@/lib/utils/cn";
+import { CardLocation } from "./types";
 import "./styles.css";
 
 export default function SolitairePage() {
@@ -18,7 +21,6 @@ export default function SolitairePage() {
     stock,
     waste,
     moves,
-    won,
     drawCount,
     selectedCard,
     isAutoCompleting,
@@ -29,6 +31,7 @@ export default function SolitairePage() {
     handleCardClick,
     handleEmptyClick,
     handleAutoMove,
+    handleMove,
     handleNewGame,
     handleChangeDrawCount,
     startAutoComplete,
@@ -36,9 +39,24 @@ export default function SolitairePage() {
     winDialog,
   } = useGameLogic();
 
+  const {
+    draggedCards,
+    dragOverPile,
+    handleDragStart,
+    handleDragEnd,
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
+  } = useDragDrop();
+
   const handleCardDoubleClick = (card: Parameters<typeof handleCardClick>[0], location: Parameters<typeof handleCardClick>[1]) => {
     handleAutoMove(card, location);
   };
+
+  const onDrop = useCallback(
+    (location: CardLocation) => handleDrop(location, handleMove),
+    [handleDrop, handleMove]
+  );
 
   return (
     <div className="min-h-screen bg-white dark:bg-black">
@@ -113,10 +131,17 @@ export default function SolitairePage() {
                 waste={waste}
                 drawCount={drawCount}
                 selectedCardId={selectedCard?.card.id}
+                draggedCardIds={draggedCards?.cards.map(c => c.id)}
+                dragOverLocation={dragOverPile}
                 onDraw={handleDraw}
                 onCardClick={handleCardClick}
                 onCardDoubleClick={handleCardDoubleClick}
                 onEmptyClick={handleEmptyClick}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={onDrop}
               />
             )}
           </div>

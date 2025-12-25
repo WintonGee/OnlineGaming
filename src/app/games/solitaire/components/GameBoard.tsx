@@ -1,5 +1,6 @@
 "use client";
 
+import { DragEvent } from "react";
 import { Card as CardType, CardLocation } from "../types";
 import TableauColumn from "./TableauColumn";
 import FoundationPile from "./FoundationPile";
@@ -12,10 +13,17 @@ interface GameBoardProps {
   waste: CardType[];
   drawCount: 1 | 3;
   selectedCardId?: string;
+  draggedCardIds?: string[];
+  dragOverLocation?: CardLocation | null;
   onDraw: () => void;
   onCardClick: (card: CardType, location: CardLocation) => void;
   onCardDoubleClick: (card: CardType, location: CardLocation) => void;
   onEmptyClick: (location: CardLocation) => void;
+  onDragStart: (cards: CardType[], source: CardLocation) => (e: DragEvent) => void;
+  onDragEnd: () => void;
+  onDragOver: (location: CardLocation) => (e: DragEvent) => void;
+  onDragLeave: () => void;
+  onDrop: (location: CardLocation) => (e: DragEvent) => void;
 }
 
 export default function GameBoard({
@@ -25,10 +33,17 @@ export default function GameBoard({
   waste,
   drawCount,
   selectedCardId,
+  draggedCardIds = [],
+  dragOverLocation,
   onDraw,
   onCardClick,
   onCardDoubleClick,
   onEmptyClick,
+  onDragStart,
+  onDragEnd,
+  onDragOver,
+  onDragLeave,
+  onDrop,
 }: GameBoardProps) {
   return (
     <div className="flex flex-col gap-6">
@@ -40,9 +55,12 @@ export default function GameBoard({
           waste={waste}
           drawCount={drawCount}
           selectedCardId={selectedCardId}
+          draggedCardId={draggedCardIds[0]}
           onDraw={onDraw}
           onWasteCardClick={onCardClick}
           onWasteCardDoubleClick={onCardDoubleClick}
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
         />
 
         {/* Foundation piles */}
@@ -53,8 +71,12 @@ export default function GameBoard({
               cards={pile}
               pileIndex={index}
               selectedCardId={selectedCardId}
+              dragOverLocation={dragOverLocation}
               onCardClick={onCardClick}
               onEmptyClick={onEmptyClick}
+              onDragOver={onDragOver}
+              onDragLeave={onDragLeave}
+              onDrop={onDrop}
             />
           ))}
         </div>
@@ -68,9 +90,16 @@ export default function GameBoard({
             cards={column}
             columnIndex={index}
             selectedCardId={selectedCardId}
+            draggedCardIds={draggedCardIds}
+            dragOverLocation={dragOverLocation}
             onCardClick={onCardClick}
             onCardDoubleClick={onCardDoubleClick}
             onEmptyClick={onEmptyClick}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            onDrop={onDrop}
           />
         ))}
       </div>

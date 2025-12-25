@@ -1,5 +1,6 @@
 "use client";
 
+import { DragEvent } from "react";
 import { Card as CardType, CardLocation } from "../types";
 import Card, { CardPlaceholder } from "./Card";
 import { RefreshCw } from "lucide-react";
@@ -10,9 +11,12 @@ interface StockWasteProps {
   waste: CardType[];
   drawCount: 1 | 3;
   selectedCardId?: string;
+  draggedCardId?: string;
   onDraw: () => void;
   onWasteCardClick: (card: CardType, location: CardLocation) => void;
   onWasteCardDoubleClick: (card: CardType, location: CardLocation) => void;
+  onDragStart: (cards: CardType[], source: CardLocation) => (e: DragEvent) => void;
+  onDragEnd: () => void;
 }
 
 export default function StockWaste({
@@ -20,9 +24,12 @@ export default function StockWaste({
   waste,
   drawCount,
   selectedCardId,
+  draggedCardId,
   onDraw,
   onWasteCardClick,
   onWasteCardDoubleClick,
+  onDragStart,
+  onDragEnd,
 }: StockWasteProps) {
   const location: CardLocation = { pile: "waste", index: 0 };
 
@@ -62,6 +69,7 @@ export default function StockWaste({
           visibleWaste.map((card, idx) => {
             const isTopCard = idx === visibleWaste.length - 1;
             const isSelected = selectedCardId === card.id;
+            const isDragging = draggedCardId === card.id;
 
             return (
               <div
@@ -76,8 +84,12 @@ export default function StockWaste({
                   card={card}
                   isSelected={isSelected}
                   isPlayable={isTopCard}
+                  isDragging={isDragging}
+                  draggable={isTopCard}
                   onClick={isTopCard ? () => onWasteCardClick(card, location) : undefined}
                   onDoubleClick={isTopCard ? () => onWasteCardDoubleClick(card, location) : undefined}
+                  onDragStart={isTopCard ? onDragStart([card], location) : undefined}
+                  onDragEnd={onDragEnd}
                   className={cn(!isTopCard && "pointer-events-none")}
                 />
               </div>
