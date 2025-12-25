@@ -41,7 +41,10 @@
       "Bash(/Users/wintongee/Desktop/Projects/OnlineGaming/src/app/games/word-search/utils/storage.ts)",
       "Bash(xargs sed:*)",
       "WebFetch(domain:github.com)",
-      "Bash(bd:*)"
+      "Bash(bd:*)",
+      "WebFetch(domain:www.bombmanual.com)",
+      "WebFetch(domain:ktane.fandom.com)",
+      "Bash(git:*)"
     ],
     "deny": [],
     "ask": []
