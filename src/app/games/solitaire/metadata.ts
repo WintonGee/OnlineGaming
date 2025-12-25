@@ -18,7 +18,7 @@ const gameOptions = {
       "Track your moves",
       "Auto-complete when possible",
       "Works on mobile and desktop",
-      "Unlimited undos",
+      "Drag and drop or click to move",
     ],
     ratingValue: "4.6",
     ratingCount: "1200",

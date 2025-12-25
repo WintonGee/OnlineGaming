@@ -19,6 +19,63 @@ export function useGameLogic() {
     }
   }, [gameState.gameState.won, winDialog]);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't handle if typing in an input or dialog is open
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        instructionsDialog.isOpen ||
+        winDialog.isOpen
+      ) {
+        return;
+      }
+
+      switch (e.key.toLowerCase()) {
+        case "d":
+          // Draw from stock
+          e.preventDefault();
+          gameState.handleDraw();
+          break;
+        case "a":
+          // Auto-complete if available
+          if (gameState.canAutoComplete && !gameState.isAutoCompleting) {
+            e.preventDefault();
+            gameState.startAutoComplete();
+          }
+          break;
+        case "n":
+          // New game
+          e.preventDefault();
+          hasShownWinDialog.current = false;
+          resetWinDialog();
+          gameState.handleNewGame();
+          break;
+        case "escape":
+          // Clear selection
+          if (gameState.selectedCard) {
+            e.preventDefault();
+            gameState.clearSelection();
+          }
+          break;
+        case "?":
+          // Show help
+          e.preventDefault();
+          instructionsDialog.open();
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    gameState,
+    instructionsDialog,
+    winDialog.isOpen,
+    resetWinDialog,
+  ]);
+
   // New game handler
   const handleNewGame = useCallback((drawCount?: 1 | 3) => {
     hasShownWinDialog.current = false;

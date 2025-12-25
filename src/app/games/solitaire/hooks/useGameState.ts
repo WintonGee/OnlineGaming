@@ -196,6 +196,10 @@ export function useGameState() {
     }
   }, [gameState]);
 
+  const clearSelection = useCallback(() => {
+    setSelectedCard(null);
+  }, []);
+
   const canAutoCompleteNow = canAutoComplete(gameState);
 
   return {
@@ -213,5 +217,6 @@ export function useGameState() {
     handleNewGame,
     handleChangeDrawCount,
     startAutoComplete,
+    clearSelection,
   };
 }

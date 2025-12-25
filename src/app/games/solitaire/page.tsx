@@ -152,7 +152,8 @@ export default function SolitairePage() {
           open={winDialog.isOpen}
           onOpenChange={winDialog.setIsOpen}
           title="Congratulations!"
-          message={`You won in ${moves} moves!`}
+          moves={moves}
+          bestMoves={stats.bestMoves}
           onNewGame={() => handleNewGame()}
         />
 

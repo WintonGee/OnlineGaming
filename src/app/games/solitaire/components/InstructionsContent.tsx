@@ -38,6 +38,17 @@ export default function InstructionsContent() {
       </section>
 
       <section>
+        <h3 className="font-semibold text-black dark:text-white mb-2">Keyboard Shortcuts</h3>
+        <ul className="list-disc list-inside space-y-1">
+          <li><strong>D:</strong> Draw from stock</li>
+          <li><strong>A:</strong> Auto-complete (when available)</li>
+          <li><strong>N:</strong> New game</li>
+          <li><strong>Esc:</strong> Clear selection</li>
+          <li><strong>?:</strong> Show this help</li>
+        </ul>
+      </section>
+
+      <section>
         <h3 className="font-semibold text-black dark:text-white mb-2">Tips</h3>
         <ul className="list-disc list-inside space-y-1">
           <li>Always move Aces and Twos to foundations immediately.</li>

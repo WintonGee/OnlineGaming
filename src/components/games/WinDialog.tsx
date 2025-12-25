@@ -60,6 +60,12 @@ interface WinDialogWithTime extends BaseWinDialogProps {
   formatTime?: (seconds: number) => string;
 }
 
+interface WinDialogWithMoves extends BaseWinDialogProps {
+  onNewGame: () => void;
+  moves: number;
+  bestMoves: number | null;
+}
+
 interface WinDialogSimple extends BaseWinDialogProps {
   message?: string;
   solution?: string;
@@ -68,6 +74,7 @@ interface WinDialogSimple extends BaseWinDialogProps {
 type WinDialogProps =
   | WinDialogWithContinue
   | WinDialogWithTime
+  | WinDialogWithMoves
   | WinDialogSimple;
 
 function isWinDialogWithContinue(
@@ -80,6 +87,12 @@ function isWinDialogWithTime(
   props: WinDialogProps
 ): props is WinDialogWithTime {
   return "time" in props && "difficulty" in props;
+}
+
+function isWinDialogWithMoves(
+  props: WinDialogProps
+): props is WinDialogWithMoves {
+  return "moves" in props && "bestMoves" in props;
 }
 
 export default function WinDialog(props: WinDialogProps) {
@@ -170,6 +183,68 @@ export default function WinDialog(props: WinDialogProps) {
             {isNewRecord && !currentBest && (
               <div className="text-center text-green-600 dark:text-green-400 font-semibold">
                 🎉 First Completion!
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button onClick={props.onNewGame} className="w-full">
+              New Game
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  // Handle Solitaire-style dialog with move stats
+  if (isWinDialogWithMoves(props)) {
+    const { moves, bestMoves } = props;
+    const isNewRecord = bestMoves === null || moves < bestMoves;
+
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-md bg-white dark:bg-black border-gray-300 dark:border-gray-700">
+          <DialogHeader>
+            <div className="flex justify-center mb-4">
+              <div className="bg-black dark:bg-white rounded-full p-3">
+                <Trophy className="h-12 w-12 text-white dark:text-black" />
+              </div>
+            </div>
+            <DialogTitle className="text-center text-2xl text-black dark:text-white">
+              {title}
+            </DialogTitle>
+            <DialogDescription className="text-center text-gray-700 dark:text-gray-300">
+              {message || "Congratulations!"}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="text-center">
+              <div className="text-sm text-gray-600 dark:text-gray-400">Your Moves</div>
+              <div className="text-3xl font-bold font-mono text-black dark:text-white">
+                {moves}
+              </div>
+            </div>
+
+            {isNewRecord && bestMoves !== null && (
+              <div className="text-center text-green-600 dark:text-green-400 font-semibold">
+                New Best Score! (Previous: {bestMoves})
+              </div>
+            )}
+
+            {!isNewRecord && bestMoves !== null && (
+              <div className="text-center">
+                <div className="text-sm text-gray-600 dark:text-gray-400">Best Score</div>
+                <div className="text-xl font-bold font-mono text-black dark:text-white">
+                  {bestMoves}
+                </div>
+              </div>
+            )}
+
+            {isNewRecord && bestMoves === null && (
+              <div className="text-center text-green-600 dark:text-green-400 font-semibold">
+                First Win!
               </div>
             )}
           </div>
