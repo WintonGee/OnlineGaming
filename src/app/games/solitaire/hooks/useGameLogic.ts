@@ -37,6 +37,7 @@ export function useGameLogic() {
     drawCount: gameState.gameState.drawCount,
     selectedCard: gameState.selectedCard,
     isAutoCompleting: gameState.isAutoCompleting,
+    isInitialized: gameState.isInitialized,
     canAutoComplete: gameState.canAutoComplete,
     stats: gameState.stats,
 

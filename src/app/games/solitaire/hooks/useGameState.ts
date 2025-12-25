@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { GameState, CardLocation, Card } from "../types";
-import { createNewGame, drawFromStock, moveCards, autoMoveToFoundation, autoCompleteStep, canAutoComplete } from "../logic/game";
+import { createNewGame, createEmptyState, drawFromStock, moveCards, autoMoveToFoundation, autoCompleteStep, canAutoComplete } from "../logic/game";
 import { createStorage } from "@/lib/utils/storage";
 import { GAME_STATE_KEY, STATS_KEY, AUTO_COMPLETE_DELAY } from "../constants";
 
@@ -16,7 +16,9 @@ const gameStateStorage = createStorage<GameState>(GAME_STATE_KEY);
 const statsStorage = createStorage<GameStats>(STATS_KEY);
 
 export function useGameState() {
-  const [gameState, setGameState] = useState<GameState>(() => createNewGame(1));
+  // Use empty state for SSR to avoid hydration mismatch (Math.random in createNewGame)
+  const [gameState, setGameState] = useState<GameState>(() => createEmptyState(1));
+  const [isInitialized, setIsInitialized] = useState(false);
   const [stats, setStats] = useState<GameStats>({
     gamesPlayed: 0,
     gamesWon: 0,
@@ -28,18 +30,23 @@ export function useGameState() {
     source: CardLocation;
   } | null>(null);
 
-  // Load saved state and stats
+  // Load saved state and stats on mount (client-side only)
   useEffect(() => {
     const savedState = gameStateStorage.load();
     const savedStats = statsStorage.load();
 
     if (savedState && !savedState.won) {
       setGameState(savedState);
+    } else {
+      // No saved state, create a new game
+      setGameState(createNewGame(1));
     }
 
     if (savedStats) {
       setStats(savedStats);
     }
+
+    setIsInitialized(true);
   }, []);
 
   // Save state on changes
@@ -196,6 +203,7 @@ export function useGameState() {
     stats,
     selectedCard,
     isAutoCompleting,
+    isInitialized,
     canAutoComplete: canAutoCompleteNow,
     handleDraw,
     handleMove,

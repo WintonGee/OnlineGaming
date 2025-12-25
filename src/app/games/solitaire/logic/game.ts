@@ -9,6 +9,23 @@ import {
 } from "./validation";
 
 /**
+ * Creates an empty game state for SSR hydration
+ * This ensures server and client render the same initial state
+ */
+export function createEmptyState(drawCount: 1 | 3 = 1): GameState {
+  return {
+    tableau: [[], [], [], [], [], [], []],
+    foundation: [[], [], [], []],
+    stock: [],
+    waste: [],
+    moves: 0,
+    gameStarted: false,
+    won: false,
+    drawCount,
+  };
+}
+
+/**
  * Creates a new game with dealt cards
  */
 export function createNewGame(drawCount: 1 | 3 = 1): GameState {

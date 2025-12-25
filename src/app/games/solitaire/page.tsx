@@ -22,6 +22,7 @@ export default function SolitairePage() {
     drawCount,
     selectedCard,
     isAutoCompleting,
+    isInitialized,
     canAutoComplete,
     stats,
     handleDraw,
@@ -100,18 +101,24 @@ export default function SolitairePage() {
           isAutoCompleting && "pointer-events-none"
         )}>
           <div className="min-w-[540px] px-2">
-            <GameBoard
-              tableau={tableau}
-              foundation={foundation}
-              stock={stock}
-              waste={waste}
-              drawCount={drawCount}
-              selectedCardId={selectedCard?.card.id}
-              onDraw={handleDraw}
-              onCardClick={handleCardClick}
-              onCardDoubleClick={handleCardDoubleClick}
-              onEmptyClick={handleEmptyClick}
-            />
+            {!isInitialized ? (
+              <div className="flex items-center justify-center h-[300px]">
+                <div className="text-gray-500 dark:text-gray-400">Loading...</div>
+              </div>
+            ) : (
+              <GameBoard
+                tableau={tableau}
+                foundation={foundation}
+                stock={stock}
+                waste={waste}
+                drawCount={drawCount}
+                selectedCardId={selectedCard?.card.id}
+                onDraw={handleDraw}
+                onCardClick={handleCardClick}
+                onCardDoubleClick={handleCardDoubleClick}
+                onEmptyClick={handleEmptyClick}
+              />
+            )}
           </div>
         </div>
 
