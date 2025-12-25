@@ -13,6 +13,7 @@ import { snakeConfig } from "./snake/config";
 import { wordSearchConfig } from "./word-search/config";
 import { blackjackConfig } from "./blackjack/config";
 import { mastermindConfig } from "./mastermind/config";
+import { bombDefusalConfig } from "./bomb-defusal/config";
 
 export const allGames: GameConfig[] = [
   sudokuConfig,
@@ -29,4 +30,5 @@ export const allGames: GameConfig[] = [
   wordSearchConfig,
   blackjackConfig,
   mastermindConfig,
+  bombDefusalConfig,
 ];
