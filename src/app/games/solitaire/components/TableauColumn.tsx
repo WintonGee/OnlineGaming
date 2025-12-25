@@ -43,7 +43,7 @@ export default function TableauColumn({
 
   return (
     <div
-      className="relative"
+      className="relative w-[70px] flex-shrink-0"
       style={{ height: `${totalHeight}px`, minHeight: "100px" }}
     >
       {cards.map((card, cardIndex) => {

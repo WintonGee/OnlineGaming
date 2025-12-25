@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { GameState, CardLocation, Card } from "../types";
 import { createNewGame, drawFromStock, moveCards, autoMoveToFoundation, autoCompleteStep, canAutoComplete } from "../logic/game";
 import { createStorage } from "@/lib/utils/storage";
@@ -49,23 +49,29 @@ export function useGameState() {
     }
   }, [gameState]);
 
+  const hasRecordedWin = useRef(false);
+
   // Handle win
   useEffect(() => {
-    if (gameState.won) {
+    if (gameState.won && !hasRecordedWin.current) {
+      hasRecordedWin.current = true;
       gameStateStorage.clear();
 
-      const newStats = {
-        gamesPlayed: stats.gamesPlayed,
-        gamesWon: stats.gamesWon + 1,
-        bestMoves: stats.bestMoves === null
-          ? gameState.moves
-          : Math.min(stats.bestMoves, gameState.moves),
-      };
-
-      setStats(newStats);
-      statsStorage.save(newStats);
+      setStats(prev => {
+        const newStats = {
+          gamesPlayed: prev.gamesPlayed,
+          gamesWon: prev.gamesWon + 1,
+          bestMoves: prev.bestMoves === null
+            ? gameState.moves
+            : Math.min(prev.bestMoves, gameState.moves),
+        };
+        statsStorage.save(newStats);
+        return newStats;
+      });
+    } else if (!gameState.won) {
+      hasRecordedWin.current = false;
     }
-  }, [gameState.won, gameState.moves, stats]);
+  }, [gameState.won, gameState.moves]);
 
   // Auto-complete logic
   useEffect(() => {

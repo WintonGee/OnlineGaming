@@ -108,7 +108,7 @@ export function CardPlaceholder({
   return (
     <div
       className={cn(
-        "w-[70px] h-[100px] rounded-lg",
+        "w-[70px] h-[100px] rounded-lg flex-shrink-0",
         "border-2 border-dashed border-gray-300 dark:border-gray-600",
         "bg-gray-100/50 dark:bg-gray-800/50",
         "flex items-center justify-center",
