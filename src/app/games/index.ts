@@ -15,6 +15,7 @@ import { blackjackConfig } from "./blackjack/config";
 import { mastermindConfig } from "./mastermind/config";
 import { bombDefusalConfig } from "./bomb-defusal/config";
 import { solitaireConfig } from "./solitaire/config";
+import { reactionTimerConfig } from "./reaction-timer/config";
 
 export const allGames: GameConfig[] = [
   sudokuConfig,
@@ -33,4 +34,5 @@ export const allGames: GameConfig[] = [
   mastermindConfig,
   bombDefusalConfig,
   solitaireConfig,
+  reactionTimerConfig,
 ];
