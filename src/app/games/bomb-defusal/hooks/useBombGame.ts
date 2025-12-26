@@ -30,7 +30,6 @@ import {
   addPlayerInput,
   advanceStage,
   startFlashing as startSimonFlashing,
-  advanceFlash as advanceSimonFlash,
   markSolved as markSimonSolved,
   handleStrike as handleSimonStrike,
 } from "../logic/simonSaysLogic";
@@ -45,6 +44,7 @@ import {
   generateMorseCodeModule,
   incrementFrequency,
   decrementFrequency,
+  setFrequency,
   submitFrequency,
   generateFlashSequence,
 } from "../logic/morseCodeLogic";
@@ -115,6 +115,10 @@ export function useBombGame() {
   const [morseFlashIndex, setMorseFlashIndex] = useState(0);
 
   const hasInitialized = useRef(false);
+
+  // Ref to always access the latest bombState (avoids stale closures in timeouts)
+  const bombStateRef = useRef<BombState | null>(null);
+  bombStateRef.current = bombState;
 
   // Load stats on mount
   useEffect(() => {
@@ -331,16 +335,19 @@ export function useBombGame() {
   // --- Simon Says Module Actions ---
   const startSimonSequence = useCallback(
     (moduleId: string) => {
-      if (!bombState) return;
-      const module = bombState.modules.find((m) => m.id === moduleId) as SimonSaysModuleState;
+      // Use ref to get latest bombState (avoids stale closure in setTimeout callbacks)
+      const currentBombState = bombStateRef.current;
+      if (!currentBombState) return;
+      const module = currentBombState.modules.find((m) => m.id === moduleId) as SimonSaysModuleState;
       if (!module || module.status !== "unsolved") return;
 
       const newState = startSimonFlashing(module);
       updateModule(moduleId, () => newState);
 
-      // Start flash animation
+      // Start flash animation - flash currentStage + 1 lights (stages are 0-indexed)
+      const stageToFlash = newState.currentStage;
       const flashSequence = (index: number) => {
-        if (index > newState.currentStage) {
+        if (index > stageToFlash) {
           // Done flashing, wait for player input
           updateModule(moduleId, (m) => ({
             ...(m as SimonSaysModuleState),
@@ -362,20 +369,22 @@ export function useBombGame() {
 
       flashSequence(0);
     },
-    [bombState, updateModule]
+    [updateModule]
   );
 
   const handleSimonInput = useCallback(
     (moduleId: string, color: SimonColor) => {
-      if (!bombState) return;
-      const module = bombState.modules.find((m) => m.id === moduleId) as SimonSaysModuleState;
+      // Use ref to get latest bombState
+      const currentBombState = bombStateRef.current;
+      if (!currentBombState) return;
+      const module = currentBombState.modules.find((m) => m.id === moduleId) as SimonSaysModuleState;
       if (!module || module.status !== "unsolved" || module.isFlashing) return;
 
       const { isCorrect, isStageComplete, isModuleSolved } = validateInput(
         module,
         color,
-        bombState.edgework,
-        bombState.strikes
+        currentBombState.edgework,
+        currentBombState.strikes
       );
 
       if (!isCorrect) {
@@ -403,7 +412,7 @@ export function useBombGame() {
         updateModule(moduleId, () => addPlayerInput(module, color));
       }
     },
-    [bombState, updateModule, addStrike, startSimonSequence, checkAllModulesSolved, defuseBomb]
+    [updateModule, addStrike, startSimonSequence, checkAllModulesSolved, defuseBomb]
   );
 
   // --- Memory Module Actions ---
@@ -498,6 +507,18 @@ export function useBombGame() {
       if (!module || module.status !== "unsolved") return;
 
       const newState = decrementFrequency(module);
+      updateModule(moduleId, () => newState);
+    },
+    [bombState, updateModule]
+  );
+
+  const handleMorseFrequencySet = useCallback(
+    (moduleId: string, frequency: number) => {
+      if (!bombState) return;
+      const module = bombState.modules.find((m) => m.id === moduleId) as MorseCodeModuleState;
+      if (!module || module.status !== "unsolved") return;
+
+      const newState = setFrequency(module, frequency);
       updateModule(moduleId, () => newState);
     },
     [bombState, updateModule]
@@ -603,6 +624,7 @@ export function useBombGame() {
     handlePasswordSubmit,
     handleMorseFrequencyUp,
     handleMorseFrequencyDown,
+    handleMorseFrequencySet,
     handleMorseSubmit,
   };
 }

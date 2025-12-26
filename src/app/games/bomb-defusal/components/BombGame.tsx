@@ -314,6 +314,7 @@ export function BombGame() {
                         isLightOn={game.morseIsOn}
                         onFrequencyUp={() => game.handleMorseFrequencyUp(module.id)}
                         onFrequencyDown={() => game.handleMorseFrequencyDown(module.id)}
+                        onFrequencySet={(freq) => game.handleMorseFrequencySet(module.id, freq)}
                         onSubmit={() => game.handleMorseSubmit(module.id)}
                         disabled={isDisabled}
                       />
