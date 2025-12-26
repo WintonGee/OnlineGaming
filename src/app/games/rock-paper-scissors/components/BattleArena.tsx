@@ -31,49 +31,46 @@ export default function BattleArena({
   return (
     <div
       className={cn(
-        "relative flex flex-col items-center justify-center py-8 px-4 rounded-2xl",
+        "relative flex flex-col items-center justify-center py-6 sm:py-8 px-3 sm:px-4 rounded-2xl",
         "bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900",
         "border-2 border-gray-200 dark:border-gray-700",
-        "min-h-[200px] sm:min-h-[240px]",
+        "min-h-[140px] sm:min-h-[200px]",
         phase === "reveal" && "arena-shake"
       )}
     >
       {/* Idle State */}
       {phase === "idle" && (
         <div className="text-center animate-fade-in">
-          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 font-medium">
+          <p className="text-base sm:text-xl text-gray-600 dark:text-gray-400 font-medium">
             Choose your weapon!
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
-            Pick rock, paper, or scissors below
           </p>
         </div>
       )}
 
       {/* Countdown State - Shaking hands */}
       {phase === "countdown" && playerChoice && (
-        <div className="flex items-center justify-center gap-8 sm:gap-16">
+        <div className="flex items-center justify-center gap-6 sm:gap-16">
           {/* Player's hand (shaking) */}
           <div className="flex flex-col items-center">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 text-blue-500 hand-shake-left">
+            <div className="w-12 h-12 sm:w-20 sm:h-20 text-blue-500 hand-shake-left">
               <ChoiceIcon choice={playerChoice} />
             </div>
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-400 mt-2">
+            <span className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mt-1 sm:mt-2">
               You
             </span>
           </div>
 
           {/* VS indicator */}
-          <div className="text-2xl sm:text-3xl font-bold text-gray-400 dark:text-gray-500 countdown-pulse">
+          <div className="text-xl sm:text-3xl font-bold text-gray-400 dark:text-gray-500 countdown-pulse">
             VS
           </div>
 
           {/* AI's hand (question mark, shaking) */}
           <div className="flex flex-col items-center">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center text-red-500 hand-shake-right">
-              <span className="text-4xl sm:text-5xl font-bold">?</span>
+            <div className="w-12 h-12 sm:w-20 sm:h-20 flex items-center justify-center text-red-500 hand-shake-right">
+              <span className="text-3xl sm:text-5xl font-bold">?</span>
             </div>
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-400 mt-2">
+            <span className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mt-1 sm:mt-2">
               AI
             </span>
           </div>
@@ -82,8 +79,8 @@ export default function BattleArena({
 
       {/* Reveal/Result State - Both choices visible */}
       {showChoices && playerChoice && aiChoice && (
-        <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center justify-center gap-8 sm:gap-16">
+        <div className="flex flex-col items-center gap-2 sm:gap-4">
+          <div className="flex items-center justify-center gap-6 sm:gap-16">
             {/* Player's choice */}
             <div
               className={cn(
@@ -93,7 +90,7 @@ export default function BattleArena({
             >
               <div
                 className={cn(
-                  "w-16 h-16 sm:w-20 sm:h-20 transition-colors duration-300",
+                  "w-12 h-12 sm:w-20 sm:h-20 transition-colors duration-300",
                   result === "win"
                     ? "text-green-500"
                     : result === "lose"
@@ -103,7 +100,7 @@ export default function BattleArena({
               >
                 <ChoiceIcon choice={playerChoice} />
               </div>
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-400 mt-2">
+              <span className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mt-1 sm:mt-2">
                 You
               </span>
             </div>
@@ -111,7 +108,7 @@ export default function BattleArena({
             {/* Clash effect */}
             <div
               className={cn(
-                "text-2xl sm:text-3xl font-bold",
+                "text-xl sm:text-3xl font-bold",
                 phase === "reveal" && "clash-burst"
               )}
             >
@@ -127,7 +124,7 @@ export default function BattleArena({
             >
               <div
                 className={cn(
-                  "w-16 h-16 sm:w-20 sm:h-20 transition-colors duration-300",
+                  "w-12 h-12 sm:w-20 sm:h-20 transition-colors duration-300",
                   result === "lose"
                     ? "text-green-500"
                     : result === "win"
@@ -137,7 +134,7 @@ export default function BattleArena({
               >
                 <ChoiceIcon choice={aiChoice} />
               </div>
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-400 mt-2">
+              <span className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mt-1 sm:mt-2">
                 AI
               </span>
             </div>
@@ -147,7 +144,7 @@ export default function BattleArena({
           {showResult && (
             <div
               className={cn(
-                "text-2xl sm:text-3xl font-bold mt-4 animate-bounce-in",
+                "text-xl sm:text-3xl font-bold mt-2 sm:mt-4 animate-bounce-in",
                 RESULT_MESSAGES[result].color
               )}
             >

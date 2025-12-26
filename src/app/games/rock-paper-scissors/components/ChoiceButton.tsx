@@ -72,9 +72,9 @@ export default function ChoiceButton({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "relative flex flex-col items-center justify-center gap-2 rounded-2xl border-2 transition-all duration-200",
+        "relative flex flex-col items-center justify-center gap-1 sm:gap-2 rounded-xl sm:rounded-2xl border-2 transition-all duration-200",
         "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-black",
-        size === "normal" ? "w-24 h-28 sm:w-28 sm:h-32" : "w-16 h-20",
+        size === "normal" ? "w-[88px] h-[100px] sm:w-28 sm:h-32" : "w-16 h-20",
         disabled
           ? "opacity-50 cursor-not-allowed"
           : "hover:scale-105 active:scale-95 cursor-pointer",
@@ -84,13 +84,13 @@ export default function ChoiceButton({
       )}
       aria-label={`Choose ${CHOICE_LABELS[choice]}`}
     >
-      <div className={cn(size === "normal" ? "w-12 h-12 sm:w-14 sm:h-14" : "w-8 h-8")}>
+      <div className={cn(size === "normal" ? "w-10 h-10 sm:w-14 sm:h-14" : "w-8 h-8")}>
         <ChoiceIcon choice={choice} />
       </div>
       <span
         className={cn(
           "font-semibold",
-          size === "normal" ? "text-sm sm:text-base" : "text-xs"
+          size === "normal" ? "text-xs sm:text-base" : "text-xs"
         )}
       >
         {CHOICE_LABELS[choice]}

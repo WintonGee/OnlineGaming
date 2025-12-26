@@ -1,6 +1,5 @@
 "use client";
 
-import GameHeader from "@/components/games/GameHeader";
 import GameHelpMenu from "@/components/games/GameHelpMenu";
 import InstructionsDialog from "@/components/games/InstructionsDialog";
 import { useGameLogic } from "./hooks/useGameLogic";
@@ -33,20 +32,20 @@ export default function RockPaperScissorsPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-black">
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
-        {/* Header */}
-        <GameHeader title="Rock Paper Scissors" />
-
-        {/* Controls Row */}
-        <div className="flex items-center justify-end mb-4">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-2xl">
+        {/* Header with Help Menu inline */}
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-serif font-bold text-black dark:text-white">
+            Rock Paper Scissors
+          </h1>
           <GameHelpMenu
             onHowToPlay={instructionsDialog.open}
             onNewGame={handleNewGame}
           />
         </div>
 
-        {/* Stats Display */}
-        <div className="mb-4">
+        {/* Compact Stats Display */}
+        <div className="mb-3 sm:mb-4">
           <StatsDisplay
             stats={stats}
             totalGames={totalGames}
@@ -55,7 +54,7 @@ export default function RockPaperScissorsPage() {
         </div>
 
         {/* Battle Arena */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <BattleArena
             phase={phase}
             playerChoice={playerChoice}
@@ -65,7 +64,7 @@ export default function RockPaperScissorsPage() {
         </div>
 
         {/* Choice Buttons */}
-        <div className="flex justify-center gap-4 mb-6">
+        <div className="flex justify-center gap-2 sm:gap-4 mb-3 sm:mb-6">
           {CHOICES.map((choice) => (
             <ChoiceButton
               key={choice}
@@ -77,10 +76,12 @@ export default function RockPaperScissorsPage() {
           ))}
         </div>
 
-        {/* History Strip */}
-        <div className="mb-4">
-          <HistoryStrip history={history} />
-        </div>
+        {/* History Strip - only show when there's history */}
+        {history.length > 0 && (
+          <div className="mb-2">
+            <HistoryStrip history={history} />
+          </div>
+        )}
 
         {/* Confetti */}
         <Confetti show={showConfetti} onComplete={dismissConfetti} />
