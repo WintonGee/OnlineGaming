@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { MorseCodeModuleState } from "../types";
 import { formatFrequency } from "../logic/morseCodeLogic";
 import {
@@ -14,12 +14,21 @@ import { Volume2, VolumeX } from "lucide-react";
 interface MorseCodeModuleProps {
   module: MorseCodeModuleState;
   isLightOn: boolean;
+  speed: number;
+  onSpeedChange: (speed: number) => void;
   onFrequencyUp: () => void;
   onFrequencyDown: () => void;
   onFrequencySet: (frequency: number) => void;
   onSubmit: () => void;
   disabled: boolean;
 }
+
+const SPEED_OPTIONS = [
+  { value: 0.25, label: "0.25x" },
+  { value: 0.5, label: "0.5x" },
+  { value: 0.75, label: "0.75x" },
+  { value: 1, label: "1x" },
+];
 
 // Audio context singleton for morse code beeps
 let audioContext: AudioContext | null = null;
@@ -31,39 +40,11 @@ function getAudioContext(): AudioContext {
   return audioContext;
 }
 
-function playBeep(duration: number, frequency: number = 600) {
-  try {
-    const ctx = getAudioContext();
-    if (ctx.state === "suspended") {
-      ctx.resume();
-    }
-
-    const oscillator = ctx.createOscillator();
-    const gainNode = ctx.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(ctx.destination);
-
-    oscillator.frequency.value = frequency;
-    oscillator.type = "sine";
-
-    // Fade in/out to avoid clicks
-    const now = ctx.currentTime;
-    gainNode.gain.setValueAtTime(0, now);
-    gainNode.gain.linearRampToValueAtTime(0.3, now + 0.01);
-    gainNode.gain.linearRampToValueAtTime(0.3, now + duration / 1000 - 0.01);
-    gainNode.gain.linearRampToValueAtTime(0, now + duration / 1000);
-
-    oscillator.start(now);
-    oscillator.stop(now + duration / 1000);
-  } catch {
-    // Audio not available
-  }
-}
-
 export function MorseCodeModule({
   module,
   isLightOn,
+  speed,
+  onSpeedChange,
   onFrequencyUp,
   onFrequencyDown,
   onFrequencySet,
@@ -73,26 +54,8 @@ export function MorseCodeModule({
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [frequencyInput, setFrequencyInput] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const wasLightOn = useRef(false);
-  const beepStartTime = useRef<number | null>(null);
 
-  // Play beep when light turns on
-  useEffect(() => {
-    if (audioEnabled && isLightOn && !wasLightOn.current) {
-      // Light just turned on - start tracking for beep
-      beepStartTime.current = performance.now();
-    } else if (!isLightOn && wasLightOn.current && beepStartTime.current !== null) {
-      // Light just turned off - calculate duration and play
-      const duration = performance.now() - beepStartTime.current;
-      if (audioEnabled) {
-        playBeep(duration);
-      }
-      beepStartTime.current = null;
-    }
-    wasLightOn.current = isLightOn;
-  }, [isLightOn, audioEnabled]);
-
-  // Play beep while light is on (real-time audio)
+  // Play continuous tone while light is on (real-time audio)
   useEffect(() => {
     if (!audioEnabled || !isLightOn) return;
 
@@ -259,6 +222,29 @@ export function MorseCodeModule({
         >
           + {MORSE_FREQUENCY_STEP * 1000} kHz
         </button>
+      </div>
+
+      {/* Speed control */}
+      <div className="mb-4">
+        <p className="text-gray-500 dark:text-gray-400 text-xs text-center mb-2 uppercase tracking-wide">
+          Playback Speed
+        </p>
+        <div className="flex gap-1">
+          {SPEED_OPTIONS.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => onSpeedChange(option.value)}
+              className={cn(
+                "flex-1 py-1.5 rounded-lg font-medium text-xs transition-colors",
+                speed === option.value
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 dark:bg-gray-800 text-black dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700"
+              )}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Submit button */}

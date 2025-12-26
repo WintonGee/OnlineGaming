@@ -1,5 +1,5 @@
-import { Card, Difficulty, GameState } from '../types';
-import { CARD_SYMBOLS, DIFFICULTY_CONFIG } from '../constants';
+import { Card, Difficulty, GameState, CustomSettings } from '../types';
+import { CARD_SYMBOLS, getConfigForDifficulty } from '../constants';
 
 /**
  * Fisher-Yates shuffle algorithm
@@ -17,8 +17,8 @@ export function shuffle<T>(array: T[]): T[] {
 /**
  * Creates a new deck of cards for the given difficulty
  */
-export function createDeck(difficulty: Difficulty): Card[] {
-  const config = DIFFICULTY_CONFIG[difficulty];
+export function createDeck(difficulty: Difficulty, customSettings?: CustomSettings): Card[] {
+  const config = getConfigForDifficulty(difficulty, customSettings);
   const numPairs = config.pairs;
 
   // Select random symbols for this game
@@ -121,9 +121,9 @@ export function countMatchedPairs(cards: Card[]): number {
 /**
  * Creates a new game state
  */
-export function createNewGame(difficulty: Difficulty): GameState {
-  const config = DIFFICULTY_CONFIG[difficulty];
-  const cards = createDeck(difficulty);
+export function createNewGame(difficulty: Difficulty, customSettings?: CustomSettings): GameState {
+  const config = getConfigForDifficulty(difficulty, customSettings);
+  const cards = createDeck(difficulty, customSettings);
 
   return {
     cards,
@@ -132,6 +132,7 @@ export function createNewGame(difficulty: Difficulty): GameState {
     matches: 0,
     totalPairs: config.pairs,
     difficulty,
+    customSettings,
     gameStarted: false,
     gameOver: false,
     won: false,

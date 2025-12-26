@@ -113,6 +113,7 @@ export function useBombGame() {
   const morseFlashTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [morseIsOn, setMorseIsOn] = useState(false);
   const [morseFlashIndex, setMorseFlashIndex] = useState(0);
+  const [morseSpeed, setMorseSpeed] = useState(1); // 1 = normal, 0.5 = half speed (slower)
 
   const hasInitialized = useRef(false);
 
@@ -217,11 +218,12 @@ export function useBombGame() {
     }
   }, [bombState, timer, updateStats]);
 
-  // Check if all modules are solved
+  // Check if all modules are solved (uses ref to avoid stale closure issues)
   const checkAllModulesSolved = useCallback(() => {
-    if (!bombState) return false;
-    return bombState.modules.every((m) => m.status === "solved");
-  }, [bombState]);
+    const currentState = bombStateRef.current;
+    if (!currentState) return false;
+    return currentState.modules.every((m) => m.status === "solved");
+  }, []);
 
   // Mark game as defused
   const defuseBomb = useCallback(() => {
@@ -564,9 +566,12 @@ export function useBombGame() {
       const item = sequence[morseFlashIndex % sequence.length];
       setMorseIsOn(item.isOn);
 
+      // Apply speed multiplier: lower speed = slower (longer duration)
+      const adjustedDuration = item.duration / morseSpeed;
+
       morseFlashTimeoutRef.current = setTimeout(() => {
         setMorseFlashIndex((prev) => (prev + 1) % sequence.length);
-      }, item.duration);
+      }, adjustedDuration);
     };
 
     runFlash();
@@ -576,7 +581,7 @@ export function useBombGame() {
         clearTimeout(morseFlashTimeoutRef.current);
       }
     };
-  }, [bombState, morseFlashIndex, gamePhase]);
+  }, [bombState, morseFlashIndex, gamePhase, morseSpeed]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -585,6 +590,16 @@ export function useBombGame() {
       if (morseFlashTimeoutRef.current) clearTimeout(morseFlashTimeoutRef.current);
     };
   }, []);
+
+  // Check for win condition when modules change
+  useEffect(() => {
+    if (!bombState || gamePhase !== "playing") return;
+
+    const allSolved = bombState.modules.every((m) => m.status === "solved");
+    if (allSolved) {
+      defuseBomb();
+    }
+  }, [bombState, gamePhase, defuseBomb]);
 
   // Return to menu
   const returnToMenu = useCallback(() => {
@@ -605,12 +620,14 @@ export function useBombGame() {
     timeRemaining: timer.timeRemaining,
     formattedTime: timer.formattedTime,
     morseIsOn,
+    morseSpeed,
 
     // Actions
     setDifficulty,
     startGame,
     returnToMenu,
     setSelectedModuleIndex,
+    setMorseSpeed,
 
     // Module actions
     handleCutWire,

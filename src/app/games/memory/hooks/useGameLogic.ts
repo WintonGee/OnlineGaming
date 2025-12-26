@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState } from "react";
 import { useGameState } from "./useGameState";
-import { Difficulty } from "../types";
+import { Difficulty, CustomSettings } from "../types";
 import {
   canFlipCard,
   flipCard,
@@ -19,13 +19,16 @@ export function useGameLogic() {
   const {
     gameState,
     bestScores,
+    savedCustomSettings,
     updateState,
     resetGame,
     setDifficulty,
     updateBestScore,
+    getCurrentBestScore,
   } = useGameState();
 
   const instructionsDialog = useDialogState();
+  const customModeDialog = useDialogState();
   const timer = useTimer();
   const [isProcessing, setIsProcessing] = useState(false);
   const [isNewBestScore, setIsNewBestScore] = useState(false);
@@ -140,14 +143,22 @@ export function useGameLogic() {
 
   // Handle difficulty change
   const handleDifficultyChange = useCallback(
-    (difficulty: Difficulty) => {
+    (difficulty: Difficulty, customSettings?: CustomSettings) => {
       clearTimeoutRef();
       timer.reset();
-      setDifficulty(difficulty);
+      setDifficulty(difficulty, customSettings);
       setIsProcessing(false);
       setIsNewBestScore(false);
     },
     [clearTimeoutRef, timer, setDifficulty]
+  );
+
+  // Handle custom mode selection
+  const handleCustomModeStart = useCallback(
+    (customSettings: CustomSettings) => {
+      handleDifficultyChange('custom', customSettings);
+    },
+    [handleDifficultyChange]
   );
 
   // Get status message
@@ -161,9 +172,14 @@ export function useGameLogic() {
     return `Moves: ${gameState.moves} | Pairs: ${gameState.matches}/${gameState.totalPairs}`;
   };
 
+  // Get current best score (uses the hook's method)
+  const currentBest = getCurrentBestScore();
+
   return {
     gameState,
     bestScores,
+    savedCustomSettings,
+    currentBest,
     timer,
     isProcessing,
     isNewBestScore,
@@ -171,6 +187,8 @@ export function useGameLogic() {
     handleCardClick,
     handleNewGame,
     handleDifficultyChange,
+    handleCustomModeStart,
     instructionsDialog,
+    customModeDialog,
   };
 }

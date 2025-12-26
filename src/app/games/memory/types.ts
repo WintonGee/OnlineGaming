@@ -1,6 +1,6 @@
 import { Difficulty as SharedDifficulty } from "@/lib/types/shared";
 
-export type Difficulty = SharedDifficulty;
+export type Difficulty = SharedDifficulty | "custom";
 
 export type CardStatus = "hidden" | "flipped" | "matched";
 
@@ -11,6 +11,11 @@ export interface Card {
   status: CardStatus;
 }
 
+export interface CustomSettings {
+  rows: number;
+  cols: number;
+}
+
 export interface GameState {
   cards: Card[];
   flippedCards: number[]; // Indices of currently flipped cards (max 2)
@@ -18,6 +23,7 @@ export interface GameState {
   matches: number;
   totalPairs: number;
   difficulty: Difficulty;
+  customSettings?: CustomSettings;
   gameStarted: boolean;
   gameOver: boolean;
   won: boolean;

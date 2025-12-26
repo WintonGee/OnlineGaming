@@ -7,15 +7,18 @@ import { Button } from "@/components/ui/button";
 import GameBoard from "./components/GameBoard";
 import InstructionsDialog from "@/components/games/InstructionsDialog";
 import InstructionsContent from "./components/InstructionsContent";
+import CustomModeDialog from "./components/CustomModeDialog";
 import { DIFFICULTY_LABELS } from "./constants";
 import { Difficulty } from "./types";
 import { formatTimeMSS } from "@/lib/utils/formatTime";
+import { Settings2 } from "lucide-react";
 import "./styles.css";
 
 export default function MemoryPage() {
   const {
     gameState,
-    bestScores,
+    savedCustomSettings,
+    currentBest,
     timer,
     isProcessing,
     isNewBestScore,
@@ -23,14 +26,22 @@ export default function MemoryPage() {
     handleCardClick,
     handleNewGame,
     handleDifficultyChange,
+    handleCustomModeStart,
     instructionsDialog,
+    customModeDialog,
   } = useGameLogic();
 
-  const currentBest = bestScores[gameState.difficulty];
+  // Get display label for current difficulty
+  const getDifficultyLabel = () => {
+    if (gameState.difficulty === 'custom' && gameState.customSettings) {
+      return `${gameState.customSettings.rows}×${gameState.customSettings.cols}`;
+    }
+    return DIFFICULTY_LABELS[gameState.difficulty];
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-black">
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
+      <div className="container mx-auto px-4 py-8 max-w-3xl">
         <div className="mb-6 mx-auto max-w-md w-full px-4 sm:px-0">
           {/* Title */}
           <GameHeader title="Memory" />
@@ -39,7 +50,7 @@ export default function MemoryPage() {
           <div className="flex flex-wrap items-center justify-center gap-2 mb-4 mt-3 sm:mt-7 lg:mt-9">
             {/* Difficulty Toggle */}
             <div className="inline-flex rounded-full border-2 border-gray-300 dark:border-gray-600 p-0.5 bg-gray-100 dark:bg-gray-800">
-              {(["easy", "medium", "hard"] as Difficulty[]).map((diff) => (
+              {(["easy", "medium", "hard"] as Exclude<Difficulty, "custom">[]).map((diff) => (
                 <button
                   key={diff}
                   onClick={() => handleDifficultyChange(diff)}
@@ -52,6 +63,19 @@ export default function MemoryPage() {
                   {DIFFICULTY_LABELS[diff]}
                 </button>
               ))}
+              {/* Custom Button */}
+              <button
+                onClick={customModeDialog.open}
+                className={`px-3 py-1.5 text-sm font-medium rounded-full transition-all flex items-center gap-1 ${
+                  gameState.difficulty === "custom"
+                    ? "bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm"
+                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                }`}
+                title="Custom grid size"
+              >
+                <Settings2 className="w-3.5 h-3.5" />
+                <span>{gameState.difficulty === "custom" ? getDifficultyLabel() : "Custom"}</span>
+              </button>
             </div>
 
             {/* Help Menu */}
@@ -108,6 +132,7 @@ export default function MemoryPage() {
         <GameBoard
           cards={gameState.cards}
           difficulty={gameState.difficulty}
+          customSettings={gameState.customSettings}
           disabled={isProcessing || gameState.gameOver}
           onCardClick={handleCardClick}
         />
@@ -134,6 +159,14 @@ export default function MemoryPage() {
         >
           <InstructionsContent />
         </InstructionsDialog>
+
+        {/* Custom Mode Dialog */}
+        <CustomModeDialog
+          open={customModeDialog.isOpen}
+          currentCustomSettings={savedCustomSettings}
+          onClose={customModeDialog.close}
+          onStartGame={handleCustomModeStart}
+        />
       </div>
     </div>
   );
