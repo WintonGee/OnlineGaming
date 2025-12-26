@@ -1,5 +1,6 @@
 "use client";
 
+import GameHeader from "@/components/games/GameHeader";
 import GameHelpMenu from "@/components/games/GameHelpMenu";
 import InstructionsDialog from "@/components/games/InstructionsDialog";
 import { useGameLogic } from "./hooks/useGameLogic";
@@ -33,11 +34,11 @@ export default function RockPaperScissorsPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-black">
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-2xl">
-        {/* Header with Help Menu inline */}
-        <div className="flex items-center justify-between mb-3 sm:mb-4">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-serif font-bold text-black dark:text-white">
-            Rock Paper Scissors
-          </h1>
+        {/* Header */}
+        <GameHeader title="Rock Paper Scissors" />
+
+        {/* Controls Row */}
+        <div className="flex items-center justify-end mb-3 sm:mb-4">
           <GameHelpMenu
             onHowToPlay={instructionsDialog.open}
             onNewGame={handleNewGame}
