@@ -33,20 +33,20 @@ export default function RockPaperScissorsPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-black">
-      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-2xl">
+      <div className="container mx-auto px-4 py-8 max-w-2xl">
         {/* Header */}
         <GameHeader title="Rock Paper Scissors" />
 
-        {/* Controls Row */}
-        <div className="flex items-center justify-end mb-3 sm:mb-4">
+        {/* Help Menu */}
+        <div className="flex justify-center mt-3 sm:mt-7 lg:mt-9">
           <GameHelpMenu
             onHowToPlay={instructionsDialog.open}
             onNewGame={handleNewGame}
           />
         </div>
 
-        {/* Compact Stats Display */}
-        <div className="mb-3 sm:mb-4">
+        {/* Stats Display */}
+        <div className="mt-6 mb-6">
           <StatsDisplay
             stats={stats}
             totalGames={totalGames}
@@ -55,7 +55,7 @@ export default function RockPaperScissorsPage() {
         </div>
 
         {/* Battle Arena */}
-        <div className="mb-4 sm:mb-6">
+        <div className="mb-6">
           <BattleArena
             phase={phase}
             playerChoice={playerChoice}
@@ -65,7 +65,7 @@ export default function RockPaperScissorsPage() {
         </div>
 
         {/* Choice Buttons */}
-        <div className="flex justify-center gap-2 sm:gap-4 mb-3 sm:mb-6">
+        <div className="flex justify-center gap-3 sm:gap-4 mb-6">
           {CHOICES.map((choice) => (
             <ChoiceButton
               key={choice}
@@ -79,7 +79,7 @@ export default function RockPaperScissorsPage() {
 
         {/* History Strip - only show when there's history */}
         {history.length > 0 && (
-          <div className="mb-2">
+          <div>
             <HistoryStrip history={history} />
           </div>
         )}

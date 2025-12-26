@@ -9,87 +9,67 @@ interface StatsDisplayProps {
   winPercentage: number;
 }
 
+function StatBox({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: string | number;
+  color?: "green" | "red" | "yellow" | "blue";
+}) {
+  return (
+    <div className="bg-gray-200 dark:bg-gray-800 rounded-lg px-3 py-2 text-center min-w-[70px] sm:min-w-[80px]">
+      <div className="text-[10px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+        {label}
+      </div>
+      <div
+        className={cn(
+          "text-xl sm:text-2xl font-bold font-mono",
+          color === "green" && "text-green-500",
+          color === "red" && "text-red-500",
+          color === "yellow" && "text-yellow-500",
+          color === "blue" && "text-blue-500",
+          !color && "text-black dark:text-white"
+        )}
+      >
+        {value}
+      </div>
+    </div>
+  );
+}
+
 export default function StatsDisplay({
   stats,
   totalGames,
   winPercentage,
 }: StatsDisplayProps) {
   return (
-    <div className="flex items-center justify-between gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-3 bg-gray-100 dark:bg-gray-800 rounded-xl">
-      {/* W-L-T compact display */}
-      <div className="flex items-center gap-2 sm:gap-3">
-        <div className="flex items-center gap-1">
-          <span className="text-green-500 font-bold text-base sm:text-lg font-mono">
-            {stats.wins}
-          </span>
-          <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">W</span>
-        </div>
-        <span className="text-gray-300 dark:text-gray-600">-</span>
-        <div className="flex items-center gap-1">
-          <span className="text-red-500 font-bold text-base sm:text-lg font-mono">
-            {stats.losses}
-          </span>
-          <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">L</span>
-        </div>
-        <span className="text-gray-300 dark:text-gray-600">-</span>
-        <div className="flex items-center gap-1">
-          <span className="text-yellow-500 font-bold text-base sm:text-lg font-mono">
-            {stats.ties}
-          </span>
-          <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">T</span>
-        </div>
-      </div>
-
-      {/* Divider */}
-      <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 hidden sm:block" />
-
-      {/* Streak display */}
-      <div className="flex items-center gap-2 sm:gap-4">
-        <div className="flex items-center gap-1">
-          <span
-            className={cn(
-              "font-bold text-base sm:text-lg font-mono",
-              stats.currentStreak > 0 ? "text-green-500" : "text-gray-400"
-            )}
-          >
-            {stats.currentStreak}
-          </span>
-          <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
-            streak
-          </span>
-        </div>
-
-        {/* Best streak - hidden on very small screens */}
-        <div className="hidden xs:flex items-center gap-1">
-          <span
-            className={cn(
-              "font-bold text-base sm:text-lg font-mono",
-              stats.bestStreak > 0 ? "text-blue-500" : "text-gray-400"
-            )}
-          >
-            {stats.bestStreak}
-          </span>
-          <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
-            best
-          </span>
-        </div>
-
-        {/* Win % */}
-        <div className="flex items-center gap-1">
-          <span
-            className={cn(
-              "font-bold text-base sm:text-lg font-mono",
-              totalGames === 0
-                ? "text-gray-400"
-                : winPercentage >= 50
-                ? "text-green-500"
-                : "text-red-400"
-            )}
-          >
-            {totalGames > 0 ? `${winPercentage}%` : "-"}
-          </span>
-        </div>
-      </div>
+    <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
+      <StatBox label="Wins" value={stats.wins} color="green" />
+      <StatBox label="Losses" value={stats.losses} color="red" />
+      <StatBox label="Ties" value={stats.ties} color="yellow" />
+      <StatBox
+        label="Streak"
+        value={stats.currentStreak}
+        color={stats.currentStreak > 0 ? "green" : undefined}
+      />
+      <StatBox
+        label="Best"
+        value={stats.bestStreak}
+        color={stats.bestStreak > 0 ? "blue" : undefined}
+      />
+      <StatBox
+        label="Win %"
+        value={totalGames > 0 ? `${winPercentage}%` : "—"}
+        color={
+          totalGames === 0
+            ? undefined
+            : winPercentage >= 50
+            ? "green"
+            : "red"
+        }
+      />
     </div>
   );
 }
