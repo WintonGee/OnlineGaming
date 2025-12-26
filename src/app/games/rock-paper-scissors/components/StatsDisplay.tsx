@@ -55,7 +55,7 @@ export default function StatsDisplay({
         color={stats.currentStreak > 0 ? "green" : undefined}
       />
       <StatBox
-        label="Best"
+        label="Best Streak"
         value={stats.bestStreak}
         color={stats.bestStreak > 0 ? "blue" : undefined}
       />

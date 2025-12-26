@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import "../styles.css";
 
 interface ConfettiProps {
@@ -28,41 +28,55 @@ const COLORS = [
 ];
 
 const PIECE_COUNT = 50;
+const CONFETTI_DURATION = 3000;
+
+function generatePieces(): ConfettiPiece[] {
+  return Array.from({ length: PIECE_COUNT }, (_, i) => ({
+    id: i,
+    left: Math.random() * 100,
+    delay: Math.random() * 0.5,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    size: Math.random() * 8 + 6,
+    type: (["circle", "square", "triangle"] as const)[
+      Math.floor(Math.random() * 3)
+    ],
+  }));
+}
 
 export default function Confetti({ show, onComplete }: ConfettiProps) {
   const [pieces, setPieces] = useState<ConfettiPiece[]>([]);
+  const onCompleteRef = useRef(onComplete);
 
-  const generatePieces = useCallback(() => {
-    return Array.from({ length: PIECE_COUNT }, (_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      delay: Math.random() * 0.5,
-      color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      size: Math.random() * 8 + 6,
-      type: (["circle", "square", "triangle"] as const)[
-        Math.floor(Math.random() * 3)
-      ],
-    }));
-  }, []);
+  // Keep ref updated with latest callback
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   useEffect(() => {
-    if (show) {
-      setPieces(generatePieces());
-
-      // Clear confetti after animation
-      const timer = setTimeout(() => {
-        setPieces([]);
-        onComplete?.();
-      }, 3000);
-
-      return () => clearTimeout(timer);
+    if (!show) {
+      setPieces([]);
+      return;
     }
-  }, [show, generatePieces, onComplete]);
 
-  if (!show || pieces.length === 0) return null;
+    // Generate new pieces when show becomes true
+    setPieces(generatePieces());
+
+    // Clear confetti after animation
+    const timer = setTimeout(() => {
+      setPieces([]);
+      onCompleteRef.current?.();
+    }, CONFETTI_DURATION);
+
+    return () => clearTimeout(timer);
+  }, [show]);
+
+  if (pieces.length === 0) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-50">
+    <div
+      className="fixed inset-0 pointer-events-none overflow-hidden z-50"
+      aria-hidden="true"
+    >
       {pieces.map((piece) => (
         <div
           key={piece.id}

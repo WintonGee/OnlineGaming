@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils/cn";
 import { Choice } from "../types";
+import { CHOICE_LABELS } from "../constants";
 
 interface ChoiceButtonProps {
   choice: Choice;
@@ -52,12 +53,6 @@ const ChoiceIcon = ({ choice, className }: { choice: Choice; className?: string 
         </svg>
       );
   }
-};
-
-const CHOICE_LABELS: Record<Choice, string> = {
-  rock: "Rock",
-  paper: "Paper",
-  scissors: "Scissors",
 };
 
 export default function ChoiceButton({

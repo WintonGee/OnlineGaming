@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils/cn";
 import { Choice, GamePhase, RoundResult } from "../types";
 import { ChoiceIcon } from "./ChoiceButton";
+import { CHOICE_LABELS } from "../constants";
 import "../styles.css";
 
 interface BattleArenaProps {
@@ -18,13 +19,33 @@ const RESULT_MESSAGES: Record<RoundResult, { text: string; color: string }> = {
   tie: { text: "It's a Tie!", color: "text-yellow-500" },
 };
 
+function getArenaLabel(
+  phase: GamePhase,
+  playerChoice: Choice | null,
+  aiChoice: Choice | null,
+  result: RoundResult | null
+): string {
+  switch (phase) {
+    case "idle":
+      return "Battle arena. Waiting for your choice.";
+    case "countdown":
+      return `Battle arena. You chose ${playerChoice ? CHOICE_LABELS[playerChoice] : "nothing"}. Waiting for AI...`;
+    case "reveal":
+      return `Battle arena. Revealing choices. You: ${playerChoice ? CHOICE_LABELS[playerChoice] : "nothing"}, AI: ${aiChoice ? CHOICE_LABELS[aiChoice] : "nothing"}.`;
+    case "result":
+      const resultText = result === "win" ? "You won!" : result === "lose" ? "You lost." : "It's a tie.";
+      return `Battle arena. ${resultText} You played ${playerChoice ? CHOICE_LABELS[playerChoice] : "nothing"}, AI played ${aiChoice ? CHOICE_LABELS[aiChoice] : "nothing"}.`;
+    default:
+      return "Battle arena";
+  }
+}
+
 export default function BattleArena({
   phase,
   playerChoice,
   aiChoice,
   result,
 }: BattleArenaProps) {
-  const isAnimating = phase === "countdown" || phase === "reveal";
   const showChoices = phase === "reveal" || phase === "result";
   const showResult = phase === "result" && result;
 
@@ -37,6 +58,9 @@ export default function BattleArena({
         "min-h-[180px] sm:min-h-[220px]",
         phase === "reveal" && "arena-shake"
       )}
+      role="region"
+      aria-label={getArenaLabel(phase, playerChoice, aiChoice, result)}
+      aria-live="polite"
     >
       {/* Idle State */}
       {phase === "idle" && (
@@ -55,7 +79,10 @@ export default function BattleArena({
         <div className="flex items-center justify-center gap-8 sm:gap-16">
           {/* Player's hand (shaking) */}
           <div className="flex flex-col items-center">
-            <div className="w-14 h-14 sm:w-20 sm:h-20 text-blue-500 hand-shake-left">
+            <div
+              className="w-14 h-14 sm:w-20 sm:h-20 text-blue-500 hand-shake-left"
+              aria-hidden="true"
+            >
               <ChoiceIcon choice={playerChoice} />
             </div>
             <span className="text-sm font-medium text-gray-600 dark:text-gray-400 mt-2">
@@ -64,13 +91,19 @@ export default function BattleArena({
           </div>
 
           {/* VS indicator */}
-          <div className="text-2xl sm:text-3xl font-bold text-gray-400 dark:text-gray-500 countdown-pulse">
+          <div
+            className="text-2xl sm:text-3xl font-bold text-gray-400 dark:text-gray-500 countdown-pulse"
+            aria-hidden="true"
+          >
             VS
           </div>
 
           {/* AI's hand (question mark, shaking) */}
           <div className="flex flex-col items-center">
-            <div className="w-14 h-14 sm:w-20 sm:h-20 flex items-center justify-center text-red-500 hand-shake-right">
+            <div
+              className="w-14 h-14 sm:w-20 sm:h-20 flex items-center justify-center text-red-500 hand-shake-right"
+              aria-hidden="true"
+            >
               <span className="text-4xl sm:text-5xl font-bold">?</span>
             </div>
             <span className="text-sm font-medium text-gray-600 dark:text-gray-400 mt-2">
@@ -100,6 +133,7 @@ export default function BattleArena({
                     ? "text-red-400"
                     : "text-yellow-500"
                 )}
+                aria-hidden="true"
               >
                 <ChoiceIcon choice={playerChoice} />
               </div>
@@ -114,6 +148,7 @@ export default function BattleArena({
                 "text-2xl sm:text-3xl font-bold",
                 phase === "reveal" && "clash-burst"
               )}
+              aria-hidden="true"
             >
               💥
             </div>
@@ -134,6 +169,7 @@ export default function BattleArena({
                     ? "text-red-400"
                     : "text-yellow-500"
                 )}
+                aria-hidden="true"
               >
                 <ChoiceIcon choice={aiChoice} />
               </div>
@@ -150,6 +186,7 @@ export default function BattleArena({
                 "text-2xl sm:text-3xl font-bold mt-4 animate-bounce-in",
                 RESULT_MESSAGES[result].color
               )}
+              role="status"
             >
               {RESULT_MESSAGES[result].text}
             </div>

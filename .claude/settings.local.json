@@ -45,7 +45,8 @@
       "WebFetch(domain:www.bombmanual.com)",
       "WebFetch(domain:ktane.fandom.com)",
       "Bash(git:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": [],
     "ask": []
