@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { MORSE_WORDS } from "../constants";
+import { MORSE_WORDS, KEYPAD_COLUMNS } from "../constants";
+import { getSymbolDisplay } from "../logic/keypadsLogic";
 
-type Section = "wires" | "button" | "simon" | "memory" | "password" | "morse";
+type Section = "wires" | "button" | "simon" | "memory" | "password" | "morse" | "keypads" | "maze";
 
 export function ManualPanel() {
   const [openSection, setOpenSection] = useState<Section | null>("wires");
@@ -264,6 +265,62 @@ export function ManualPanel() {
             <span>Y: -.--</span>
             <span>Z: --..</span>
           </div>
+        </div>
+      )}
+
+      {/* Keypads */}
+      <SectionHeader
+        title="Keypads"
+        isOpen={openSection === "keypads"}
+        onClick={() => toggleSection("keypads")}
+      />
+      {openSection === "keypads" && (
+        <div className="p-4 text-sm text-gray-600 dark:text-gray-300">
+          <p className="font-bold text-black dark:text-white mb-2">Instructions:</p>
+          <p className="text-xs mb-3">
+            Press the four symbols in the correct order. Find the column that contains all four symbols
+            and press them from top to bottom as they appear in that column.
+          </p>
+          <p className="font-bold text-black dark:text-white mb-2">Symbol Columns:</p>
+          <div className="grid grid-cols-6 gap-1 text-lg text-center">
+            {KEYPAD_COLUMNS.map((column, colIdx) => (
+              <div key={colIdx} className="space-y-1">
+                <div className="text-xs text-gray-400 mb-1">Col {colIdx + 1}</div>
+                {column.map((symbol, symIdx) => (
+                  <div key={symIdx} className="text-lg">
+                    {getSymbolDisplay(symbol)}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Maze */}
+      <SectionHeader
+        title="Maze"
+        isOpen={openSection === "maze"}
+        onClick={() => toggleSection("maze")}
+      />
+      {openSection === "maze" && (
+        <div className="p-4 text-sm text-gray-600 dark:text-gray-300">
+          <p className="font-bold text-black dark:text-white mb-2">Instructions:</p>
+          <ul className="list-disc list-inside space-y-1 text-xs">
+            <li>Navigate the white square to the red triangle goal</li>
+            <li>Use the green circles to identify which maze you have</li>
+            <li>Moving into a wall causes a strike!</li>
+            <li>Moving off the edge is safe (no penalty)</li>
+          </ul>
+          <p className="font-bold text-black dark:text-white mt-3 mb-2">Legend:</p>
+          <ul className="list-disc list-inside space-y-1 text-xs">
+            <li><span className="inline-block w-3 h-3 bg-white border border-gray-800"></span> = Your position</li>
+            <li><span className="inline-block w-0 h-0 border-l-4 border-r-4 border-b-8 border-transparent border-b-red-500"></span> = Goal (red triangle)</li>
+            <li><span className="inline-block w-3 h-3 rounded-full bg-green-500"></span> = Maze indicators</li>
+          </ul>
+          <p className="text-xs mt-3 text-gray-400">
+            Tip: Tell your expert the position of the green circles to identify the correct maze from the manual.
+          </p>
         </div>
       )}
     </div>

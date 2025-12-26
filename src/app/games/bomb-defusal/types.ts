@@ -6,7 +6,7 @@
 
 export type GamePhase = "menu" | "setup" | "playing" | "defused" | "exploded";
 
-export type Difficulty = "Easy" | "Medium" | "Hard";
+export type Difficulty = "Easy" | "Medium" | "Hard" | "Custom";
 
 export interface DifficultyConfig {
   label: string;
@@ -53,7 +53,9 @@ export type ModuleType =
   | "simon-says"
   | "memory"
   | "password"
-  | "morse-code";
+  | "morse-code"
+  | "keypads"
+  | "maze";
 
 export type ModuleStatus = "unsolved" | "solved" | "strike";
 
@@ -163,6 +165,59 @@ export interface MorseCodeModuleState extends BaseModuleState {
 }
 
 // =============================================================================
+// KEYPADS MODULE
+// =============================================================================
+
+export type KeypadSymbol =
+  | "copyright" | "filledStar" | "hollowStar" | "smiley" | "doublek"
+  | "omega" | "squidknife" | "pumpkin" | "hookn" | "six"
+  | "squigglyn" | "at" | "ae" | "meltedthree" | "euro"
+  | "nwithhat" | "dragon" | "questionmark" | "paragraph" | "rightc"
+  | "leftc" | "pitchfork" | "cursive" | "tracks" | "balloon"
+  | "upsidedowny" | "bt";
+
+export interface KeypadButton {
+  symbol: KeypadSymbol;
+  pressed: boolean;
+  position: number; // 0-3
+}
+
+export interface KeypadsModuleState extends BaseModuleState {
+  type: "keypads";
+  buttons: KeypadButton[];
+  correctOrder: number[]; // Indices in correct order (0-3)
+  currentPressIndex: number; // How many correct buttons have been pressed
+}
+
+// =============================================================================
+// MAZE MODULE
+// =============================================================================
+
+export interface MazePosition {
+  row: number; // 0-5
+  col: number; // 0-5
+}
+
+export interface MazeModuleState extends BaseModuleState {
+  type: "maze";
+  mazeIndex: number; // 0-8, which of the 9 predefined mazes
+  playerPosition: MazePosition;
+  goalPosition: MazePosition;
+  indicators: [MazePosition, MazePosition]; // Two green circle indicators
+  walls: boolean[][][][]; // walls[row][col][direction] - 0=up, 1=right, 2=down, 3=left
+}
+
+// =============================================================================
+// CUSTOM GAME SETTINGS
+// =============================================================================
+
+export interface CustomGameSettings {
+  timerSeconds: number;
+  moduleCount: number;
+  maxStrikes: number;
+}
+
+// =============================================================================
 // UNION TYPE FOR ALL MODULES
 // =============================================================================
 
@@ -172,7 +227,9 @@ export type ModuleState =
   | SimonSaysModuleState
   | MemoryModuleState
   | PasswordModuleState
-  | MorseCodeModuleState;
+  | MorseCodeModuleState
+  | KeypadsModuleState
+  | MazeModuleState;
 
 // =============================================================================
 // BOMB STATE

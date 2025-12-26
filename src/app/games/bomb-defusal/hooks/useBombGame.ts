@@ -12,10 +12,13 @@ import {
   MemoryModuleState,
   PasswordModuleState,
   MorseCodeModuleState,
+  KeypadsModuleState,
+  MazeModuleState,
   SimonColor,
   Edgework,
+  CustomGameSettings,
 } from "../types";
-import { DIFFICULTY_CONFIG, DEFAULT_DIFFICULTY, STORAGE_KEYS } from "../constants";
+import { DIFFICULTY_CONFIG, DEFAULT_DIFFICULTY, STORAGE_KEYS, CUSTOM_MODE_LIMITS } from "../constants";
 import { generateEdgework } from "../logic/edgework";
 import { generateWires, cutWire } from "../logic/wiresLogic";
 import {
@@ -48,10 +51,12 @@ import {
   submitFrequency,
   generateFlashSequence,
 } from "../logic/morseCodeLogic";
+import { generateKeypadsModule, pressKeypad } from "../logic/keypadsLogic";
+import { generateMazeModule, tryMove } from "../logic/mazeLogic";
 import { useCountdownTimer } from "./useCountdownTimer";
 import { createStorage } from "@/lib/utils/storage";
 
-type ModuleType = "wires" | "button" | "simon-says" | "memory" | "password" | "morse-code";
+type ModuleType = "wires" | "button" | "simon-says" | "memory" | "password" | "morse-code" | "keypads" | "maze";
 
 interface GameStats {
   gamesPlayed: number;
@@ -64,36 +69,79 @@ const gameStatsStorage = createStorage<GameStats>(STORAGE_KEYS.GAME_STATS);
 const DEFAULT_STATS: GameStats = {
   gamesPlayed: 0,
   gamesWon: 0,
-  bestTime: { Easy: null, Medium: null, Hard: null },
+  bestTime: { Easy: null, Medium: null, Hard: null, Custom: null },
+};
+
+const DEFAULT_CUSTOM_SETTINGS: CustomGameSettings = {
+  timerSeconds: 300,
+  moduleCount: 5,
+  maxStrikes: 3,
 };
 
 /**
- * Generate modules based on difficulty and edgework
+ * Generate a single module of a given type
  */
-function generateModules(difficulty: Difficulty, edgework: Edgework): ModuleState[] {
-  const config = DIFFICULTY_CONFIG[difficulty];
-  const moduleTypes: ModuleType[] = ["wires", "button", "simon-says", "memory", "password", "morse-code"];
+function generateSingleModule(type: ModuleType, edgework: Edgework): ModuleState {
+  switch (type) {
+    case "wires":
+      return generateWires(edgework);
+    case "button":
+      return generateButtonModule(edgework);
+    case "simon-says":
+      return generateSimonSaysModule();
+    case "memory":
+      return generateMemoryModule();
+    case "password":
+      return generatePasswordModule();
+    case "morse-code":
+      return generateMorseCodeModule();
+    case "keypads":
+      return generateKeypadsModule();
+    case "maze":
+      return generateMazeModule();
+  }
+}
 
-  // Shuffle and pick module types
-  const shuffled = [...moduleTypes].sort(() => Math.random() - 0.5);
-  const selectedTypes = shuffled.slice(0, config.moduleCount);
+/**
+ * Generate modules based on difficulty and edgework
+ * For custom mode, allows duplicates and uses custom module count
+ */
+function generateModules(
+  difficulty: Difficulty,
+  edgework: Edgework,
+  customSettings?: CustomGameSettings
+): ModuleState[] {
+  const moduleTypes: ModuleType[] = [
+    "wires",
+    "button",
+    "simon-says",
+    "memory",
+    "password",
+    "morse-code",
+    "keypads",
+    "maze",
+  ];
 
-  return selectedTypes.map((type) => {
-    switch (type) {
-      case "wires":
-        return generateWires(edgework);
-      case "button":
-        return generateButtonModule(edgework);
-      case "simon-says":
-        return generateSimonSaysModule();
-      case "memory":
-        return generateMemoryModule();
-      case "password":
-        return generatePasswordModule();
-      case "morse-code":
-        return generateMorseCodeModule();
+  // Determine module count
+  const moduleCount =
+    difficulty === "Custom" && customSettings
+      ? customSettings.moduleCount
+      : DIFFICULTY_CONFIG[difficulty].moduleCount;
+
+  if (difficulty === "Custom") {
+    // Custom mode: allow duplicates by randomly picking module types
+    const selectedTypes: ModuleType[] = [];
+    for (let i = 0; i < moduleCount; i++) {
+      const randomType = moduleTypes[Math.floor(Math.random() * moduleTypes.length)];
+      selectedTypes.push(randomType);
     }
-  });
+    return selectedTypes.map((type) => generateSingleModule(type, edgework));
+  } else {
+    // Standard difficulties: shuffle and pick unique types (up to available count)
+    const shuffled = [...moduleTypes].sort(() => Math.random() - 0.5);
+    const selectedTypes = shuffled.slice(0, Math.min(moduleCount, moduleTypes.length));
+    return selectedTypes.map((type) => generateSingleModule(type, edgework));
+  }
 }
 
 /**
@@ -101,6 +149,7 @@ function generateModules(difficulty: Difficulty, edgework: Edgework): ModuleStat
  */
 export function useBombGame() {
   const [difficulty, setDifficulty] = useState<Difficulty>(DEFAULT_DIFFICULTY);
+  const [customSettings, setCustomSettings] = useState<CustomGameSettings>(DEFAULT_CUSTOM_SETTINGS);
   const [gamePhase, setGamePhase] = useState<GamePhase>("menu");
   const [bombState, setBombState] = useState<BombState | null>(null);
   const [stats, setStats] = useState<GameStats>(DEFAULT_STATS);
@@ -141,7 +190,20 @@ export function useBombGame() {
     }
   }, [gamePhase, bombState]);
 
-  const config = DIFFICULTY_CONFIG[difficulty];
+  // Get effective config (use custom settings if in custom mode)
+  const getEffectiveConfig = useCallback(() => {
+    if (difficulty === "Custom") {
+      return {
+        ...DIFFICULTY_CONFIG.Custom,
+        timerSeconds: customSettings.timerSeconds,
+        moduleCount: customSettings.moduleCount,
+        maxStrikes: customSettings.maxStrikes,
+      };
+    }
+    return DIFFICULTY_CONFIG[difficulty];
+  }, [difficulty, customSettings]);
+
+  const config = getEffectiveConfig();
   const timer = useCountdownTimer({
     initialSeconds: config.timerSeconds,
     onTimeUp: handleTimeUp,
@@ -175,31 +237,48 @@ export function useBombGame() {
 
   // Start a new game
   const startGame = useCallback(
-    (selectedDifficulty?: Difficulty) => {
+    (selectedDifficulty?: Difficulty, newCustomSettings?: CustomGameSettings) => {
       const diff = selectedDifficulty ?? difficulty;
       if (selectedDifficulty) {
         setDifficulty(selectedDifficulty);
       }
 
+      // Update custom settings if provided
+      const effectiveCustomSettings = newCustomSettings ?? customSettings;
+      if (newCustomSettings) {
+        setCustomSettings(newCustomSettings);
+      }
+
+      // Get the effective config for this game
+      const effectiveConfig =
+        diff === "Custom"
+          ? {
+              ...DIFFICULTY_CONFIG.Custom,
+              timerSeconds: effectiveCustomSettings.timerSeconds,
+              moduleCount: effectiveCustomSettings.moduleCount,
+              maxStrikes: effectiveCustomSettings.maxStrikes,
+            }
+          : DIFFICULTY_CONFIG[diff];
+
       const edgework = generateEdgework();
-      const modules = generateModules(diff, edgework);
+      const modules = generateModules(diff, edgework, effectiveCustomSettings);
 
       setBombState({
         edgework,
         modules,
         strikes: 0,
-        maxStrikes: DIFFICULTY_CONFIG[diff].maxStrikes,
-        timerSeconds: DIFFICULTY_CONFIG[diff].timerSeconds,
+        maxStrikes: effectiveConfig.maxStrikes,
+        timerSeconds: effectiveConfig.timerSeconds,
         isDefused: false,
         isExploded: false,
       });
 
       setSelectedModuleIndex(0);
       setGamePhase("playing");
-      timer.reset(DIFFICULTY_CONFIG[diff].timerSeconds);
+      timer.reset(effectiveConfig.timerSeconds);
       timer.start();
     },
-    [difficulty, timer]
+    [difficulty, customSettings, timer]
   );
 
   // Add a strike
@@ -549,6 +628,54 @@ export function useBombGame() {
     [bombState, updateModule, addStrike, checkAllModulesSolved, defuseBomb]
   );
 
+  // --- Keypads Module Actions ---
+  const handleKeypadPress = useCallback(
+    (moduleId: string, position: number) => {
+      if (!bombState) return;
+      const module = bombState.modules.find((m) => m.id === moduleId) as KeypadsModuleState;
+      if (!module || module.status !== "unsolved") return;
+
+      const { newState, isCorrect, isModuleSolved } = pressKeypad(module, position);
+      updateModule(moduleId, () => newState);
+
+      if (!isCorrect) {
+        addStrike();
+        setTimeout(() => {
+          updateModule(moduleId, (m) => ({ ...m, status: "unsolved" }));
+        }, 500);
+      } else if (isModuleSolved) {
+        setTimeout(() => {
+          if (checkAllModulesSolved()) defuseBomb();
+        }, 100);
+      }
+    },
+    [bombState, updateModule, addStrike, checkAllModulesSolved, defuseBomb]
+  );
+
+  // --- Maze Module Actions ---
+  const handleMazeMove = useCallback(
+    (moduleId: string, direction: "up" | "down" | "left" | "right") => {
+      if (!bombState) return;
+      const module = bombState.modules.find((m) => m.id === moduleId) as MazeModuleState;
+      if (!module || module.status !== "unsolved") return;
+
+      const { newState, hitWall, reachedGoal } = tryMove(module, direction);
+      updateModule(moduleId, () => newState);
+
+      if (hitWall) {
+        addStrike();
+        setTimeout(() => {
+          updateModule(moduleId, (m) => ({ ...m, status: "unsolved" }));
+        }, 500);
+      } else if (reachedGoal) {
+        setTimeout(() => {
+          if (checkAllModulesSolved()) defuseBomb();
+        }, 100);
+      }
+    },
+    [bombState, updateModule, addStrike, checkAllModulesSolved, defuseBomb]
+  );
+
   // Morse code flash animation
   useEffect(() => {
     if (!bombState) return;
@@ -614,6 +741,7 @@ export function useBombGame() {
     // State
     gamePhase,
     difficulty,
+    customSettings,
     bombState,
     stats,
     selectedModuleIndex,
@@ -624,6 +752,7 @@ export function useBombGame() {
 
     // Actions
     setDifficulty,
+    setCustomSettings,
     startGame,
     returnToMenu,
     setSelectedModuleIndex,
@@ -643,5 +772,7 @@ export function useBombGame() {
     handleMorseFrequencyDown,
     handleMorseFrequencySet,
     handleMorseSubmit,
+    handleKeypadPress,
+    handleMazeMove,
   };
 }

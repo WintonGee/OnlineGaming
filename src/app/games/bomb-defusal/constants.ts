@@ -3,6 +3,7 @@ import {
   DifficultyConfig,
   SimonColor,
   IndicatorLabel,
+  KeypadSymbol,
 } from "./types";
 
 // =============================================================================
@@ -31,7 +32,29 @@ export const DIFFICULTY_CONFIG: Record<Difficulty, DifficultyConfig> = {
     maxStrikes: 2,
     needyModules: false,
   },
+  Custom: {
+    label: "Custom",
+    moduleCount: 5, // Default, can be overridden
+    timerSeconds: 300, // Default, can be overridden
+    maxStrikes: 3, // Default, can be overridden
+    needyModules: false,
+  },
 } as const;
+
+// =============================================================================
+// CUSTOM MODE LIMITS
+// =============================================================================
+
+export const CUSTOM_MODE_LIMITS = {
+  minModules: 1,
+  maxModules: 12,
+  minTime: 60, // 1 minute
+  maxTime: 600, // 10 minutes
+  minStrikes: 1,
+  maxStrikes: 5,
+} as const;
+
+export const CUSTOM_TIME_PRESETS = [60, 120, 180, 240, 300, 420, 600] as const;
 
 export const DEFAULT_DIFFICULTY: Difficulty = "Medium";
 
@@ -216,6 +239,94 @@ export const PORT_TYPES = [
 export const SERIAL_VOWELS = ["A", "E", "I", "O", "U"];
 export const SERIAL_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 export const SERIAL_LENGTH = 6;
+
+// =============================================================================
+// KEYPADS MODULE CONSTANTS
+// =============================================================================
+
+// The 6 columns of symbols - each keypad will use 4 symbols from one column
+export const KEYPAD_COLUMNS: KeypadSymbol[][] = [
+  ["balloon", "at", "upsidedowny", "squigglyn", "squidknife", "hookn", "leftc"],
+  ["euro", "balloon", "leftc", "cursive", "hollowStar", "hookn", "questionmark"],
+  ["copyright", "pumpkin", "cursive", "doublek", "meltedthree", "upsidedowny", "hollowStar"],
+  ["six", "paragraph", "bt", "squidknife", "doublek", "questionmark", "smiley"],
+  ["pitchfork", "smiley", "bt", "rightc", "paragraph", "dragon", "filledStar"],
+  ["six", "euro", "tracks", "ae", "pitchfork", "nwithhat", "omega"],
+];
+
+// Symbol display names for the manual/help
+export const KEYPAD_SYMBOL_NAMES: Record<KeypadSymbol, string> = {
+  copyright: "©",
+  filledStar: "★",
+  hollowStar: "☆",
+  smiley: "ټ",
+  doublek: "Ѭ",
+  omega: "Ω",
+  squidknife: "Ͽ",
+  pumpkin: "Ѣ",
+  hookn: "ƛ",
+  six: "6",
+  squigglyn: "Ϙ",
+  at: "Ѧ",
+  ae: "Æ",
+  meltedthree: "Ӭ",
+  euro: "€",
+  nwithhat: "Ñ",
+  dragon: "Ψ",
+  questionmark: "¿",
+  paragraph: "¶",
+  rightc: "Ͼ",
+  leftc: "Ͽ",
+  pitchfork: "Ψ",
+  cursive: "ϗ",
+  tracks: "҂",
+  balloon: "Ϙ",
+  upsidedowny: "ƛ",
+  bt: "Ѯ",
+};
+
+// =============================================================================
+// MAZE MODULE CONSTANTS
+// =============================================================================
+
+// 9 predefined mazes with their indicator positions and wall data
+// Each maze is a 6x6 grid. Walls are stored as adjacency (which cells can't be traversed between)
+// Format: Array of [row1, col1, row2, col2] pairs indicating walls between adjacent cells
+
+export const MAZE_INDICATORS: [{ row: number; col: number }, { row: number; col: number }][] = [
+  [{ row: 0, col: 1 }, { row: 5, col: 2 }], // Maze 0
+  [{ row: 1, col: 4 }, { row: 3, col: 1 }], // Maze 1
+  [{ row: 3, col: 5 }, { row: 4, col: 2 }], // Maze 2
+  [{ row: 0, col: 0 }, { row: 0, col: 3 }], // Maze 3
+  [{ row: 2, col: 4 }, { row: 4, col: 1 }], // Maze 4
+  [{ row: 2, col: 0 }, { row: 4, col: 3 }], // Maze 5
+  [{ row: 1, col: 0 }, { row: 1, col: 5 }], // Maze 6
+  [{ row: 3, col: 0 }, { row: 2, col: 3 }], // Maze 7
+  [{ row: 0, col: 2 }, { row: 3, col: 3 }], // Maze 8
+];
+
+// Walls for each maze stored as a set of blocked passages
+// Each entry is [fromRow, fromCol, toRow, toCol] - a wall between these two adjacent cells
+export const MAZE_WALLS: number[][][] = [
+  // Maze 0
+  [[0,0,0,1],[0,0,1,0],[0,2,0,3],[0,4,1,4],[1,0,1,1],[1,1,1,2],[1,2,2,2],[1,3,1,4],[1,4,1,5],[2,0,2,1],[2,1,2,2],[2,2,2,3],[2,3,3,3],[2,4,2,5],[3,0,3,1],[3,1,3,2],[3,2,3,3],[3,3,3,4],[3,5,4,5],[4,0,4,1],[4,1,5,1],[4,2,4,3],[4,3,4,4],[4,4,5,4],[5,1,5,2],[5,2,5,3]],
+  // Maze 1
+  [[0,0,1,0],[0,1,0,2],[0,3,0,4],[0,4,0,5],[1,1,1,2],[1,2,1,3],[1,3,2,3],[1,4,2,4],[2,0,2,1],[2,1,3,1],[2,2,2,3],[2,4,2,5],[3,0,3,1],[3,2,3,3],[3,3,3,4],[3,4,4,4],[3,5,4,5],[4,0,5,0],[4,1,4,2],[4,2,5,2],[4,3,4,4],[5,0,5,1],[5,2,5,3],[5,3,5,4]],
+  // Maze 2
+  [[0,0,0,1],[0,2,0,3],[0,3,1,3],[0,4,0,5],[1,0,1,1],[1,1,2,1],[1,2,1,3],[1,4,1,5],[2,0,3,0],[2,2,2,3],[2,3,2,4],[2,4,3,4],[3,0,3,1],[3,1,3,2],[3,2,4,2],[3,3,3,4],[3,5,4,5],[4,0,4,1],[4,2,4,3],[4,3,5,3],[4,4,4,5],[5,0,5,1],[5,1,5,2]],
+  // Maze 3
+  [[0,1,0,2],[0,4,0,5],[0,4,1,4],[1,0,1,1],[1,1,1,2],[1,2,2,2],[1,3,1,4],[1,5,2,5],[2,0,2,1],[2,2,2,3],[2,3,3,3],[2,4,2,5],[3,0,4,0],[3,1,3,2],[3,2,3,3],[3,4,3,5],[3,4,4,4],[4,1,4,2],[4,2,5,2],[4,3,4,4],[4,5,5,5],[5,0,5,1],[5,2,5,3],[5,3,5,4]],
+  // Maze 4
+  [[0,0,0,1],[0,2,0,3],[0,3,0,4],[0,5,1,5],[1,0,2,0],[1,1,1,2],[1,2,1,3],[1,4,1,5],[2,1,2,2],[2,2,3,2],[2,3,2,4],[2,4,3,4],[3,0,3,1],[3,1,4,1],[3,3,3,4],[3,4,3,5],[4,0,5,0],[4,2,4,3],[4,3,5,3],[4,4,4,5],[5,0,5,1],[5,1,5,2],[5,4,5,5]],
+  // Maze 5
+  [[0,0,0,1],[0,2,0,3],[0,3,1,3],[0,4,1,4],[1,0,1,1],[1,1,2,1],[1,2,1,3],[1,5,2,5],[2,1,2,2],[2,2,2,3],[2,4,2,5],[2,4,3,4],[3,0,3,1],[3,1,3,2],[3,2,4,2],[3,3,3,4],[3,5,4,5],[4,0,4,1],[4,1,5,1],[4,3,4,4],[4,4,5,4],[5,1,5,2],[5,2,5,3]],
+  // Maze 6
+  [[0,1,0,2],[0,2,1,2],[0,3,0,4],[0,4,0,5],[1,0,1,1],[1,3,1,4],[1,4,2,4],[2,0,2,1],[2,1,2,2],[2,2,2,3],[2,3,3,3],[2,5,3,5],[3,0,3,1],[3,1,4,1],[3,2,3,3],[3,4,3,5],[4,0,5,0],[4,2,4,3],[4,3,4,4],[4,4,5,4],[4,5,5,5],[5,1,5,2],[5,2,5,3]],
+  // Maze 7
+  [[0,0,0,1],[0,2,0,3],[0,3,0,4],[0,5,1,5],[1,0,1,1],[1,1,1,2],[1,3,1,4],[1,4,2,4],[2,0,3,0],[2,1,2,2],[2,2,3,2],[2,3,2,4],[2,5,3,5],[3,1,3,2],[3,3,3,4],[3,4,4,4],[4,0,4,1],[4,1,4,2],[4,2,5,2],[4,3,4,4],[4,5,5,5],[5,0,5,1],[5,3,5,4]],
+  // Maze 8
+  [[0,0,1,0],[0,1,0,2],[0,3,0,4],[0,4,1,4],[1,1,1,2],[1,2,1,3],[1,3,2,3],[1,5,2,5],[2,0,2,1],[2,1,3,1],[2,2,2,3],[2,4,2,5],[3,0,3,1],[3,2,3,3],[3,3,4,3],[3,4,3,5],[4,0,4,1],[4,1,4,2],[4,2,5,2],[4,4,4,5],[4,4,5,4],[5,0,5,1],[5,2,5,3]],
+];
 
 // =============================================================================
 // UI CONSTANTS

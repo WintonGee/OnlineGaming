@@ -7,18 +7,42 @@ import { SimonSaysModule } from "./SimonSaysModule";
 import { MemoryModule } from "./MemoryModule";
 import { PasswordModule } from "./PasswordModule";
 import { MorseCodeModule } from "./MorseCodeModule";
+import { KeypadsModule } from "./KeypadsModule";
+import { MazeModule } from "./MazeModule";
 import { EdgeworkDisplay } from "./EdgeworkDisplay";
 import { ManualPanel } from "./ManualPanel";
-import { Difficulty } from "../types";
-import { DIFFICULTY_CONFIG } from "../constants";
-import { Bomb, AlertTriangle, Trophy, RotateCcw, BookOpen } from "lucide-react";
+import { Difficulty, CustomGameSettings } from "../types";
+import { DIFFICULTY_CONFIG, CUSTOM_MODE_LIMITS, CUSTOM_TIME_PRESETS } from "../constants";
+import { Bomb, AlertTriangle, Trophy, RotateCcw, BookOpen, Settings, Minus, Plus } from "lucide-react";
 import { useState } from "react";
 import GameHeader from "@/components/games/GameHeader";
 import { cn } from "@/lib/utils/cn";
 
+// Helper to format time in mm:ss
+function formatTime(seconds: number): string {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
+}
+
 export function BombGame() {
   const game = useBombGame();
   const [showManual, setShowManual] = useState(false);
+  const [localCustomSettings, setLocalCustomSettings] = useState<CustomGameSettings>(game.customSettings);
+
+  // Get display config based on difficulty
+  const getDisplayConfig = () => {
+    if (game.difficulty === "Custom") {
+      return {
+        moduleCount: localCustomSettings.moduleCount,
+        timerSeconds: localCustomSettings.timerSeconds,
+        maxStrikes: localCustomSettings.maxStrikes,
+      };
+    }
+    return DIFFICULTY_CONFIG[game.difficulty];
+  };
+
+  const displayConfig = getDisplayConfig();
 
   // Menu screen
   if (game.gamePhase === "menu") {
@@ -46,27 +70,147 @@ export function BombGame() {
                 Select Difficulty
               </p>
               <div className="inline-flex rounded-full border-2 border-gray-300 dark:border-gray-600 p-0.5 bg-gray-200 dark:bg-gray-800 w-full justify-center">
-                {(["Easy", "Medium", "Hard"] as Difficulty[]).map((diff) => (
+                {(["Easy", "Medium", "Hard", "Custom"] as Difficulty[]).map((diff) => (
                   <button
                     key={diff}
                     onClick={() => game.setDifficulty(diff)}
                     className={cn(
-                      "px-4 py-1.5 text-sm font-medium rounded-full transition-all flex-1",
+                      "px-3 py-1.5 text-sm font-medium rounded-full transition-all flex-1",
                       game.difficulty === diff
                         ? "bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm"
                         : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                     )}
                   >
-                    {diff}
+                    {diff === "Custom" ? <Settings className="w-4 h-4 mx-auto" /> : diff}
                   </button>
                 ))}
               </div>
               <p className="text-gray-500 dark:text-gray-400 text-xs text-center mt-2">
-                {DIFFICULTY_CONFIG[game.difficulty].moduleCount} modules |{" "}
-                {Math.floor(DIFFICULTY_CONFIG[game.difficulty].timerSeconds / 60)}:00 |{" "}
-                {DIFFICULTY_CONFIG[game.difficulty].maxStrikes} strikes
+                {displayConfig.moduleCount} modules |{" "}
+                {formatTime(displayConfig.timerSeconds)} |{" "}
+                {displayConfig.maxStrikes} strikes
               </p>
             </div>
+
+            {/* Custom mode settings */}
+            {game.difficulty === "Custom" && (
+              <div className="mb-6 p-4 bg-gray-200 dark:bg-gray-800 rounded-lg space-y-4">
+                <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 text-center uppercase tracking-wide">
+                  Custom Settings
+                </h4>
+
+                {/* Time selection */}
+                <div>
+                  <label className="text-xs text-gray-500 dark:text-gray-400 block mb-2">
+                    Time Limit
+                  </label>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {CUSTOM_TIME_PRESETS.map((time) => (
+                      <button
+                        key={time}
+                        onClick={() =>
+                          setLocalCustomSettings((prev) => ({
+                            ...prev,
+                            timerSeconds: time,
+                          }))
+                        }
+                        className={cn(
+                          "px-3 py-1 text-sm rounded-full border-2 transition-colors",
+                          localCustomSettings.timerSeconds === time
+                            ? "bg-black dark:bg-white text-white dark:text-black border-black dark:border-white"
+                            : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600"
+                        )}
+                      >
+                        {formatTime(time)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Module count */}
+                <div>
+                  <label className="text-xs text-gray-500 dark:text-gray-400 block mb-2">
+                    Number of Modules
+                  </label>
+                  <div className="flex items-center justify-center gap-4">
+                    <button
+                      onClick={() =>
+                        setLocalCustomSettings((prev) => ({
+                          ...prev,
+                          moduleCount: Math.max(
+                            CUSTOM_MODE_LIMITS.minModules,
+                            prev.moduleCount - 1
+                          ),
+                        }))
+                      }
+                      className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="text-2xl font-mono font-bold text-black dark:text-white w-12 text-center">
+                      {localCustomSettings.moduleCount}
+                    </span>
+                    <button
+                      onClick={() =>
+                        setLocalCustomSettings((prev) => ({
+                          ...prev,
+                          moduleCount: Math.min(
+                            CUSTOM_MODE_LIMITS.maxModules,
+                            prev.moduleCount + 1
+                          ),
+                        }))
+                      }
+                      className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-400 text-center mt-1">
+                    ({CUSTOM_MODE_LIMITS.minModules}-{CUSTOM_MODE_LIMITS.maxModules} modules, duplicates allowed)
+                  </p>
+                </div>
+
+                {/* Strikes */}
+                <div>
+                  <label className="text-xs text-gray-500 dark:text-gray-400 block mb-2">
+                    Max Strikes
+                  </label>
+                  <div className="flex items-center justify-center gap-4">
+                    <button
+                      onClick={() =>
+                        setLocalCustomSettings((prev) => ({
+                          ...prev,
+                          maxStrikes: Math.max(
+                            CUSTOM_MODE_LIMITS.minStrikes,
+                            prev.maxStrikes - 1
+                          ),
+                        }))
+                      }
+                      className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="text-2xl font-mono font-bold text-black dark:text-white w-12 text-center">
+                      {localCustomSettings.maxStrikes}
+                    </span>
+                    <button
+                      onClick={() =>
+                        setLocalCustomSettings((prev) => ({
+                          ...prev,
+                          maxStrikes: Math.min(
+                            CUSTOM_MODE_LIMITS.maxStrikes,
+                            prev.maxStrikes + 1
+                          ),
+                        }))
+                      }
+                      className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Stats */}
             <div className="bg-gray-200 dark:bg-gray-800 rounded-lg p-4 mb-6">
@@ -86,7 +230,8 @@ export function BombGame() {
                 <div>
                   <p className="text-gray-500 dark:text-gray-400">Best Time</p>
                   <p className="text-black dark:text-white font-bold font-mono">
-                    {game.stats.bestTime[game.difficulty] !== null
+                    {game.stats.bestTime[game.difficulty] !== undefined &&
+                    game.stats.bestTime[game.difficulty] !== null
                       ? `${Math.floor(game.stats.bestTime[game.difficulty]! / 60)}:${(game.stats.bestTime[game.difficulty]! % 60).toString().padStart(2, "0")}`
                       : "--:--"}
                   </p>
@@ -104,7 +249,11 @@ export function BombGame() {
 
             {/* Start button */}
             <button
-              onClick={() => game.startGame()}
+              onClick={() =>
+                game.difficulty === "Custom"
+                  ? game.startGame("Custom", localCustomSettings)
+                  : game.startGame()
+              }
               className="w-full py-3 bg-black dark:bg-white text-white dark:text-black rounded-full font-semibold text-sm uppercase tracking-wide transition-colors hover:bg-gray-800 dark:hover:bg-gray-200"
             >
               Start Defusing
@@ -318,6 +467,24 @@ export function BombGame() {
                         onFrequencyDown={() => game.handleMorseFrequencyDown(module.id)}
                         onFrequencySet={(freq) => game.handleMorseFrequencySet(module.id, freq)}
                         onSubmit={() => game.handleMorseSubmit(module.id)}
+                        disabled={isDisabled}
+                      />
+                    );
+                  case "keypads":
+                    return (
+                      <KeypadsModule
+                        key={module.id}
+                        module={module}
+                        onPress={(pos) => game.handleKeypadPress(module.id, pos)}
+                        disabled={isDisabled}
+                      />
+                    );
+                  case "maze":
+                    return (
+                      <MazeModule
+                        key={module.id}
+                        module={module}
+                        onMove={(dir) => game.handleMazeMove(module.id, dir)}
                         disabled={isDisabled}
                       />
                     );
