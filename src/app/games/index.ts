@@ -17,6 +17,7 @@ import { bombDefusalConfig } from "./bomb-defusal/config";
 import { solitaireConfig } from "./solitaire/config";
 import { reactionTimerConfig } from "./reaction-timer/config";
 import { rockPaperScissorsConfig } from "./rock-paper-scissors/config";
+import { higherOrLowerConfig } from "./higher-or-lower/config";
 
 export const allGames: GameConfig[] = [
   sudokuConfig,
@@ -37,4 +38,5 @@ export const allGames: GameConfig[] = [
   solitaireConfig,
   reactionTimerConfig,
   rockPaperScissorsConfig,
+  higherOrLowerConfig,
 ];

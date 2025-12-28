@@ -1,0 +1,101 @@
+/* Card draw animation - slides in from right */
+@keyframes cardDraw {
+  0% {
+    opacity: 0;
+    transform: translateX(100px) rotate(15deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) rotate(0deg);
+  }
+}
+
+.card-new {
+  animation: cardDraw 300ms ease-out forwards;
+}
+
+/* Card flip animation for revealing the next card */
+.card-container {
+  perspective: 1000px;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 400ms ease-in-out;
+  transform-style: preserve-3d;
+}
+
+.card-inner.flipping {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.card-front {
+  transform: rotateY(180deg);
+}
+
+.card-back {
+  transform: rotateY(0deg);
+}
+
+/* Result animations */
+@keyframes correctPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes wrongShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-4px);
+  }
+  40% {
+    transform: translateX(4px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+.result-correct {
+  animation: correctPulse 500ms ease-in-out;
+}
+
+.result-wrong {
+  animation: wrongShake 300ms ease-out;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .card-new,
+  .card-inner,
+  .result-correct,
+  .result-wrong {
+    animation: none;
+    transition: none;
+  }
+
+  .card-new {
+    opacity: 1;
+    transform: none;
+  }
+}
