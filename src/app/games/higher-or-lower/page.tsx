@@ -35,7 +35,7 @@ export default function HigherOrLowerPage() {
                 Streak
               </div>
               <div className="text-xl font-bold text-black dark:text-white font-mono">
-                {gameState.streak}
+                {gameState?.streak ?? 0}
               </div>
             </div>
             <div className="bg-gray-200 dark:bg-gray-800 rounded-lg px-3 py-1.5 text-center min-w-[70px]">
@@ -55,16 +55,24 @@ export default function HigherOrLowerPage() {
         </div>
 
         {/* Game Board */}
-        <GameBoard
-          currentCard={gameState.currentCard}
-          nextCard={gameState.nextCard}
-          gamePhase={gameState.gamePhase}
-          lastResult={gameState.lastResult}
-          onGuess={handleGuess}
-        />
+        {!gameState ? (
+          <div className="w-full max-w-md mx-auto">
+            <div className="rounded-2xl p-6 bg-gray-100 dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 min-h-[420px] flex items-center justify-center">
+              <div className="text-gray-500 dark:text-gray-400">Loading...</div>
+            </div>
+          </div>
+        ) : (
+          <GameBoard
+            currentCard={gameState.currentCard}
+            nextCard={gameState.nextCard}
+            gamePhase={gameState.gamePhase}
+            lastResult={gameState.lastResult}
+            onGuess={handleGuess}
+          />
+        )}
 
         {/* Play Again Button */}
-        {gameState.gamePhase === "gameOver" && (
+        {gameState?.gamePhase === "gameOver" && (
           <div className="flex justify-center mt-6">
             <Button
               onClick={handleNewGame}
@@ -80,8 +88,8 @@ export default function HigherOrLowerPage() {
           open={gameOverDialog.isOpen}
           onOpenChange={gameOverDialog.setIsOpen}
           icon="frown"
-          message={`Your streak: ${gameState.streak}`}
-          score={gameState.streak}
+          message={`Your streak: ${gameState?.streak ?? 0}`}
+          score={gameState?.streak ?? 0}
           highScore={bestScores.bestStreak}
           onNewGame={handleNewGame}
         />
