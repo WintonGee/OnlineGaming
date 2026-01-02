@@ -46,7 +46,10 @@
       "WebFetch(domain:ktane.fandom.com)",
       "Bash(git:*)",
       "Bash(ls:*)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "WebFetch(domain:monkeytype.com)",
+      "Bash(npx next lint:*)",
+      "Bash(npm run lint:*)"
     ],
     "deny": [],
     "ask": []
