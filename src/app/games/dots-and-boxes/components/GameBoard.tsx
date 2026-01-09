@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { BoardState, GridSize, LineType, Player } from "../types";
 import { PLAYER_COLORS } from "../constants";
 
@@ -158,11 +159,11 @@ export default function GameBoard({
   // 1. A horizontal line row (dots and horizontal lines)
   // 2. A vertical line row (vertical lines and box cells)
 
-  const rows: JSX.Element[] = [];
+  const rows: React.ReactNode[] = [];
 
   for (let row = 0; row <= gridSize; row++) {
     // Horizontal line row
-    const horizontalRow: JSX.Element[] = [];
+    const horizontalRow: React.ReactNode[] = [];
     for (let col = 0; col < gridSize; col++) {
       // Dot
       horizontalRow.push(
@@ -200,7 +201,7 @@ export default function GameBoard({
 
     // Vertical line row (except after the last horizontal row)
     if (row < gridSize) {
-      const verticalRow: JSX.Element[] = [];
+      const verticalRow: React.ReactNode[] = [];
       for (let col = 0; col <= gridSize; col++) {
         // Vertical line
         verticalRow.push(
