@@ -63,23 +63,14 @@ export function MazeModule({ module, onMove, disabled }: MazeModuleProps) {
                 key={`${row}-${col}`}
                 className={cn(
                   "w-6 h-6 sm:w-7 sm:h-7 relative flex items-center justify-center",
-                  "bg-white dark:bg-gray-800"
+                  "bg-white dark:bg-gray-700",
+                  "border border-gray-200 dark:border-gray-600", // Subtle grid lines
+                  // Wall overrides - thick dark borders where walls exist
+                  walls.up && "!border-t-[3px] !border-t-gray-900 dark:!border-t-gray-100",
+                  walls.right && "!border-r-[3px] !border-r-gray-900 dark:!border-r-gray-100",
+                  walls.down && "!border-b-[3px] !border-b-gray-900 dark:!border-b-gray-100",
+                  walls.left && "!border-l-[3px] !border-l-gray-900 dark:!border-l-gray-100"
                 )}
-                style={{
-                  borderTop: walls.up
-                    ? "2px solid"
-                    : "1px solid transparent",
-                  borderRight: walls.right
-                    ? "2px solid"
-                    : "1px solid transparent",
-                  borderBottom: walls.down
-                    ? "2px solid"
-                    : "1px solid transparent",
-                  borderLeft: walls.left
-                    ? "2px solid"
-                    : "1px solid transparent",
-                  borderColor: "rgb(31, 41, 55)",
-                }}
               >
                 {/* Indicator circle */}
                 {isIndicator && !isPlayer && !isGoal && (

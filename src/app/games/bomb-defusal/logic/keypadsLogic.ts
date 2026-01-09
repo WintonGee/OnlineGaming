@@ -88,6 +88,8 @@ export function pressKeypad(
  * Get the display character for a keypad symbol
  */
 export function getSymbolDisplay(symbol: KeypadSymbol): string {
+  // Each symbol must have a visually distinct character
+  // Avoid similar-looking Unicode characters that may render identically
   const symbolMap: Record<KeypadSymbol, string> = {
     copyright: "©",
     filledStar: "★",
@@ -95,7 +97,7 @@ export function getSymbolDisplay(symbol: KeypadSymbol): string {
     smiley: "ツ",
     doublek: "Ж",
     omega: "Ω",
-    squidknife: "Ͽ",
+    squidknife: "Ѯ̈",    // Was "Ͽ" - too similar to leftc
     pumpkin: "Ѣ",
     hookn: "ƛ",
     six: "б",
@@ -108,9 +110,9 @@ export function getSymbolDisplay(symbol: KeypadSymbol): string {
     dragon: "Ψ",
     questionmark: "¿",
     paragraph: "¶",
-    rightc: "Ͼ",
-    leftc: "Ͻ",
-    pitchfork: "Ѱ",
+    rightc: "⊃",         // Was "Ͼ" - now clearly distinct
+    leftc: "⊂",          // Was "Ͻ" - now clearly distinct
+    pitchfork: "¥",      // Was "Ѱ" - too similar to dragon "Ψ"
     cursive: "ϗ",
     tracks: "҂",
     balloon: "Ϙ",
