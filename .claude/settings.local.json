@@ -55,7 +55,8 @@
       "WebFetch(domain:jayisgames.com)",
       "WebFetch(domain:armorgames.com)",
       "Bash(pkill:*)",
-      "Bash(npm ls:*)"
+      "Bash(npm ls:*)",
+      "Bash(npx knip:*)"
     ],
     "deny": [],
     "ask": []
