@@ -18,6 +18,7 @@ import { solitaireConfig } from "./solitaire/config";
 import { reactionTimerConfig } from "./reaction-timer/config";
 import { rockPaperScissorsConfig } from "./rock-paper-scissors/config";
 import { higherOrLowerConfig } from "./higher-or-lower/config";
+import { gameConfig as boxheadConfig } from "./boxhead/config";
 
 export const allGames: GameConfig[] = [
   sudokuConfig,
@@ -39,4 +40,5 @@ export const allGames: GameConfig[] = [
   reactionTimerConfig,
   rockPaperScissorsConfig,
   higherOrLowerConfig,
+  boxheadConfig,
 ];
