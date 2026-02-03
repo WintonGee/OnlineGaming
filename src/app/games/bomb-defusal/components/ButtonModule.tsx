@@ -1,7 +1,7 @@
 "use client";
 
 import { ButtonModuleState, ButtonColor, StripColor } from "../types";
-import { getReleaseDigit } from "../logic/buttonLogic";
+import { getReleaseDigit } from "../utils/display";
 import { cn } from "@/lib/utils/cn";
 
 const BUTTON_COLORS: Record<ButtonColor, string> = {

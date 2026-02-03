@@ -1,14 +1,20 @@
 "use client";
 
-import { useRef, memo, useCallback } from "react";
+import { useRef, memo } from "react";
 import { GridSize, Direction } from "../types";
 import { cn } from "@/lib/utils/cn";
 import { useSwipeInput } from "@/lib/hooks/useSwipeInput";
 import { SWIPE_THRESHOLD } from "../constants";
-import { getPosition, canMoveTile } from "../logic/puzzleLogic";
+
+interface TileMetadata {
+  value: number;
+  index: number;
+  position: { row: number; col: number };
+  isMovable: boolean;
+}
 
 interface SlidingPuzzleBoardProps {
-  tiles: number[];
+  tilesWithMetadata: TileMetadata[];
   gridSize: GridSize;
   won: boolean;
   onTileClick: (tileIndex: number) => void;
@@ -18,6 +24,7 @@ interface SlidingPuzzleBoardProps {
 interface TileComponentProps {
   value: number;
   index: number;
+  position: { row: number; col: number };
   gridSize: GridSize;
   canMove: boolean;
   won: boolean;
@@ -67,12 +74,12 @@ function getTileFontSize(gridSize: GridSize, value: number): string {
 const TileComponent = memo(function TileComponent({
   value,
   index,
+  position,
   gridSize,
   canMove,
   won,
   onClick,
 }: TileComponentProps) {
-  const position = getPosition(index, gridSize);
   const isEmpty = value === 0;
 
   // Calculate position for CSS
@@ -114,7 +121,7 @@ const TileComponent = memo(function TileComponent({
 });
 
 export default function SlidingPuzzleBoard({
-  tiles,
+  tilesWithMetadata,
   gridSize,
   won,
   onTileClick,
@@ -129,12 +136,6 @@ export default function SlidingPuzzleBoard({
     elementRef: boardRef,
     threshold: SWIPE_THRESHOLD,
   });
-
-  // Check which tiles can move
-  const movableTiles = useCallback(
-    (index: number) => canMoveTile(tiles, index, gridSize),
-    [tiles, gridSize]
-  );
 
   // Get gap size based on grid size
   const gap = gridSize === 3 ? 8 : gridSize === 4 ? 6 : 4;
@@ -173,15 +174,16 @@ export default function SlidingPuzzleBoard({
             inset: `${gap}px`,
           }}
         >
-          {tiles.map((value, index) => (
+          {tilesWithMetadata.map((tile) => (
             <TileComponent
-              key={value === 0 ? "empty" : value}
-              value={value}
-              index={index}
+              key={tile.value === 0 ? "empty" : tile.value}
+              value={tile.value}
+              index={tile.index}
+              position={tile.position}
               gridSize={gridSize}
-              canMove={movableTiles(index)}
+              canMove={tile.isMovable}
               won={won}
-              onClick={() => onTileClick(index)}
+              onClick={() => onTileClick(tile.index)}
             />
           ))}
         </div>

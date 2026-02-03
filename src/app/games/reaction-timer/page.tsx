@@ -13,6 +13,7 @@ export default function ReactionTimerPage() {
     phase,
     currentTime,
     bestTime,
+    performanceFeedback,
     stats,
     handleAreaClick,
     handleNewGame,
@@ -42,6 +43,7 @@ export default function ReactionTimerPage() {
         <ReactionArea
           phase={phase}
           currentTime={currentTime}
+          performanceFeedback={performanceFeedback}
           onClick={handleAreaClick}
         />
 

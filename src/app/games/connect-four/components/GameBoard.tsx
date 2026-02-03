@@ -3,7 +3,6 @@
 import { useState, useCallback } from "react";
 import { Board, Player } from "../types";
 import { ROWS, COLS } from "../constants";
-import { canDropPiece, getDropRow } from "../logic/gameLogic";
 
 interface GameBoardProps {
   board: Board;
@@ -11,6 +10,7 @@ interface GameBoardProps {
   winningLine: [number, number][] | null;
   lastMove: [number, number] | null;
   disabled: boolean;
+  getColumnPreview: (col: number) => number | null;
   onColumnClick: (col: number) => void;
 }
 
@@ -20,6 +20,7 @@ export default function GameBoard({
   winningLine,
   lastMove,
   disabled,
+  getColumnPreview,
   onColumnClick,
 }: GameBoardProps) {
   const [hoverCol, setHoverCol] = useState<number | null>(null);
@@ -42,21 +43,21 @@ export default function GameBoard({
 
   const getPreviewRow = useCallback(
     (col: number): number | null => {
-      if (disabled || hoverCol !== col || !canDropPiece(board, col)) {
+      if (disabled || hoverCol !== col) {
         return null;
       }
-      return getDropRow(board, col);
+      return getColumnPreview(col);
     },
-    [disabled, hoverCol, board]
+    [disabled, hoverCol, getColumnPreview]
   );
 
   const handleColumnClick = useCallback(
     (col: number) => {
-      if (!disabled && canDropPiece(board, col)) {
+      if (!disabled && getColumnPreview(col) !== null) {
         onColumnClick(col);
       }
     },
-    [disabled, board, onColumnClick]
+    [disabled, getColumnPreview, onColumnClick]
   );
 
   const handleMouseEnter = useCallback(
@@ -118,7 +119,7 @@ export default function GameBoard({
         >
           {Array.from({ length: COLS }).map((_, col) => {
             const isColumnHovered = hoverCol === col;
-            const canDrop = canDropPiece(board, col);
+            const canDrop = getColumnPreview(col) !== null;
             const previewRow = getPreviewRow(col);
 
             return (
@@ -171,7 +172,7 @@ export default function GameBoard({
         }}
       >
         {Array.from({ length: COLS }).map((_, col) => {
-          const isHovered = hoverCol === col && !disabled && canDropPiece(board, col);
+          const isHovered = hoverCol === col && !disabled && getColumnPreview(col) !== null;
           return (
             <div
               key={`num-${col}`}

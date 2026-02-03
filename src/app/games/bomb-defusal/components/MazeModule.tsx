@@ -1,7 +1,7 @@
 "use client";
 
 import { MazeModuleState } from "../types";
-import { getWallsForRendering } from "../logic/mazeLogic";
+import { getWallsForRendering } from "../utils/display";
 import { cn } from "@/lib/utils/cn";
 import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
 

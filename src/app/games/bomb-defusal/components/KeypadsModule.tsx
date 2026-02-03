@@ -1,7 +1,7 @@
 "use client";
 
 import { KeypadsModuleState } from "../types";
-import { getSymbolDisplay } from "../logic/keypadsLogic";
+import { getSymbolDisplay } from "../utils/display";
 import { cn } from "@/lib/utils/cn";
 
 interface KeypadsModuleProps {

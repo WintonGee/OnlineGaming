@@ -19,7 +19,7 @@ To maintain architectural consistency and prevent drift from established pattern
 ```bash
 npm run build
     ↓
-npm run validate (Phase 1, 2, 3)
+npm run validate (Phase 1, 2, 3, 4)
     ↓
 next build (only if validation passes)
     ↓
@@ -46,10 +46,13 @@ scripts/
 ├── validators/
 │   ├── file-structure.js            # Phase 1: File/directory validation
 │   ├── naming-conventions.js         # Phase 2: Naming pattern validation
-│   └── code-patterns.js             # Phase 3: Hook & logic validation
+│   ├── code-patterns.js             # Phase 3: Hook & logic validation
+│   └── import-validation.js         # Phase 4: Import dependency validation
 └── utils/
     ├── file-utils.js                # File system helpers
-    └── reporter.js                  # Error reporting
+    ├── reporter.js                  # Error reporting
+    ├── import-parser.js             # Import statement extraction
+    └── path-resolver.js             # Import path classification
 ```
 
 ---
@@ -142,39 +145,79 @@ scripts/
 
 ---
 
-## ❌ TODO: Unimplemented Phases
-
 ### Phase 4: Import Dependency Validation
 
-**Status:** 📋 Not Implemented
+**Validator:** `validators/import-validation.js`
+**Utilities:** `utils/import-parser.js`, `utils/path-resolver.js`
 
-**What it would enforce:**
-- Validate import paths follow conventions (use `@/` aliases)
-- Check for circular dependencies between modules
-- Ensure logic files only import from:
-  - Other logic files
-  - Utils
-  - Types
-  - Constants
-  - External libraries (but NOT React)
-- Prevent components from importing directly from logic (must go through hooks)
-- Validate shared components don't import game-specific code
-- Enforce layered architecture at import level
+**Enforces:**
 
-**Benefits:**
-- Prevents tight coupling
-- Enforces clear dependency boundaries
-- Catches architectural violations before runtime
+#### Rule 1: Logic Layer Purity
+- ✅ Files in `logic/` CANNOT import React hooks or components
+- ✅ Files in `logic/` CANNOT import game-specific components
+- ✅ Logic files may only import:
+  - Other logic files from same game
+  - Shared utilities, types, constants
+  - External libraries (except React/React-DOM)
 
-**Strictness:** 🔒🔒🔒🔒 Extremely Strict
+#### Rule 2: Hook Layer Composition
+- ✅ Files in `hooks/` CANNOT import from `components/`
+- ✅ Hooks may import from:
+  - Other hooks in same game
+  - Logic files from same game
+  - Shared hooks, types, constants
+  - React and React hooks
 
-**Implementation Notes:**
-- Would require TypeScript AST parsing
-- Need to analyze import statements and their sources
-- Check import graph for circular dependencies
-- Validate import paths against allowed patterns
+#### Rule 3: Component Layer Access
+- ✅ Files in `components/` CANNOT import from `logic/` directly
+- ✅ Components must access logic through hooks (layered architecture)
+- ✅ Components may import from:
+  - Other components (same game or shared)
+  - Hooks from same game or shared
+  - Shared UI components, types, constants
+  - React and UI libraries
+
+#### Rule 4: Page Layer Orchestration
+- ✅ `page.tsx` CANNOT import from `logic/` directly
+- ✅ Pages must orchestrate through hooks only
+- ✅ Pages may import from:
+  - Hooks from same game
+  - Components from same game or shared
+  - Shared types and constants
+  - React and Next.js
+
+**Strictness:** 🔒🔒🔒🔒 Extremely Strict - Enforces layered architecture
+
+**Example Violations:**
+```
+❌ Logic file "gameLogic.ts" imports from React
+❌ Component "GameBoard.tsx" imports directly from "logic/game"
+❌ Hook "useGameLogic.ts" imports from "components/Dialog"
+❌ Page "page.tsx" imports from "logic/validation"
+```
+
+**Technical Implementation:**
+- Regex-based import statement parser (handles ES6 imports, require statements, multiline imports)
+- Path resolution with @/ alias support (resolves to src/)
+- Import source classification (external, same-game, shared, component/hook/logic)
+- JSX syntax detection (distinguishes from TypeScript generics)
+- Multi-layer validation at build time
+
+**Why This Matters:**
+This phase enforces the layered architecture pattern where data and logic flow in one direction:
+```
+Logic (pure) → Hooks (state + orchestration) → Components (UI) → Page (composition)
+```
+
+By preventing backwards dependencies, we ensure:
+- Logic remains testable and reusable
+- Components don't bypass the hook layer
+- Clear separation of concerns
+- Predictable data flow
 
 ---
+
+## ❌ TODO: Unimplemented Phases
 
 ### Phase 5: Game Registration Validation
 
@@ -493,6 +536,16 @@ When adding new validators:
 ---
 
 ## Version History
+
+### v2.0.0 - Phase 4 Implementation
+- Phase 4: Import Dependency Validation
+- Created `validators/import-validation.js` with 4 strict rules
+- Created `utils/import-parser.js` for import statement extraction
+- Created `utils/path-resolver.js` for import classification
+- Enforces layered architecture at import level
+- Validates Logic → Hook → Component → Page dependency flow
+- Prevents backward dependencies and architectural violations
+- Fixed 11 violations across 7 games (sudoku, mastermind, reaction-timer, connect-four, sliding-puzzle, bomb-defusal, minesweeper)
 
 ### v1.0.0 - Initial Release
 - Phase 1: File Structure Validation
