@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -12,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Difficulty, CustomSettings } from '../types';
 import { CUSTOM_CONSTRAINTS } from '../constants';
-import { validateCustomSettings } from '../logic/gameValidation';
+import { useCustomDifficultySettings } from '../hooks/useCustomDifficultySettings';
 
 interface DifficultyDialogProps {
   open: boolean;
@@ -29,33 +28,27 @@ export default function DifficultyDialog({
   onClose,
   onStartGame,
 }: DifficultyDialogProps) {
-  const [customWidth, setCustomWidth] = useState(currentCustomSettings?.width.toString() || '16');
-  const [customHeight, setCustomHeight] = useState(currentCustomSettings?.height.toString() || '16');
-  const [customMines, setCustomMines] = useState(currentCustomSettings?.mines.toString() || '40');
-  const [customError, setCustomError] = useState<string>('');
-
-  // Update form values when dialog opens or custom settings change
-  useEffect(() => {
-    if (open) {
-      setCustomWidth(currentCustomSettings?.width.toString() || '16');
-      setCustomHeight(currentCustomSettings?.height.toString() || '16');
-      setCustomMines(currentCustomSettings?.mines.toString() || '40');
-      setCustomError('');
-    }
-  }, [open, currentCustomSettings]);
+  const {
+    customWidth,
+    customHeight,
+    customMines,
+    customError,
+    setCustomWidth,
+    setCustomHeight,
+    setCustomMines,
+    validateAndGetSettings,
+  } = useCustomDifficultySettings({
+    currentCustomSettings,
+    isOpen: open,
+  });
 
   const handleStartGame = () => {
-    const width = parseInt(customWidth);
-    const height = parseInt(customHeight);
-    const mines = parseInt(customMines);
-
-    const validation = validateCustomSettings(width, height, mines);
-    if (!validation.valid) {
-      setCustomError(validation.error || 'Invalid settings');
+    const result = validateAndGetSettings();
+    if (!result.valid || !result.settings) {
       return;
     }
 
-    onStartGame('Custom', { width, height, mines });
+    onStartGame('Custom', result.settings);
     onClose();
   };
 

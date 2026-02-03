@@ -16,6 +16,7 @@ export default function SlidingPuzzlePage() {
     gameState,
     bestRecords,
     mounted,
+    tilesWithMetadata,
     handleTileClick,
     handleMove,
     handleNewGame,
@@ -74,7 +75,7 @@ export default function SlidingPuzzlePage() {
         {/* Game Board */}
         <div className="flex flex-col items-center justify-center">
           <SlidingPuzzleBoard
-            tiles={tiles}
+            tilesWithMetadata={tilesWithMetadata}
             gridSize={gridSize}
             won={won}
             onTileClick={handleTileClick}

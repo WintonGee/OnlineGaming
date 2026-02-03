@@ -4,6 +4,7 @@ const path = require('path');
 const { validateFileStructure } = require('./validators/file-structure');
 const { validateNamingConventions } = require('./validators/naming-conventions');
 const { validateCodePatterns } = require('./validators/code-patterns');
+const { validateImportDependencies } = require('./validators/import-validation');
 const { reportViolations, logProgress, logValidatorResult } = require('./utils/reporter');
 
 /**
@@ -37,6 +38,12 @@ function main() {
   const codePatternViolations = validateCodePatterns(gamesDir);
   allViolations.push(...codePatternViolations);
   logValidatorResult('Code Pattern Validator', codePatternViolations.length);
+
+  // Run import dependency validation (Phase 4)
+  logProgress('Validating import dependencies (layered architecture)...');
+  const importViolations = validateImportDependencies(gamesDir);
+  allViolations.push(...importViolations);
+  logValidatorResult('Import Dependency Validator', importViolations.length);
 
   // Report results
   console.log('\n========================================');

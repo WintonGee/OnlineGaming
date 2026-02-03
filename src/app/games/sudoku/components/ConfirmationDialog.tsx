@@ -9,8 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-
-export type ConfirmationType = "reveal" | "reset";
+import { ConfirmationType } from "../types";
 
 interface ConfirmationConfig {
   title: string;

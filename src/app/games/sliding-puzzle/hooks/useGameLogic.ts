@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useMemo } from "react";
 import { useDialogState } from "@/lib/hooks/useDialogState";
 import { useKeyboardInput } from "@/lib/hooks/useKeyboardInput";
 import { useSlidingPuzzleState } from "./useSlidingPuzzleState";
 import { Difficulty } from "../types";
+import { getPosition, canMoveTile } from "../logic/puzzleLogic";
 
 export function useGameLogic() {
   const instructionsDialog = useDialogState();
@@ -57,11 +58,24 @@ export function useGameLogic() {
     }
   }, [won]);
 
+  // Compute tile metadata (position and movability)
+  const tilesWithMetadata = useMemo(() => {
+    return gameState.tiles.map((value, index) => ({
+      value,
+      index,
+      position: getPosition(index, gameState.gridSize),
+      isMovable: canMoveTile(gameState.tiles, index, gameState.gridSize),
+    }));
+  }, [gameState.tiles, gameState.gridSize]);
+
   return {
     // State
     gameState,
     bestRecords,
     mounted,
+
+    // Computed
+    tilesWithMetadata,
 
     // Actions
     handleTileClick,

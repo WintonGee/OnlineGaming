@@ -5,6 +5,7 @@ import { useGameState } from "./useGameState";
 import { useDialogState } from "@/lib/hooks/useDialogState";
 import { COLORS, CODE_LENGTH } from "../constants";
 import { PegColor } from "../types";
+import { isGuessComplete } from "../logic/validation";
 
 export function useGameLogic() {
   const gameState = useGameState();
@@ -87,10 +88,16 @@ export function useGameLogic() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [gameState, instructionsDialog.isOpen]);
 
+  // Computed properties
+  const canSubmitGuess = isGuessComplete(gameState.gameState.currentGuess);
+
   return {
     // Game state
     gameState: gameState.gameState,
     mounted: gameState.mounted,
+
+    // Computed
+    canSubmitGuess,
 
     // Actions
     selectSlot: gameState.setSelectedSlot,

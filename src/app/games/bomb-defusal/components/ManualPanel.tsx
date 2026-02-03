@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { MORSE_WORDS, KEYPAD_COLUMNS } from "../constants";
-import { getSymbolDisplay } from "../logic/keypadsLogic";
+import { getSymbolDisplay } from "../utils/display";
 
 type Section = "wires" | "button" | "simon" | "memory" | "password" | "morse" | "keypads" | "maze";
 

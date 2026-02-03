@@ -15,6 +15,7 @@ export default function ConnectFourPage() {
     gameState,
     isAIThinking,
     statusMessage,
+    getColumnPreview,
     handleColumnClick,
     handleNewGame,
     handleDifficultyChange,
@@ -140,6 +141,7 @@ export default function ConnectFourPage() {
           winningLine={gameState.winningLine}
           lastMove={gameState.lastMove}
           disabled={isGameOver || isAIThinking}
+          getColumnPreview={getColumnPreview}
           onColumnClick={handleColumnClick}
         />
 
