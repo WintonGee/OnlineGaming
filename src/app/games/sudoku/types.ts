@@ -40,3 +40,5 @@ export interface HelperActionResult {
   status: HelperActionStatus;
   message: string;
 }
+
+export type ConfirmationType = "reveal" | "reset";

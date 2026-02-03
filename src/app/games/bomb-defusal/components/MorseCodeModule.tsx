@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { MorseCodeModuleState } from "../types";
-import { formatFrequency } from "../logic/morseCodeLogic";
+import { formatFrequency } from "../utils/display";
 import {
   MORSE_FREQUENCY_STEP,
   MORSE_FREQUENCY_MIN,

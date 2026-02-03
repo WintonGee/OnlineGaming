@@ -11,12 +11,12 @@ import InstructionsDialog from "@/components/games/InstructionsDialog";
 import InstructionsContent from "./components/InstructionsContent";
 import WinDialog from "@/components/games/WinDialog";
 import GameOverDialog from "@/components/games/GameOverDialog";
-import { isGuessComplete } from "./logic/validation";
 
 export default function MastermindPage() {
   const {
     gameState,
     mounted,
+    canSubmitGuessGuess,
     selectSlot,
     selectColor,
     submitGuess,
@@ -53,8 +53,6 @@ export default function MastermindPage() {
       </div>
     );
   }
-
-  const canSubmit = isGuessComplete(gameState.currentGuess);
 
   return (
     <div className="min-h-screen bg-white dark:bg-black">
@@ -160,7 +158,7 @@ export default function MastermindPage() {
             {/* Submit Button */}
             <Button
               onClick={submitGuess}
-              disabled={!canSubmit}
+              disabled={!canSubmitGuess}
               className="w-full rounded-full py-2.5 text-sm font-semibold uppercase tracking-wide bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Submit Guess
@@ -202,7 +200,7 @@ export default function MastermindPage() {
             {/* Submit Button */}
             <Button
               onClick={submitGuess}
-              disabled={!canSubmit}
+              disabled={!canSubmitGuess}
               className="w-full rounded-full py-2.5 text-sm font-semibold uppercase tracking-wide bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Submit Guess

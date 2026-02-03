@@ -229,10 +229,22 @@ export function useGameLogic() {
     return `Player ${gameState.currentPlayer}'s turn`;
   };
 
+  // Get preview row for a column (for hover effect)
+  const getColumnPreview = useCallback(
+    (col: number): number | null => {
+      if (!canDropPiece(gameState.board, col)) {
+        return null;
+      }
+      return getDropRow(gameState.board, col);
+    },
+    [gameState.board]
+  );
+
   return {
     gameState,
     isAIThinking,
     statusMessage: getStatusMessage(),
+    getColumnPreview,
     handleColumnClick,
     handleNewGame,
     handleDifficultyChange,

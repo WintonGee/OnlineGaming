@@ -3,6 +3,7 @@
 import { useCallback } from "react";
 import { useDialogState } from "@/lib/hooks/useDialogState";
 import { useGameState } from "./useGameState";
+import { getPerformanceFeedback } from "../logic/game";
 
 export function useGameLogic() {
   const { gameState, stats, startGame, handleClick, resetGame } = useGameState();
@@ -30,12 +31,20 @@ export function useGameLogic() {
     resetGame();
   }, [resetGame]);
 
+  // Computed properties
+  const performanceFeedback = gameState.currentTime
+    ? getPerformanceFeedback(gameState.currentTime)
+    : null;
+
   return {
     // State
     phase: gameState.phase,
     currentTime: gameState.currentTime,
     bestTime: gameState.bestTime,
     attempts: gameState.attempts,
+
+    // Computed
+    performanceFeedback,
 
     // Stats
     stats,

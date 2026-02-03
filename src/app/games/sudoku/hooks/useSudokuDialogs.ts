@@ -2,8 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useDialogState } from "@/lib/hooks/useDialogState";
-import { HelperActionResult } from "../types";
-import { ConfirmationType } from "../components/ConfirmationDialog";
+import { HelperActionResult, ConfirmationType } from "../types";
 
 /**
  * Sudoku-specific dialog and helper state management hook

@@ -3,15 +3,15 @@
 import { cn } from "@/lib/utils/cn";
 import { GamePhase } from "../types";
 import { PHASE_COLORS, PHASE_MESSAGES } from "../constants";
-import { getPerformanceFeedback } from "../logic/game";
 
 interface ReactionAreaProps {
   phase: GamePhase;
   currentTime: number | null;
+  performanceFeedback: string | null;
   onClick: () => void;
 }
 
-export default function ReactionArea({ phase, currentTime, onClick }: ReactionAreaProps) {
+export default function ReactionArea({ phase, currentTime, performanceFeedback, onClick }: ReactionAreaProps) {
   const colorClass = PHASE_COLORS[phase];
   const message = PHASE_MESSAGES[phase];
 
@@ -50,7 +50,7 @@ export default function ReactionArea({ phase, currentTime, onClick }: ReactionAr
                 <span className="text-3xl sm:text-4xl md:text-5xl ml-1">ms</span>
               </span>
               <span className="text-white/90 text-lg sm:text-xl mt-3">
-                {getPerformanceFeedback(currentTime)}
+                {performanceFeedback}
               </span>
             </>
           )}
