@@ -16,7 +16,7 @@ export default function MastermindPage() {
   const {
     gameState,
     mounted,
-    canSubmitGuessGuess,
+    canSubmitGuess,
     selectSlot,
     selectColor,
     submitGuess,

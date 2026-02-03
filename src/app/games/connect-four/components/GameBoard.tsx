@@ -119,7 +119,7 @@ export default function GameBoard({
         >
           {Array.from({ length: COLS }).map((_, col) => {
             const isColumnHovered = hoverCol === col;
-            const canDrop = canDropPiece(board, col);
+            const canDrop = getColumnPreview(col) !== null;
             const previewRow = getPreviewRow(col);
 
             return (
@@ -172,7 +172,7 @@ export default function GameBoard({
         }}
       >
         {Array.from({ length: COLS }).map((_, col) => {
-          const isHovered = hoverCol === col && !disabled && canDropPiece(board, col);
+          const isHovered = hoverCol === col && !disabled && getColumnPreview(col) !== null;
           return (
             <div
               key={`num-${col}`}
